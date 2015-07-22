@@ -1,5 +1,5 @@
 <?php
-    use itlife\infrajs;
+    use itlife\infrajs\Infrajs;
 
 infra_require('*infrajs/initphp.php');
     $ans = array();
