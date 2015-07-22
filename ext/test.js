@@ -1,4 +1,5 @@
 infra.test=function(plugin,step){
+	if(!plugin)return true;//Аналогия сервера infra_test();
 	setTimeout(function(){//надо чтобы в консоли сначало вывелась строка return а потом уже тест запустился. наоборот тупо.
 		infra.test.plugin=plugin;
 		infra.test.index=0;

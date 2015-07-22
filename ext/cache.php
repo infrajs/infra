@@ -44,7 +44,10 @@ function infra_install()
 		if (!$r) {
 			return;
 		}
+		
+		infra_mem_flush();
 		$r = @infra_cache_fullrmdir($dirs['cache']);
+		
 		header('infra-update:'.($r ? 'Fail' : 'OK'));
 		require_once __DIR__.'/../../infra/install.php';
 	} else {
@@ -101,13 +104,22 @@ function infra_cache_check($call)
 {
 	$cache = infra_cache_is();
 	if (!$cache) {
+		//По умолчанию готовы кэшировать
 		infra_cache_yes();
 	}
 	$call();
+	//Смотрим есть ли возражения
 	$cache2 = infra_cache_is();
 
-	if ($cache && !$cache2) {
-		infra_cache_yes();
+	//Если настройки кэша поменялись возвращаем обратно к cache
+
+	//если no значит no и всем выше тоже no
+	//if ($cache && !$cache2) {
+	//	infra_cache_yes();
+	//}
+
+	if (!$cache && $cache2) {
+		infra_cache_no();
 	}
 
 	return $cache2;
@@ -116,13 +128,8 @@ function infra_cache_check($call)
 function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 {
 	return infra_admin_cache('cache_admin_'.$name, function ($conds, $name, $fn, $args, $re) {
-		//цифры нельзя, будут плодиться кэши
-		//если условие цифра значит это время, и если время кэша меньше.. нужно выполнить
 		$cache_time = 0; //стартовая временная метка равна дате изменения самого кэша
 		$execute=$re;
-		if (!$conds) {
-			$execute=true;
-		}
 		$path = infra_cache_path($name, array($conds, $args));
 		if (!$execute) {
 			$data=infra_mem_get($path);

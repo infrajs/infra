@@ -8,8 +8,7 @@ Copyright 2008-2010 ITLife, Ltd. http://itlife-studio.ru
 function infra_admin_modified($etag = '')
 {
 	//$v изменение которой должно создавать новую копию кэша
-	$conf = infra_config();
-	if ($conf['debug']) {
+	if (infra_debug()) {
 		return;
 	}
 	$now = gmdate('D, d M Y H:i:s', time()).' GMT';
@@ -159,7 +158,6 @@ function infra_admin_cache($name, $call, $args = array(), $re = false)
 {
 	//Запускается один раз для админа, остальные разы возвращает кэш из памяти
 	return infra_once('infra_admin_cache'.$name, function ($args, $name) use ($name, $call, $re) {
-		$conf = infra_config();
 
 		$strargs = infra_hash($args);
 		$name = 'infra_admin_once_'.$name.$strargs;
@@ -168,7 +166,7 @@ function infra_admin_cache($name, $call, $args = array(), $re = false)
 		}
 
 		$execute=true;
-		if (!$conf['debug'] && !$re && !infra_admin()) {
+		if (!infra_debug() && !$re && !infra_admin()) {
 			$execute=false;
 		}
 
@@ -185,24 +183,12 @@ function infra_admin_cache($name, $call, $args = array(), $re = false)
 
 		if ($execute) {
 			$data = array('time' => time());
-
-			//здесь для примера показана
-			//@header('Cache-control:no-store');//Метка о том что это место нельзя кэшировать для всех. нужно выставлять даже с session_start
-
 			$cache = infra_cache_check(function () use ($call, &$args, &$data, $re) {
 				$data['result'] = call_user_func_array($call, array_merge($args, array($re)));
 			});
-
-			
 			if ($cache) {
 				infra_mem_set($name, $data);
 			}
-
-			//} elseif ($data) {
-				//Если текущие данные не кэшируются, то удаляются ???
-				//infra_mem_flush();
-			//	infra_mem_delete('infra_admin_once_'.$name);
-			//}
 		}
 
 		return $data['result'];

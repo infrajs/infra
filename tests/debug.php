@@ -1,11 +1,15 @@
 <?php
+infra_test(true);
+$ans = array();
+$ans['title'] = 'Тест на значение отладки debug и test';
 
-    $ans = array();
-    $ans['title'] = 'Тест на значение debug. Режим отладки должен быть отключён.';
+$conf=infra_config();
+$conf=$conf['infra'];
+if (infra_debug()&&!is_string($conf['debug'])&&!is_array($conf['debug'])) {
+	return infra_err($ans, 'Значение debug = true');
+}
 
-    $conf = infra_config();
-    if ($conf['debug']) {
-        return infra_err($ans, 'Значение debug = true');
-    }
-
-    return infra_ret($ans, 'Значение debug = false');
+if (infra_test()&&!is_string($conf['test'])&&!is_array($conf['test'])) {
+	return infra_err($ans, 'Значение test = true');
+}
+return infra_ret($ans, 'Безопасные infra.debug:'.$conf['debug'].' и infra.test:'.$conf['test']);

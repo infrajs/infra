@@ -17,8 +17,7 @@ class Ans
 		if ($msg) {
 			$ans['msg']=$msg;
 		}
-		$conf=infra_config();
-		if ($conf['debug']&&!is_null($data)) {
+		if (infra_debug()&&!is_null($data)) {
 			$ans['msg'].='<pre><code>'.print_r($data, true).'</code></pre>';
 		}
 		error_log(basename(__FILE__).$msg);

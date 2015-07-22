@@ -81,7 +81,7 @@
 			try{
 				el.removeChild(bug);
 			}catch(e){
-				if(infra.debug)alert('Ошибка при удалении временного элемента в infra.html\n'+ e);
+				if(infra.debug())alert('Ошибка при удалении временного элемента в infra.html\n'+ e);
 			}
 		}
 		return res;
@@ -176,7 +176,7 @@
 				if(div.id=='documentwrite')div.id='';
 				infra.html(html,div);
 			}else{
-				if(infra.debug){
+				if(infra.debug()){
 					alert('Нужен document.write.div указать или создать ещё элемент с id '+sdiv);
 				}
 			}

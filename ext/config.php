@@ -91,16 +91,43 @@ function infra_dirs()
 function infra_test($r = false)
 {
 	$conf=infra_config();
-	$ips=$conf['infra']['testips'];
-	if (!$ips) {
-		$ips=array();
+	$ips=$conf['infra']['test'];
+
+	if (is_array($ips)) {
+		$is=in_array($_SERVER["REMOTE_ADDR"], $ips);
+	} elseif (is_string($ips)) {
+		$is= ($_SERVER["REMOTE_ADDR"] == $ips);
+	} else {
+		$is=!!$ips;
 	}
-	$is=in_array($_SERVER["REMOTE_ADDR"], $ips);
+	
 	
 	if ($r) {
 		if (!$is) {
 			header('HTTP/1.0 403 Forbidden');
-			die('{"msg":"Required config.infra.testips:['.$_SERVER["REMOTE_ADDR"].']"}');
+			die('{"msg":"Required config.infra.test:['.$_SERVER["REMOTE_ADDR"].']"}');
+		}
+	} else {
+		return $is;
+	}
+}
+function infra_debug($r = false)
+{
+	$conf=infra_config();
+	$ips=$conf['infra']['debug'];
+
+	if (is_array($ips)) {
+		$is=in_array($_SERVER["REMOTE_ADDR"], $ips);
+	} else if (is_string($ips)) {
+		$is= ($_SERVER["REMOTE_ADDR"] == $ips);
+	} else {
+		$is=!!$ips;
+	}
+	
+	if ($r) {
+		if (!$is) {
+			header('HTTP/1.0 403 Forbidden');
+			die('{"msg":"Required config.infra.debug:['.$_SERVER["REMOTE_ADDR"].']"}');
 		}
 	} else {
 		return $is;

@@ -71,12 +71,8 @@ infra_require('*infra/ext/admin.php');
 infra_require('*infra/ext/cache.php');
 
 
-$conf=infra_config();
 
-if ($conf['debug']) {
-	@header('Infrajs-Debug:true');
-	infra_cache_no();
-}
+
 infra_require('*infra/ext/once.php');
 
 
@@ -96,6 +92,13 @@ infra_require('*infra/ext/view.php');
 infra_require('*infra/ext/seq.php');
 infra_require('*infra/ext/template.php');
 
+
+
 infra_install();
+if (infra_debug()) {
+	@header('Infrajs-Debug:true');
+	infra_cache_no();
+}
+
 
 itlife\infra\ext\crumb::init();
