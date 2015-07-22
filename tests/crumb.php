@@ -1,5 +1,5 @@
 <?php
-    use itlife\infrajs\infra\ext\crumb;
+    use itlife\infra\ext\crumb;
 
 $ans = array();
     $ans['title'] = 'Хлебные крошки';

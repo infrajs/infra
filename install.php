@@ -6,7 +6,7 @@
 	весь конфиг сохраняется в data/.config.json.. 
 	интерфейс показывает сравнение собранного конфига всей системы с файлом data/.config.json
 */
-namespace itlife\infrajs\infra;
+namespace itlife\infra;
 
 function checkParentDir($name)
 {

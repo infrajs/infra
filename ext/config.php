@@ -64,7 +64,7 @@ function infra_dirs()
 		return $infra_dirs;
 	}
 	//Корень сайта относительно этого файла
-	$vendorroot = infra_realpath(__DIR__.'/../../../../../');//AВ до vendor
+	$vendorroot = infra_realpath(__DIR__.'/../../../../');//AВ до vendor
 	//Корень сайта определёный по рабочей дирректории
 	$siteroot = infra_getcwd();
 	//Определёный корень сайта двумя способами сравниваем

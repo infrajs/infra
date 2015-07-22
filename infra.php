@@ -35,7 +35,7 @@ state - серверная обработка адреса сайта
 statist - интегрировать как-нибудь
 
 */
-	//namespace itlife\infrajs\infra;
+	//namespace itlife\infra;
 
 //Скрипт не должен управлять этими опциями
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
@@ -98,4 +98,4 @@ infra_require('*infra/ext/template.php');
 
 infra_install();
 
-itlife\infrajs\infra\ext\crumb::init();
+itlife\infra\ext\crumb::init();

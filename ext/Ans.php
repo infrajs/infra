@@ -1,5 +1,5 @@
 <?php
-namespace itlife\infrajs\infra\ext;
+namespace itlife\infra\ext;
 
 class Ans
 {
