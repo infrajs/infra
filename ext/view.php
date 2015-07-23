@@ -38,20 +38,21 @@ function infra_view_setCookie($name, $val = null)
 		$time = time() + 60 * 60 * 24 * 30 * 24;
 	}
 
-	return setcookie($name, $val, $time, '/'.$root);
+	return setcookie($name, $val, $time, $root);
 }
 function infra_view_getPath()
 {
 	return infra_view_getSchema().infra_view_getHost().'/'.infra_view_getRoot();
 }
+
 /**
  * Возвращает путь до сайта от корня сервера
  */
 function infra_view_getRoot()
 {
 	$path=substr(infra_getcwd(), strlen(infra_realpath($_SERVER['DOCUMENT_ROOT'])));
+	return $path;
 }
-
 /*function infra_view_setCOOKIE($name,$val){
 	return infra_view_setCookie($name,$val);
 }

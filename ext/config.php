@@ -81,8 +81,7 @@ function infra_dirs()
 			'infra/data/', //Обязательно на первом месте, папка с данными пользователя!
 			'infra/layers/',
 			'./',
-			'vendor/itlife/',
-			'vendor/itlife/infrajs/',
+			'vendor/itlife/'
 		),
 	);
 

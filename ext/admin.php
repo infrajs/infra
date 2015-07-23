@@ -98,7 +98,7 @@ function infra_admin($break = null, $ans = array('msg' => 'Требуется а
 		}
 	} else {
 		$key = infra_view_getCookie('infra_admin');
-
+		
 		$admin = ($key === $realkey);
 		if ($break === false) {
 			infra_view_setCookie('infra_admin');
@@ -135,6 +135,31 @@ function infra_admin_time_set($t = null)
 	infra_once('infra_admin_time', $adm['time']);
 }
 
+/**
+ * Отвечает на вопрос! Время настало для сложной обработки?
+ * Функция стремится сказать что время ещё не пришло... и последней инстанцией будет выполнение фукции которая должна вернуть true или false
+ * Если передать метку времени и функцию это будет означать запуск функции если метка времени старей админской метки
+ * В debug режиме функция запускается всегда
+ */
+function infra_admin_isTime($cachetime = 0, $callback = false, $re = false)
+{
+	if (!$cachetime || $re) {
+		return true; //Нет кэша... пришло всремя для сложной обработки
+	};
+	if (infra_debug()||infra_admin()||$cachetime < infra_admin_time()) {
+		if ($callback) {
+			return !!$callback($cachetime); //Только функция сможет сказать надо или нет
+		}
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Функция работает без параметров...возвращает дату последних изменений админа для всей системы
+ * Если передать метку времени и функцию это будет означать запуск функции если метка времени старей админской метки
+ * В debug режиме функция запускается всегда
+ */
 function infra_admin_time()
 {
 	return infra_once('infra_admin_time', function () {
@@ -146,11 +171,6 @@ function infra_admin_time()
 			$adm['time'] = 0;
 		}
 
-		/*$t=infra_admin_lastupdate_time();
-		if($t>$adm['time']){
-			infra_admin_time_set($t);
-			$adm['time']=$t;
-		}*/
 		return $adm['time'];
 	});
 }

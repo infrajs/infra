@@ -2,7 +2,7 @@
 
 	infra_test(true);
 	$ans = array();
-	$ans['title'] = 'Тест функции кэширующих функций infra_cache infra_admin_cache';
+	$ans['title'] = 'Тест функции кэширующих функций infra_cache infra_admin_cache. Требуется F5';
 
 	
 
@@ -25,8 +25,10 @@
 	$str=' debug:'.infra_debug();
 	$str.=' admin:'.infra_admin();
 
+
 	if (infra_debug()||infra_admin()) {
-		if ($r1||$r2||$r3||!$r4||$r5) {
+		//Даже в debug r1 true. Так как это вложенный файл... для браузера будет false
+		if (!$r1||$r2||$r3||!$r4||$r5) {
 			return infra_err($ans, 'infra_cache_check работает некорректно'.$str);
 		}
 	} else {
@@ -88,12 +90,12 @@
 
 	if (infra_admin()) {
 		if ($ans['counter'] != 0) {
-			return infra_err($ans, 'infra_cache с авторизацией и с несуществующим файлом');
+			return infra_err($ans, 'infra_cache с авторизацией и с несуществующим файлом'.$str);
 		}
 	} else {
 		if (infra_debug()) {
 			if ($ans['counter'] != 0) {
-				return infra_err($ans, 'infra_cache В отладочном режиме с несуществующим файлом должен был сработать один раз, так как debug:true');
+				return infra_err($ans, 'infra_cache В отладочном режиме с несуществующим файлом'.$str);
 			}
 		} else {
 			if ($ans['counter'] != 0) {

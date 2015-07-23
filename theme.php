@@ -37,19 +37,20 @@ $src = infra_theme($filesrc);
 infra_isphp(false);//Метка для подключаемого файла если такой будет, что он рабоает вне php и должен проверять права и делать соответствующие выводы
 
 
-if ($src) {
-	//  Обращение к папке конфликтует с файлом index.php и с показом первой попавшейся картинки
-	//	Так как поведение с картинкой нестандартное... то и побеждает index.php
-	if ($src[strlen($src) - 1] == '/') {
-		$src = infra_theme($src.'index.php');
-	}
-}
+
 if (!$src) {
 	header('HTTP/1.0 404 Not Found');
 	return;
 }
-
 $p = infra_srcinfo($src);
+
+//  Обращение к папке конфликтует с файлом index.php и с показом первой попавшейся картинки
+//	Так как поведение с картинкой нестандартное... то и побеждает index.php
+if ($p['path'][strlen($p['path']) - 1] == '/') {
+	$src = infra_theme($src.'index.php');
+}
+
+
 if ($p['path'] && (preg_match("/\/\./", $p['path']) || ($p['path']{0} == '.' && $p['path']{1} != '/'))) {
 	header('HTTP/1.0 403 Forbidden');
 	return;
@@ -116,8 +117,8 @@ if ($p['ext'] !== 'php') {
 	} else {
 		$type = 'application/octet-stream';
 	}
-
-	if ($p['query']&&in_array($p['ext'], array('jpeg', 'jpg', 'png'))) {
+	$conf=infra_config();
+	if ($p['query']&&in_array($p['ext'], $conf['imager']['images'])) {
 		$fex = explode('?', $filesrc);
 		$src = infra_theme('*imager/imager.php').'?src='.$fex[0].'&'.mb_substr($p['query'], 1);
 		$p = infra_srcinfo($src);

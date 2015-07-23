@@ -62,18 +62,7 @@ function infra_install()
 
 function infra_cache_path($name, $args = null)
 {
-	$dirs = infra_dirs();
-	$dir = $dirs['cache'].'infra_cache_once/';
-	$name = infra_tofs($name);
-	$dirfn = $dir.$name.'/';
-	@mkdir($dirfn);
-	if (is_null($args)) {
-		return $dirfn;
-	}
-	$strargs = infra_hash($args);
-	$path = $dirfn.$strargs.'.json';
-
-	return $path;
+	return 'infra_cache '.$name.' '.infra_hash($args);
 }
 
 function infra_cache_is()
@@ -89,16 +78,19 @@ function infra_cache_is()
 
 	return true;
 }
+/**
+ * no-store - вообще не сохранять кэш
+ */
 function infra_cache_no()
 {
 	header('Cache-Control: no-store'); //Браузер всегда спрашивает об изменениях. Кэш слоя не делается.
-	//header("Expires: ".date("r"));
 }
+/**
+ * no-store - кэш сохранять но каждый раз спрашивать не поменялось ли чего
+ */
 function infra_cache_yes()
 {
 	header('Cache-Control: no-cache'); //По умолчанию. Браузер должен всегда спрашивать об изменениях. Кэш слоёв делается.
-	//header_remove("Cache-Control");
-	//header_remove("Expires");
 }
 function infra_cache_check($call)
 {
@@ -111,14 +103,9 @@ function infra_cache_check($call)
 	//Смотрим есть ли возражения
 	$cache2 = infra_cache_is();
 
-	//Если настройки кэша поменялись возвращаем обратно к cache
-
-	//если no значит no и всем выше тоже no
-	//if ($cache && !$cache2) {
-	//	infra_cache_yes();
-	//}
-
 	if (!$cache && $cache2) {
+		//Возражений нет и функция вернёт это в $cache2..
+		//но уже была установка что кэш не делать... возвращем эту установку для вообще скрипта
 		infra_cache_no();
 	}
 
@@ -127,54 +114,47 @@ function infra_cache_check($call)
 
 function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 {
-	return infra_admin_cache('cache_admin_'.$name, function ($conds, $name, $fn, $args, $re) {
-		$cache_time = 0; //стартовая временная метка равна дате изменения самого кэша
-		$execute=$re;
-		$path = infra_cache_path($name, array($conds, $args));
-		if (!$execute) {
-			$data=infra_mem_get($path);
-			if ($data) {
-				$cache_time=$data['time'];
-			} else {
-				$execute=true;
+	$path = infra_cache_path($name, array($conds, $args));
+	$data=infra_mem_get($path);
+	if (!$data) {
+		$data=array('time'=>0);
+	}
+	$execute = infra_admin_isTime($data['time'], function ($cache_time) use ($conds) {
+		$max_time = 1;
+		for ($i = 0, $l = sizeof($conds); $i < $l; ++$i) {
+			$mark = $conds[$i];
+			$mark = infra_theme($mark);
+			if (!$mark) {
+				continue;
 			}
-		}
-		if (!$execute) {
-			$max_time = 1;
-			for ($i = 0, $l = sizeof($conds); $i < $l; ++$i) {
-				$mark = $conds[$i];
-				$mark = infra_theme($mark);
-				if ($mark) {
-					$m = filemtime($mark);
-					if ($m > $max_time) {
-						$max_time = $m;
-					}
-					if (is_dir($mark)) {
-						foreach (glob($mark.'*.*') as $filename) {
-							$m = filemtime($filename);
-							if ($m > $max_time) {
-								$max_time = $m;
-							}
-						}
-					}
-				} else {
-					array_splice($conds, $i, 1);
-					//Если переданной метки не существует меняется путь до кэша
+			$m = filemtime($mark);
+			if ($m > $max_time) {
+				$max_time = $m;
+			}
+			if (!is_dir($mark)) {
+				continue;
+			}
+			foreach (glob($mark.'*.*') as $filename) {
+				$m = filemtime($filename);
+				if ($m > $max_time) {
+					$max_time = $m;
 				}
 			}
-			$execute = ($max_time > $cache_time) || $re;//re удаляет кэш только для текущих параметров
 		}
+		return $max_time > $cache_time;
+	}, $re);
 
-		if ($execute) {
-			$data=array('time'=>time());
-			$cache = infra_cache_check(function () use (&$data, $fn, $args, $re) {
-				$data['result'] = call_user_func_array($fn, array_merge($args, array($re)));
-			});
-			if ($cache) {
-				infra_mem_set($path, $data);
-			}
+	if ($execute) {
+		$cache = infra_cache_check(function () use (&$data, $fn, $args, $re) {
+			$data['result'] = call_user_func_array($fn, array_merge($args, array($re)));
+		});
+		if ($cache) {
+			$data['time']=time();
+			infra_mem_set($path, $data);
+		} else {
+			infra_mem_delete($path);
 		}
+	}
 
-		return $data['result'];
-	}, array(&$conds, $name, $fn, $args), $re);
+	return $data['result'];
 }
