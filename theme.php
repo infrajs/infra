@@ -46,9 +46,15 @@ $p = infra_srcinfo($src);
 
 //  Обращение к папке конфликтует с файлом index.php и с показом первой попавшейся картинки
 //	Так как поведение с картинкой нестандартное... то и побеждает index.php
-if ($p['path'][strlen($p['path']) - 1] == '/') {
-	$src = infra_theme($src.'index.php');
-}
+/*if ($p['path'][strlen($p['path']) - 1] == '/'&&is_dir($p['path'])) {
+	$src=$p['path'].'index.php'.$p['query'];
+	$src = infra_theme($src);
+	if (!$src) {
+		header('HTTP/1.0 404 Not Found');
+		return;
+	}
+	$p = infra_srcinfo($src);
+}*/
 
 
 if ($p['path'] && (preg_match("/\/\./", $p['path']) || ($p['path']{0} == '.' && $p['path']{1} != '/'))) {

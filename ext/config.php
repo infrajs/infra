@@ -178,8 +178,14 @@ function &infra_config($sec = false)
 						}
 					}
 				}
+
+				
 			}
+
 		}
+
+	
+
 		if (is_file($src.'.config.json')) {
 			$d = file_get_contents($src.'.config.json');
 			$d = infra_json_decode($d);
@@ -202,6 +208,7 @@ function &infra_config($sec = false)
 			}
 		}
 	}
+
 	$infra_config['unsec'] = $data;
 	foreach ($data as $i => $part) {
 		$pub = @$part['pub'];
@@ -215,7 +222,7 @@ function &infra_config($sec = false)
 			unset($data[$i]);
 		}
 	}
-	$data['debug'] = $infra_config['unsec']['debug'];
+	//$data['debug'] = $infra_config['unsec']['debug'];
 	$infra_config['secure'] = $data;
 
 	return $infra_config[$sec];
