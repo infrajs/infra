@@ -15,9 +15,6 @@ if ($conf['infra']['cache']=='fs') {
 	if (!infra_theme($dirs['data'])) {
 	    return infra_err($ans, 'Нет папки '.$dirs['data']);
 	}
-	if (!infra_theme($dirs['backup'])) {
-	    return infra_err($ans, 'Нет папки '.$dirs['backup']);
-	}
 
 	return infra_ret($ans, 'Обязательные папки есть');
 } else {

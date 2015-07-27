@@ -36,8 +36,20 @@ class Ans
 		if (infra_isphp()) {
 			return $ans;
 		} else {
+			//error_reporting(E_ALL);
+			//ini_set('display_errors',1);
 			header('Content-type:application/json');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
-			echo infra_json_encode($ans);
+			echo json_encode($ans, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+			exit;
+		}
+	}
+	public static function txt($ans)
+	{
+		if (infra_isphp()) {
+			return $ans;
+		} else {
+			header('Content-type:text/html');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
+			echo $ans;
 		}
 	}
 }

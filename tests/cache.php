@@ -9,6 +9,8 @@
 	$conf=infra_config();
 	$ans['admin']=infra_admin();
 	$ans['debug']=infra_debug();
+	$ans['test']=infra_test();
+	$ans['isphp']=infra_isphp();
 	$name='test';
 
 	
@@ -22,20 +24,37 @@
 	$r5=infra_cache_is();
 
 
-	$str=' debug:'.infra_debug();
+	$str =' debug:'.infra_debug();
 	$str.=' admin:'.infra_admin();
+	$str.=' isphp:'.infra_isphp();
+	
+	//infra_debug() - запрещает кэшировать верхний уровень
+	//Верхний это уровень браузера, его узнать можно по infra_isphp() true будет означать что мы где-то в инклуде
 
-
-	if (infra_debug()||infra_admin()) {
-		//Даже в debug r1 true. Так как это вложенный файл... для браузера будет false
-		if (!$r1||$r2||$r3||!$r4||$r5) {
-			return infra_err($ans, 'infra_cache_check работает некорректно'.$str);
+	if(infra_isphp()){
+		if (infra_debug()||infra_admin()) {
+			//Даже в debug r1 true. Так как это вложенный файл... для браузера будет false
+			if (!$r1||$r2||$r3||!$r4||$r5) {
+				return infra_err($ans, 'infra_cache_check '.implode(',',array($r1,$r2,$r3,$r4,$r5)).' работает некорректно'.$str);
+			}
+		} else {
+			if (!$r1||$r2||$r3||!$r4||$r5) {
+				return infra_err($ans, 'infra_cache_check работает некорректно'.$str);
+			}
 		}
-	} else {
-		if (!$r1||$r2||$r3||!$r4||$r5) {
-			return infra_err($ans, 'infra_cache_check работает некорректно'.$str);
+	}else{
+		if (infra_debug()||infra_admin()) {
+			//Даже в debug r1 true. Так как это вложенный файл... для браузера будет false
+			if ($r1||$r2||$r3||!$r4||$r5) {
+				return infra_err($ans, 'infra_cache_check '.implode(',',array($r1,$r2,$r3,$r4,$r5)).' работает некорректно'.$str);
+			}
+		} else {
+			if (!$r1||$r2||$r3||!$r4||$r5) {
+				return infra_err($ans, 'infra_cache_check работает некорректно'.$str);
+			}
 		}
 	}
+	
 	
 	
 	

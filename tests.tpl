@@ -74,7 +74,7 @@
 				<li role="presentation"><a href="?*infra/dirs.php">dirs</a></li>
 				<li role="presentation"><a href="?*infra/config.php">config</a></li>
 				<li role="presentation"><a href="?*session/admin.php">session</a></li>
-				<li role="presentation"><a href="./">site</a></li>
+				<li role="presentation"><a href=".">site</a></li>
 	      </ul>
 	    </div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->

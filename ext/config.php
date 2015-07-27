@@ -222,7 +222,7 @@ function &infra_config($sec = false)
 			unset($data[$i]);
 		}
 	}
-	//$data['debug'] = $infra_config['unsec']['debug'];
+
 	$infra_config['secure'] = $data;
 
 	return $infra_config[$sec];

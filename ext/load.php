@@ -69,25 +69,9 @@ function infra_json_decode($json, $soft = false)
 		echo "\n".'</pre>';
 		exit;
 	}
-	/*
-	// the following strings are valid JavaScript but not valid JSON
-
-	// the name and value must be enclosed in double quotes
-	// single quotes are not valid 
-	$bad_json = "{ 'bar': 'baz' }";
-	json_decode($bad_json); // null
-
-	// the name must be enclosed in double quotes
-	$bad_json = '{ bar: "baz" }';
-	json_decode($bad_json); // null
-
-	// trailing commas are not allowed
-	$bad_json = '{ bar: "baz", }';
-	json_decode($bad_json); // null
-	*/
 	return $data;
 }
-function infra_json_encode($mix, $pretty = true)
+function infra_json_encode($mix)
 {
 	return json_encode($mix, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 }

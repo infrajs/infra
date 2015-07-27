@@ -163,10 +163,11 @@ infra.Crumb.setA=function(div){
 		if(/^javascript:/.test(href))continue;
 		if(/^mailto:/.test(href))continue;
 
-		
+		var exception=false;
 		if (href=='.') { //Правильная ссылка на главную страницу
+			exception=true;
 			var beforequest='';
-			var href='';
+			var href='';//На главную без префикса
 		} else {
 			var r=href.split('?');
 			var beforequest=r.shift();
@@ -178,7 +179,7 @@ infra.Crumb.setA=function(div){
 					var href=r.join('?');
 				}
 			}else{
-				var href='';
+				var href='';//На главную с префиксом
 			}
 		}
 		if(beforequest) {
@@ -209,20 +210,22 @@ infra.Crumb.setA=function(div){
 			var old_func=function(){};
 		}
 		
-		a.setAttribute('weblife_href','?'+href);//Признак того что эта ссылка внутренняя и веблайфная... так сохраняется первоначальный адрес
-		
 		var crumb=infra.Crumb.getInstance(href);
 		href=crumb.toString();
 
-		var siteroot=infra.view.getRoot();
-		if(href[0]=='*'){
-			var sethref=href?('http://'+location.host+'/'+siteroot+'?'+encodeURI(href)):('http://'+location.host+'/'+siteroot);
+		var siteroot=infra.view.getPath();
+
+		a.setAttribute('data-infra-href',href);//Признак того что эта ссылка внутренняя и веблайфная... так сохраняется первоначальный адрес
+		
+		if(href[0]=='*'||exception){
+			var sethref=href?('http://'+location.host+siteroot+'?'+encodeURI(href)):('http://'+location.host+siteroot);
 		}else{
-			var sethref=href?('http://'+location.host+'/'+siteroot+infra.Crumb.prefix+'?'+encodeURI(href)):('http://'+location.host+'/'+siteroot+infra.Crumb.prefix);
+			var sethref=href?('http://'+location.host+siteroot+infra.Crumb.prefix+'?'+encodeURI(href)):('http://'+location.host+siteroot+infra.Crumb.prefix);	
 		}
 		a.setAttribute('href',sethref);//Если параметров нет, то указывам путь на главную страницу
+		
 
-		a.onclick=function(old_func,a,crumb){
+		a.onclick=function(old_func,a,crumb,exception,sethref){
 			
 			return function(event){
 
@@ -236,12 +239,15 @@ infra.Crumb.setA=function(div){
 					}
 					var nohref=a.getAttribute('nohref');
 					if(nohref)return false;
-
+					if(exception) {
+						location.href=sethref;
+						return;
+					}
 					infra.Crumb.go(crumb.toString());
 				},1);
 				return false;
 			}
-		}(old_func,a,crumb);
+		}(old_func,a,crumb,exception,sethref);
 	}
 }
 /*public $name;

@@ -37,27 +37,42 @@ function infra_cache_fullrmdir($delfile, $ischild = true)
 }
 function infra_install()
 {
+	$cmd5=infra_mem_get('configmd5');
+	$rmd5=md5(serialize(infra_config()));
+	if (!$cmd5) {
+		$flush=null;
+	} else if ($rmd5 != $cmd5) {
+		$flush=true;
+	}
 	$dirs = infra_dirs();
-	$file = infra_theme($dirs['data'].'update');
-	if ($file) {
-		$r = @unlink($file);//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
-		if (!$r) {
-			return;
+	if (!$flush) {
+		$file = infra_theme($dirs['data'].'update');
+		if ($file) {
+			$r = @unlink($file);//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
+			if (!$r) {
+				return; //Нет прав на удаление
+			}
+			$flush=true;
 		}
-		
-		infra_mem_flush();
-		$r = @infra_cache_fullrmdir($dirs['cache']);
-		
-		header('infra-update:'.($r ? 'Fail' : 'OK'));
-		require_once __DIR__.'/../../infra/install.php';
-	} else {
-		$conf=infra_config();
-		if ($conf['infra']['cache']=='fs') {
-			if (!is_dir($dirs['cache'])) {
-				require_once __DIR__.'/../../infra/install.php';
+	}
+	if (!$flush) {
+		if (!is_dir($dirs['cache'])) {
+			$conf=infra_config();
+			//Чтобы лишний раз не запускать install
+			//Возможна ситуация что папки cache в принципе нет и на диск ничего не записывается
+			if ($conf['infra']['cache']=='fs') {
+				$flush=true;
 			}
 		}
 	}
+	if ($flush) {
+		infra_mem_flush();
+		$r = @infra_cache_fullrmdir($dirs['cache']);
+		header('Infra-Update:'.($r ? 'Fail' : 'OK'));
+		require_once __DIR__.'/../../infra/install.php';
+		infra_mem_set('configmd5', $rmd5);
+	}
+	
 }
 
 function infra_cache_path($name, $args = null)
