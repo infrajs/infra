@@ -91,7 +91,7 @@ function infra_test($r = false)
 {
 	$conf=infra_config();
 	$ips=$conf['infra']['test'];
-
+	infra_cache_no();
 	if (is_array($ips)) {
 		$is=in_array($_SERVER["REMOTE_ADDR"], $ips);
 	} elseif (is_string($ips)) {
@@ -114,7 +114,7 @@ function infra_debug($r = false)
 {
 	$conf=infra_config();
 	$ips=$conf['infra']['debug'];
-
+	infra_cache_no();
 	if (is_array($ips)) {
 		$is=in_array($_SERVER["REMOTE_ADDR"], $ips);
 	} else if (is_string($ips)) {

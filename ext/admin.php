@@ -88,7 +88,7 @@ function infra_admin($break = null, $ans = array('msg' => 'Требуется а
 	$admin = null;//Неизвестно
 
 	$realkey = md5($_ADM_NAME.$_ADM_PASS.$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR']);
-
+	infra_cache_no();
 	if (is_array($break)) {
 		$admin = ($break[0] === $_ADM_NAME && $break[1] === $_ADM_PASS);
 		if ($admin) {
@@ -117,9 +117,9 @@ function infra_admin($break = null, $ans = array('msg' => 'Требуется а
 	}
 
 	if ($admin) {
-		infra_admin_time_set();
-		infra_cache_no();//Администратор может видеть кэш страниц?
+		infra_admin_time_set();	
 	}
+	
 
 	return $admin;
 }
