@@ -6,6 +6,7 @@ class Ans
 	public static function err($ans, $msg = null)
 	{
 		$ans['result']=0;
+		infra_cache_no();
 		if ($msg) {
 			$ans['msg']=$msg;
 		}

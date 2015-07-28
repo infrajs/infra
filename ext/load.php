@@ -14,6 +14,7 @@
 	infra_loadTEXT
 	infra_loadJSON
 */
+use itlife\infra\ext\Ans;
 
 
 function infra_toutf($str)
@@ -469,40 +470,13 @@ function infra__load($path)
 
 function infra_ret($ans, $str = false)
 {
-	$ans['result'] = 1;
-	if ($str) {
-		$ans['msg'] = infra_template_parse(array($str), $ans);
-	}
-
-	return infra_ans($ans);
+	return Ans::ret($ans, $str);
 }
 function infra_err($ans, $str = false)
 {
-	$ans['result'] = 0;
-	if ($str) {
-		$ans['msg'] = infra_template_parse(array($str), $ans);
-	}
-
-	return infra_ans($ans);
+	return Ans::err($ans, $str);
 }
 function infra_ans($ans)
 {
-	if (infra_isphp()) {
-		return $ans;
-	} else {
-		header('Content-type:application/json');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
-		echo infra_json_encode($ans);
-	}
-}
-function infra_echo($ans = array(), $msg = false, $res = null)
-{
-	//Окончание скриптов
-	if ($msg !== false) {
-		$ans['msg'] = $msg;
-	}
-	if (!is_null($res)) {
-		$ans['result'] = $res;
-	}
-
-	return infra_ans($ans);
+	return Ans::ans($ans, $str);
 }

@@ -47,7 +47,7 @@ function infra_mem_delete($key)
 
 	return $r;
 }
-function &infra_mem_flush()
+function infra_mem_flush()
 {
 	$mem = &infra_memcache();
 	if ($mem) {

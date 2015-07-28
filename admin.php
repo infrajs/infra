@@ -5,9 +5,9 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 	//require_once('../../../../vendor/autoload.php');
 	//require_once(__DIR__.'/infra.php');
 	if(isset($_REQUEST['json'])){//Для данных для слоя
-		$ans=array('result'=>1);
+		$ans=array();
 		$ans['admin']=infra_admin();
-		return infra_echo($ans);
+		return infra_ret($ans);
 	}
 ?>
 <script src="?*infra/js.php"></script>

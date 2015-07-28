@@ -37,48 +37,64 @@ function infra_cache_fullrmdir($delfile, $ischild = true)
 }
 function infra_install()
 {
-	$cmd5=infra_mem_get('configmd5');
-	$rmd5=md5(serialize(infra_config()));
-	if (!$cmd5) {
-		$flush=null;
-	} else if ($rmd5 != $cmd5) {
-		$flush=true;
-	}
-	$dirs = infra_dirs();
+	$flush=null;
+
+	//Изменился config...
 	if (!$flush) {
+		$cmd5=infra_mem_get('configmd5');
+		if (!$cmd5) {
+			$cmd5=array('time'=>0);
+		}
+		//проверка только если была авторизация админа
+		infra_admin_isTime($cmd5['time'], function () use (&$flush) {
+			$rmd5=array('time'=>time());
+			$rmd5['result']=md5(serialize(infra_config()));
+			if ($rmd5['result'] != $cmd5['result']) {
+				$flush=true;
+			}
+		});
+	}
+	
+	//Файл infra/data/update
+	if (!$flush) {
+		$dirs = infra_dirs();
 		$file = infra_theme($dirs['data'].'update');
 		if ($file) {
 			$r = @unlink($file);//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
 			if (!$r) {
-				return; //Нет прав на удаление
-			}
-			$flush=true;
-		}
-	}
-	if (!$flush) {
-		if (!is_dir($dirs['cache'])) {
-			$conf=infra_config();
-			//Чтобы лишний раз не запускать install
-			//Возможна ситуация что папки cache в принципе нет и на диск ничего не записывается
-			if ($conf['infra']['cache']=='fs') {
+				header('Infra-Update: Error');
+			} else {
 				$flush=true;
 			}
 		}
 	}
-	if ($flush) {
-		infra_mem_flush();
-		$r = @infra_cache_fullrmdir($dirs['cache']);
-		header('Infra-Update:'.($r ? 'Fail' : 'OK'));
-		require_once __DIR__.'/../../infra/install.php';
-		infra_mem_set('configmd5', $rmd5);
+
+	//Папка cache.. если fs
+	if (!$flush) {
+		$conf=infra_config();
+		if ($conf['infra']['cache']=='fs') {
+			$dirs = infra_dirs();
+			//Чтобы лишний раз не запускать install
+			//Возможна ситуация что папки cache в принципе нет и на диск ничего не записывается
+			if (!is_dir($dirs['cache'])) {
+				$flush=true;
+			}
+		}
 	}
-	
+
+	if (!$flush) {
+		return;
+	}
+
+	infra_mem_flush();
+	$dirs = infra_dirs();
+	$r = @infra_cache_fullrmdir($dirs['cache']);
+	header('Infra-Update:'.($r ? 'Fail' : 'OK'));
+	require_once __DIR__.'/../../infra/install.php';
+	infra_mem_set('configmd5', $rmd5);
 }
 
-function infra_cache_path($name, $args = null)
-{
-	return 'infra_cache '.$name.' '.infra_hash($args);
-}
+
 
 function infra_cache_is()
 {
@@ -129,47 +145,50 @@ function infra_cache_check($call)
 
 function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 {
-	$path = infra_cache_path($name, array($conds, $args));
-	$data=infra_mem_get($path);
-	if (!$data) {
-		$data=array('time'=>0);
-	}
-	$execute = infra_admin_isTime($data['time'], function ($cache_time) use ($conds) {
-		$max_time = 1;
-		for ($i = 0, $l = sizeof($conds); $i < $l; ++$i) {
-			$mark = $conds[$i];
-			$mark = infra_theme($mark);
-			if (!$mark) {
-				continue;
-			}
-			$m = filemtime($mark);
-			if ($m > $max_time) {
-				$max_time = $m;
-			}
-			if (!is_dir($mark)) {
-				continue;
-			}
-			foreach (glob($mark.'*.*') as $filename) {
-				$m = filemtime($filename);
+	$name='infra_admin_cache_'.$name;
+	return infra_once($name, function ($args, $name) use ($name, $fn, $re) {
+		$path = $name.'_'.infra_hash($args);
+		$data=infra_mem_get($path);
+		if (!$data) {
+			$data=array('time'=>0);
+		}
+		$execute = infra_admin_isTime($data['time'], function ($cache_time) use ($conds) {
+			$max_time = 1;
+			for ($i = 0, $l = sizeof($conds); $i < $l; ++$i) {
+				$mark = $conds[$i];
+				$mark = infra_theme($mark);
+				if (!$mark) {
+					continue;
+				}
+				$m = filemtime($mark);
 				if ($m > $max_time) {
 					$max_time = $m;
 				}
+				if (!is_dir($mark)) {
+					continue;
+				}
+				foreach (glob($mark.'*.*') as $filename) {
+					$m = filemtime($filename);
+					if ($m > $max_time) {
+						$max_time = $m;
+					}
+				}
+			}
+			return $max_time > $cache_time;
+		}, $re);
+
+		if ($execute) {
+			$cache = infra_cache_check(function () use (&$data, $fn, $args, $re) {
+				$data['result'] = call_user_func_array($fn, array_merge($args, array($re)));
+			});
+			if ($cache) {
+				$data['time']=time();
+				infra_mem_set($path, $data);
+			} else {
+				infra_mem_delete($path);
 			}
 		}
-		return $max_time > $cache_time;
-	}, $re);
 
-	if ($execute) {
-		$cache = infra_cache_check(function () use (&$data, $fn, $args, $re) {
-			$data['result'] = call_user_func_array($fn, array_merge($args, array($re)));
-		});
-		if ($cache) {
-			$data['time']=time();
-			infra_mem_set($path, $data);
-		} else {
-			infra_mem_delete($path);
-		}
-	}
-
-	return $data['result'];
+		return $data['result'];
+	}, array($args, $name), $re);
 }

@@ -165,7 +165,7 @@ infra.Crumb.setA=function(div){
 
 		var exception=false;
 		if (href=='.') { //Правильная ссылка на главную страницу
-			exception=true;
+			if(infra.Crumb.prefix)exception=true;
 			var beforequest='';
 			var href='';//На главную без префикса
 		} else {

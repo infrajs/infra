@@ -37,9 +37,7 @@ statist - интегрировать как-нибудь
 */
 	//namespace itlife\infra;
 
-//Скрипт не должен управлять этими опциями
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-ini_set('display_errors', 1);
+
 	
 
 
@@ -94,11 +92,30 @@ infra_require('*infra/ext/template.php');
 
 
 
-infra_install();
-if (infra_debug()) {
-	@header('Infrajs-Debug:true');
-	infra_cache_no();
-}
 
+
+
+infra_install();
+if (infra_test_silent()) {
+	error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+	ini_set('display_errors', 1);
+	@header('Infra-Test:true');
+} else {
+	error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+	@header('Infra-Test:false');
+	ini_set('display_errors', 0);
+}
+if (infra_debug_silent()) {
+	@header('Infra-Debug:true');
+	infra_cache_no(); //Браузер не кэширует no-store.
+} else {
+	@header('Infra-Debug:false');
+	infra_cache_yes(); //Браузер кэширует, но проверяет каждый раз no-cache
+}
+if (infra_admin_silent()) {
+	@header('Infra-Admin:true');
+} else {
+	@header('Infra-Admin:false');
+}
 
 itlife\infra\ext\crumb::init();
