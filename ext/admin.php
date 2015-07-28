@@ -8,11 +8,12 @@ Copyright 2008-2010 ITLife, Ltd. http://itlife-studio.ru
 function infra_admin_modified($etag = '')
 {
 	//$v изменение которой должно создавать новую копию кэша
-	if (infra_debug()) {
+	if (infra_debug_silent()) {
 		return;
 	}
-	$now = gmdate('D, d M Y H:i:s', time()).' GMT';
-	infra_cache_yes();
+	if ($etag) {//Мы осознано включаем возможность кэшировать, даже если были запреты до этого! так ак есть Etag и в нём срыты эти не явные условия
+		infra_cache_yes();
+	}
 	if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 		$last_modified = infra_admin_time();
 		/*
@@ -27,8 +28,9 @@ function infra_admin_modified($etag = '')
 			}
 		}
 	}
-
 	header('ETag: '.$etag);
+
+	$now = gmdate('D, d M Y H:i:s', time()).' GMT';
 	header('Last-Modified: '.$now);
 }
 /*function infra_admin($break=null,$ans=array('msg'=>'Требуется авторизация','result'=>0)){
@@ -163,7 +165,8 @@ function infra_admin_isTime($cachetime = 0, $callback = false, $re = false)
 	if (!$cachetime || $re) {
 		return true; //Нет кэша... пришло всремя для сложной обработки
 	};
-	if (infra_debug()||$cachetime < infra_admin_time()) {
+	//Мы тут не меняем содержание.. а только отвечам на вопрос можно ли закэшировать... cache_no от Infra_debug тут неуместен
+	if (infra_debug_silent()||$cachetime < infra_admin_time()) {
 		if ($callback) {
 			return !!$callback($cachetime); //Только функция сможет сказать надо или нет
 		}

@@ -121,7 +121,7 @@ function infra_debug_silent()
 }
 function infra_test($r = false)
 {
-	//infra_cache_no();
+	infra_cache_no();
 	$is=infra_test_silent();
 	if ($r) {
 		if (!$is) {
@@ -135,7 +135,7 @@ function infra_test($r = false)
 
 function infra_debug($r = false)
 {
-	//infra_cache_no();
+	infra_cache_no();
 	$is=infra_debug_silent();
 	if ($is) {
 		infra_admin_time_set();

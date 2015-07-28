@@ -17,16 +17,16 @@ $html=infra_admin_cache('infra_js_php', function ($str) {
 	$require=function ($path) {
 		$html="\n\n".'//requrie '.$path."\n";
 		$html.=infra_loadTEXT($path).';';
-		$html.='infra.store("require")["'.$path.'"]={vlaue:true};'; //код отметки о выполненных файлах
+		$html.='infra.store("require")["'.$path.'"]={value:true};'; //код отметки о выполненных файлах
 		return $html;
 	};
 	$html='window.infra={};';
 
-	$r=infra_debug()?'true':'false';
-	$html.='infra.debug=function(){return '.$r.";};\n";
+	//$r=infra_debug()?'true':'false';
+	//$html.='infra.debug=function(){return '.$r.";};\n";
 
-	$r=infra_test()?'true':'false';
-	$html.='infra.test=function(){return '.$r.";};\n";
+	//$r=infra_test()?'true':'false';
+	//$html.='infra.test=function(){return '.$r.";};\n";
 
 	$conf=infra_config('secure');
 	$html.='infra.conf=('.infra_json_encode($conf).');infra.config=function(){return infra.conf;};';
@@ -49,11 +49,12 @@ $html=infra_admin_cache('infra_js_php', function ($str) {
 	$html.=$require('*infra/ext/template.js');
 	$html.=$require('*infra/ext/crumb.js');
 	$html.=$require('*infra/ext/loader.js');
-	
-	if (infra_test()) {
-		$html.=$require('*infra/ext/test.js');
-	}
 
+	$html.=$require('*infra/ext/config.js');
+	
+	
+	//$html.=$require('*infra/ext/test.js');
+	
 	$html.=$require('*infrajs/infrajs.js');//
 	return $html;
 }, array($_SERVER['QUERY_STRING']), $re);

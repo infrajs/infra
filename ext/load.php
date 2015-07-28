@@ -408,6 +408,7 @@ function infra__load($path)
 
 			ob_start();
 			//headers надо ловить
+			$ans=array();
 			$rrr = include $plug;
 			$result = ob_get_contents();
 			$resecho = $result;

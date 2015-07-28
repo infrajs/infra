@@ -1,4 +1,3 @@
 infra.admin=function(){
-	var ans=infra.loadJSON('*infra/admin.php?json');
-	return ans.admin;
+	return infra.loadJSON('*infra/get.php?config')['admin'];
 }
