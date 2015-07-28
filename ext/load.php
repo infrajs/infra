@@ -16,7 +16,6 @@
 */
 use itlife\infra\ext\Ans;
 
-
 function infra_toutf($str)
 {
 	if (!is_string($str)) {
@@ -479,5 +478,9 @@ function infra_err($ans, $str = false)
 }
 function infra_ans($ans)
 {
-	return Ans::ans($ans, $str);
+	return Ans::ans($ans);
+}
+function infra_log($ans, $str, $data)
+{
+	return Ans::log($ans, $str);
 }

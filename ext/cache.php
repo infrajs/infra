@@ -35,7 +35,7 @@ function infra_cache_fullrmdir($delfile, $ischild = true)
 		}
 	}
 }
-function infra_install($flush=null)
+function infra_install($flush = null)
 {
 	//Изменился config...
 	if (!$flush) {
@@ -150,7 +150,11 @@ function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 		if (!$data) {
 			$data=array('time'=>0);
 		}
+		
 		$execute = infra_admin_isTime($data['time'], function ($cache_time) use ($conds) {
+			if (!sizeof($conds)) {
+				return false;//Если нет conds кэш навсегда и develop не поможет
+			}
 			$max_time = 1;
 			for ($i = 0, $l = sizeof($conds); $i < $l; ++$i) {
 				$mark = $conds[$i];
