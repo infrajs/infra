@@ -171,6 +171,7 @@ infra.Crumb.setA=function(div){
 		} else {
 			var r=href.split('?');
 			var beforequest=r.shift();
+
 			if(r.length>0){
 				try{ //error malfomed URI
 					//Пытаемся убрать проценты из адреса
@@ -213,6 +214,14 @@ infra.Crumb.setA=function(div){
 		var crumb=infra.Crumb.getInstance(href);
 		href=crumb.toString();
 
+		if(href[0]=='*'){
+			var q=href.split('?');
+			var prefix='?'+q.shift();
+			if(infra.Crumb.prefix!=prefix){
+				continue;
+			}
+		}
+	
 		var siteroot=infra.view.getPath();
 
 		a.setAttribute('data-infra-href',href);//Признак того что эта ссылка внутренняя и веблайфная... так сохраняется первоначальный адрес

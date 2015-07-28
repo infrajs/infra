@@ -35,10 +35,8 @@ function infra_cache_fullrmdir($delfile, $ischild = true)
 		}
 	}
 }
-function infra_install()
+function infra_install($flush=null)
 {
-	$flush=null;
-
 	//Изменился config...
 	if (!$flush) {
 		$cmd5=infra_mem_get('configmd5');
@@ -90,7 +88,7 @@ function infra_install()
 	$dirs = infra_dirs();
 	$r = @infra_cache_fullrmdir($dirs['cache']);
 	header('Infra-Update:'.($r ? 'Fail' : 'OK'));
-	require_once __DIR__.'/../../infra/install.php';
+	infra_require('*infra/install.php');
 	infra_mem_set('configmd5', $rmd5);
 }
 
