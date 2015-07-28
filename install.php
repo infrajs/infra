@@ -48,7 +48,7 @@ if (!is_file($dirs['data'].'.config.json')) {
 
 $t=infra_admin_time();
 if (!$t) {
-	infra_admin_time_set(time() - 1);//Нужно чтобы был, а то как-будто админ постоянно
+	infra_admin_time_set(time());//Нужно чтобы был, а то как-будто админ постоянно
 }
 
 
