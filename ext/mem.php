@@ -69,7 +69,7 @@ function &infra_memcache()
 	$conf=infra_config();
 	if ($conf['infra']['cache'] != 'mem') {
 		$infra_mem=false;
-		return false;
+		return $infra_mem;
 	}
 	$r = false;
 	if (!class_exists('Memcache')) {
