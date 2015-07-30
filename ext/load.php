@@ -384,7 +384,7 @@ function infra__load($path)
 
 	$load_path = infra_theme($path);
 	$fdata = infra_srcinfo($load_path);
-	if ($load_path) {
+	if ($load_path && $fdata['file']) {
 		$plug = infra_theme($fdata['path']);
 		if ($fdata['ext'] == 'php') {
 			$getstr = infra_toutf($fdata['query']);//get параметры в utf8, с вопросом
