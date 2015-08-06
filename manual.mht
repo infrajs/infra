@@ -2398,7 +2398,7 @@ class=3DSpellE>define</span>('ROOT','./');<br>
 <span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
 class=3DSpellE>require_once</span>(ROOT.'<span class=3DSpellE>core</span>/<=
 span
-class=3DSpellE>infra</span>/<span class=3DSpellE>infra.php</span>');<br>
+class=3DSpellE>infra</span>/<span class=3DSpellE>Infra.php</span>');<br>
 ?&gt;</p>
 
 </div>
@@ -5987,7 +5987,7 @@ ne('ROOT','../');<br>
 <span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
 class=3DSpellE>require_once</span>(<span class=3DSpellE>ROOT.'core</span>/i=
 nfra/<span
-class=3DSpellE>infra.php</span>');<br>
+class=3DSpellE>Infra.php</span>');<br>
 <br>
 <span style=3D'mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>$<span
 class=3DSpellE>ans</span>=3Darray();<br>

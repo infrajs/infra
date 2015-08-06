@@ -15,13 +15,16 @@ function checkParentDir($name)
 	$test=array_slice($test, 0, sizeof($test)-2);
 	$test=implode('/', $test).'/';
 	if (!is_dir($test)) {
-		die('Not Found folder '.$test.' for '.$name);
+		die('Not Found folder '.$test.' for '.$name.'/');
 	}
 }
 $dirs = infra_dirs();
 $conf = infra_config();
 
 if ($conf["infra"]["cache"] == "fs") {
+	if (!is_dir('infra')) { //Папка плагина
+		mkdir('infra');
+	}
 	checkParentDir('cache');
 	if (!is_dir($dirs['cache'])) {
 		mkdir($dirs['cache']);

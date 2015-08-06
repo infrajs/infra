@@ -3,7 +3,7 @@
 Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. http://itlife-studio.ru
 */
 	//require_once('../../../../vendor/autoload.php');
-	//require_once(__DIR__.'/infra.php');
+	//require_once(__DIR__.'/Infra.php');
 	if(isset($_REQUEST['json'])){//Для данных для слоя
 		$ans=array();
 		$ans['admin']=infra_admin();
