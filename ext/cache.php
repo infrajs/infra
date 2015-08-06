@@ -39,12 +39,13 @@ function infra_install($flush = null)
 {
 	//Изменился config...
 	if (!$flush) {
+		//проверка только если была авторизация админа
 		$cmd5=infra_mem_get('configmd5');
 		if (!$cmd5) {
 			$cmd5=array('time'=>0);
 		}
-		//проверка только если была авторизация админа
-		infra_admin_isTime($cmd5['time'], function () use (&$flush) {
+		infra_admin_isTime($cmd5['time'], function () use (&$flush, &$rmd5, $cmd5) {
+			
 			$rmd5=array('time'=>time());
 			$rmd5['result']=md5(serialize(infra_config()));
 			if ($rmd5['result'] != $cmd5['result']) {
@@ -89,6 +90,10 @@ function infra_install($flush = null)
 	$r = @infra_cache_fullrmdir($dirs['cache']);
 	header('Infra-Update:'.($r ? 'Fail' : 'OK'));
 	infra_require('*infra/install.php');
+	if (empty($rmd5)) {
+		$rmd5=array('time'=>time());
+		$rmd5['result']=md5(serialize(infra_config()));
+	}
 	infra_mem_set('configmd5', $rmd5);
 }
 

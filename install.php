@@ -38,11 +38,15 @@ checkParentDir('data');
 if (!is_dir($dirs['data'])) {
 	@mkdir($dirs['data']); //Режим без записи на жёсткий диск
 }
+checkParentDir('layers');
+if (!is_dir($dirs['layers'])) {
+	mkdir($dirs['layers']);
+}
 
 if (!is_file($dirs['data'].'.config.json')) {
 	$pass = substr(md5(time()), 2, 8);
 	//Режим без записи на жёсткий диск
-	@file_put_contents($dirs['data'].'.config.json', '{"debug":true,"admin":{"login":"admin","password":"'.$pass.'"}}');
+	@file_put_contents($dirs['data'].'.config.json', '{"admin":{"login":"admin","password":"'.$pass.'"}}');
 }
 
 
