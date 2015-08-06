@@ -155,16 +155,17 @@ function infra_cache_clear($name, $args = array())
 function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 {
 	$name='infra_admin_cache_'.$name;
-	return infra_once($name, function ($args, $re, $hash) use ($name, $fn) {
+	return infra_once($name, function ($args, $re, $hash) use ($name, $fn, $conds) {
 		$data=infra_mem_get($hash);
+
 		if (!$data) {
 			$data=array('time'=>0);
 		}
-		
 		$execute = infra_admin_isTime($data['time'], function ($cache_time) use ($conds) {
 			if (!sizeof($conds)) {
 				return false;//Если нет conds кэш навсегда и develop не поможет
 			}
+
 			$max_time = 1;
 			for ($i = 0, $l = sizeof($conds); $i < $l; ++$i) {
 				$mark = $conds[$i];
