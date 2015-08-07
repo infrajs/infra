@@ -236,8 +236,8 @@ function infra_theme($str, $debug = false)
 
 	$q = explode('?', $str, 2);
 	$str = $q[0];
-
-	$is_fn = ($str{strlen($str) - 1} == '/') ? 'is_dir' : 'is_file';
+	
+	$is_fn = ($str{strlen($str) - 1} == '/' || $str == '*') ? 'is_dir' : 'is_file';
 
 	$query = '';
 	if (isset($q[1])) {
@@ -255,7 +255,9 @@ function infra_theme($str, $debug = false)
 		return;
 	}
 
+
 	$str = mb_substr($str, 1);
+
 	foreach ($dirs['search'] as $dir) {
 		if ($is_fn($dir.$str)) {
 			return $dir.$str.$query;
