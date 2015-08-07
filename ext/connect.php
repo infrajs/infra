@@ -9,7 +9,7 @@ function &infra_db($debug = false)
 		if (!$debug) {
 			$debug = infra_debug();
 		}
-		$ans = array();
+		$ans = false;
 		if (!$conf['mysql']) {
 			//if($debug)die('Нет конфига для соединения с базой данных. Нужно добавить запись mysql: '.infra_json_encode($conf['/mysql']));
 			return $ans;
@@ -18,6 +18,9 @@ function &infra_db($debug = false)
 
 		if (!$conf['user']) {
 			//if($debug)die('Не указан пользователь для соединения с базой данных');
+			return $ans;
+		}
+		if (!class_exists('PDO')) {
 			return $ans;
 		}
 		try {
