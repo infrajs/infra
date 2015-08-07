@@ -29,6 +29,7 @@ if ($conf["infra"]["cache"] == "fs") {
 	if (!is_dir($dirs['cache'])) {
 		mkdir($dirs['cache']);
 	}
+	
 	if (!is_dir($dirs['cache'].'mem/')) {
 		mkdir($dirs['cache'].'mem/');
 	}

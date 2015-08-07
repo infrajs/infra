@@ -86,6 +86,9 @@ function infra_admin_silent()
 	$data = $data['admin'];
 	$_ADM_NAME = $data['login'];
 	$_ADM_PASS = $data['password'];
+	if (empty($_SERVER['HTTP_USER_AGENT'])) {
+		$_SERVER['HTTP_USER_AGENT']='';
+	}
 	$realkey = md5($_ADM_NAME.$_ADM_PASS.$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR']);
 	$key = infra_view_getCookie('infra_admin');
 	return ($key === $realkey);

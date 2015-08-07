@@ -47,10 +47,11 @@ function infra_view_getPath()
 
 /**
  * Возвращает путь до сайта от корня сервера
+ * Всегда есть 1 слэш
  */
 function infra_view_getRoot()
 {
-	$path=substr(infra_getcwd(), strlen(infra_realpath($_SERVER['DOCUMENT_ROOT'])));
+	$path=substr(infra_getcwd(), strlen(infra_realpath($_SERVER['DOCUMENT_ROOT']))).'/';
 	return $path;
 }
 /*function infra_view_setCOOKIE($name,$val){
