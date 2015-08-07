@@ -1,6 +1,6 @@
 <?php
 
-    require_once __DIR__.'/../../infra/infra.php';
+    require_once __DIR__.'/../../infra/Infra.php';
     infra_require('*infra/ext/template.php');
 
     $tpls = infra_loadJSON('*infra/tests/resources/templates.json');

@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__.'/../../infra/infra.php';
+    require_once __DIR__.'/../../infra/Infra.php';
 
     $ans = array();
     $ans['title'] = 'Тест амперсанда &';

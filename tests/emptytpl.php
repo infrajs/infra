@@ -3,7 +3,7 @@
         Пустой шаблон также содержи подшаблон root, ошибка что возвращается слово root
     */
 
-require_once __DIR__.'/../../infra/infra.php';
+require_once __DIR__.'/../../infra/Infra.php';
     $ans = array('title' => 'Проверка что пустой шаблон не возвращает слово root');
 
     $ans['res'] = infra_template_parse(array(''), true);

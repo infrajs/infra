@@ -21,6 +21,7 @@ class Ans
 		if (infra_debug()&&!is_null($data)) {
 			$ans['msg'].='<pre><code>'.print_r($data, true).'</code></pre>';
 		}
+
 		error_log(basename(__FILE__).$msg);
 		return self::ans($ans);
 	}
@@ -41,7 +42,6 @@ class Ans
 			//ini_set('display_errors',1);
 			header('Content-type:application/json');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
 			echo json_encode($ans, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-			exit;
 		}
 	}
 	public static function txt($ans)

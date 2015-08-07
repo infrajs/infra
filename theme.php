@@ -17,7 +17,7 @@ History
 адаптирован для infra
 
 */
-require_once __DIR__.'/infra.php';
+require_once __DIR__.'/Infra.php';
 
 $file = urldecode($_SERVER['QUERY_STRING']);
 

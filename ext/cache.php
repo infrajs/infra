@@ -39,18 +39,15 @@ function infra_install($flush = null)
 {
 	//Изменился config...
 	if (!$flush) {
-		$cmd5=infra_mem_get('configmd5');
-		if (!$cmd5) {
-			$cmd5=array('time'=>0);
-		}
 		//проверка только если была авторизация админа
-		infra_admin_isTime($cmd5['time'], function () use (&$flush) {
-			$rmd5=array('time'=>time());
-			$rmd5['result']=md5(serialize(infra_config()));
-			if ($rmd5['result'] != $cmd5['result']) {
-				$flush=true;
-			}
-		});
+		$cmd5=infra_mem_get('configmd5');
+		//infra_admin_isTime($cmd5['time'], function () use (&$flush, &$rmd5, $cmd5) {
+		$rmd5=array('time'=>time());
+		$rmd5['result']=md5(serialize(infra_config()));
+		if (!$cmd5||$rmd5['result'] != $cmd5['result']) {
+			$flush=true;
+		}
+		//});
 	}
 	
 	//Файл infra/data/update
@@ -79,7 +76,6 @@ function infra_install($flush = null)
 			}
 		}
 	}
-
 	if (!$flush) {
 		return;
 	}
@@ -89,6 +85,11 @@ function infra_install($flush = null)
 	$r = @infra_cache_fullrmdir($dirs['cache']);
 	header('Infra-Update:'.($r ? 'Fail' : 'OK'));
 	infra_require('*infra/install.php');
+	if (empty($rmd5)) {
+		$rmd5=array('time'=>time());
+		$rmd5['result']=md5(serialize(infra_config()));
+	}
+
 	infra_mem_set('configmd5', $rmd5);
 }
 
@@ -140,21 +141,27 @@ function infra_cache_check($call)
 
 	return $cache2;
 }
-
+function infra_cache_clear($name, $args = array())
+{
+	$name='infra_admin_cache_'.$name;
+	$hash=infra_once_clear($name, $args);
+	infra_mem_delete($hash);
+	return $hash;
+}
 function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 {
 	$name='infra_admin_cache_'.$name;
-	return infra_once($name, function ($args, $name) use ($name, $fn, $re) {
-		$path = $name.'_'.infra_hash($args);
-		$data=infra_mem_get($path);
+	return infra_once($name, function ($args, $re, $hash) use ($name, $fn, $conds) {
+		$data=infra_mem_get($hash);
+
 		if (!$data) {
 			$data=array('time'=>0);
 		}
-		
 		$execute = infra_admin_isTime($data['time'], function ($cache_time) use ($conds) {
 			if (!sizeof($conds)) {
 				return false;//Если нет conds кэш навсегда и develop не поможет
 			}
+
 			$max_time = 1;
 			for ($i = 0, $l = sizeof($conds); $i < $l; ++$i) {
 				$mark = $conds[$i];
@@ -185,12 +192,12 @@ function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 			});
 			if ($cache) {
 				$data['time']=time();
-				infra_mem_set($path, $data);
+				infra_mem_set($hash, $data);
 			} else {
-				infra_mem_delete($path);
+				infra_mem_delete($hash);
 			}
 		}
 
 		return $data['result'];
-	}, array($args, $name), $re);
+	}, array($args), $re);
 }

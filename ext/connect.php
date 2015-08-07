@@ -10,6 +10,11 @@ function &infra_db($debug = false)
 			$debug = infra_debug();
 		}
 		$ans = false;
+
+		if (!$conf['infra']['mysql']) {
+			return $ans;
+		}
+
 		if (!$conf['mysql']) {
 			//if($debug)die('Нет конфига для соединения с базой данных. Нужно добавить запись mysql: '.infra_json_encode($conf['/mysql']));
 			return $ans;

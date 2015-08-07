@@ -1,6 +1,6 @@
 <?php
 
-    require_once __DIR__.'/../../infra/infra.php';
+    require_once __DIR__.'/../../infra/Infra.php';
     $ans = array(
         'title' => 'Тест на совпадение названия указанного файла и его путь',
     );
