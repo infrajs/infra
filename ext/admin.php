@@ -11,7 +11,8 @@ function infra_admin_modified($etag = '')
 	if (infra_debug_silent()) {
 		return;
 	}
-	if ($etag) {//Мы осознано включаем возможность кэшировать, даже если были запреты до этого! так ак есть Etag и в нём срыты эти не явные условия
+	if ($etag) {
+		//Мы осознано включаем возможность кэшировать, даже если были запреты до этого! так ак есть Etag и в нём срыты эти не явные условия
 		infra_cache_yes();
 	}
 	if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
@@ -78,7 +79,7 @@ function infra_admin_modified($etag = '')
 	return $admin;
 }*/
 /**
- * Тихая функция, только проверка, без отметок
+ * Тихая функция, только проверка, без отметок.
  */
 function infra_admin_silent()
 {
@@ -87,28 +88,27 @@ function infra_admin_silent()
 	$_ADM_NAME = $data['login'];
 	$_ADM_PASS = $data['password'];
 	if (empty($_SERVER['HTTP_USER_AGENT'])) {
-		$_SERVER['HTTP_USER_AGENT']='';
+		$_SERVER['HTTP_USER_AGENT'] = '';
 	}
 	$realkey = md5($_ADM_NAME.$_ADM_PASS.$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR']);
 	$key = infra_view_getCookie('infra_admin');
+
 	return ($key === $realkey);
 }
 /**
  * infra_admin(true) - пропускает только если ты администратор, иначе выкидывает окно авторизации
  * infra_admin(false) - пропускает только если ты НЕ администратор, иначе выкидывает окно авторизации
  * $ans выводится в json если нажать отмена
- * infra_admin(array('login','pass'));
+ * infra_admin(array('login','pass'));.
  */
 function infra_admin($break = null, $ans = array('msg' => 'Требуется авторизация', 'result' => 0))
 {
-	
-
 	$data = infra_config();
 	$data = $data['admin'];
 	$_ADM_NAME = $data['login'];
 	$_ADM_PASS = $data['password'];
 	$admin = null;//Неизвестно
-	
+
 	$realkey = md5($_ADM_NAME.$_ADM_PASS.$_SERVER['HTTP_USER_AGENT'].$_SERVER['REMOTE_ADDR']);
 
 	infra_cache_no();
@@ -141,7 +141,6 @@ function infra_admin($break = null, $ans = array('msg' => 'Требуется а
 	if ($admin) {
 		infra_admin_time_set();
 	}
-	
 
 	return $admin;
 }
@@ -161,7 +160,7 @@ function infra_admin_time_set($t = null)
  * Отвечает на вопрос! Время настало для сложной обработки?
  * Функция стремится сказать что время ещё не пришло... и последней инстанцией будет выполнение фукции которая должна вернуть true или false
  * Если передать метку времени и функцию это будет означать запуск функции если метка времени старей админской метки
- * В debug режиме функция запускается всегда
+ * В debug режиме функция запускается всегда.
  */
 function infra_admin_isTime($cachetime = 0, $callback = false, $re = false)
 {
@@ -169,12 +168,14 @@ function infra_admin_isTime($cachetime = 0, $callback = false, $re = false)
 		return true; //Нет кэша... пришло всремя для сложной обработки
 	};
 	//Мы тут не меняем содержание.. а только отвечам на вопрос можно ли закэшировать... cache_no от Infra_debug тут неуместен
-	if (infra_debug_silent()||$cachetime < infra_admin_time()) {
+	if (infra_debug_silent() || $cachetime < infra_admin_time()) {
 		if ($callback) {
 			return !!$callback($cachetime); //Только функция сможет сказать надо или нет
 		}
+
 		return true;
 	}
+
 	return false;
 }
 
@@ -182,7 +183,7 @@ function infra_admin_isTime($cachetime = 0, $callback = false, $re = false)
  * Время когда админ что-то сделал (время последнего обращения к функции infra_admin и её результате true)
  * Функция работает без параметров...возвращает дату последних изменений админа для всей системы
  * Если передать метку времени и функцию это будет означать запуск функции если метка времени старей админской метки
- * В debug режиме функция запускается всегда
+ * В debug режиме функция запускается всегда.
  */
 function infra_admin_time()
 {
@@ -201,14 +202,15 @@ function infra_admin_time()
 function infra_admin_cache($name, $fn, $args = array(), $re = false)
 {
 	//Запускается один раз для админа, остальные разы возвращает кэш из памяти
-	$name='infra_admin_cache_'.$name;
+	$name = 'infra_admin_cache_'.$name;
+
 	return infra_once($name, function ($args, $name) use ($name, $fn, $re) {
 		$path = $name.'_'.infra_hash($args);
 		$data = infra_mem_get($path);
 		if (!$data) {
-			$data=array('time'=>0);
+			$data = array('time' => 0);
 		}
-		$execute=infra_admin_isTime($data['time'], function () {
+		$execute = infra_admin_isTime($data['time'], function () {
 			return true;
 		}, $re);
 
@@ -217,12 +219,13 @@ function infra_admin_cache($name, $fn, $args = array(), $re = false)
 				$data['result'] = call_user_func_array($fn, array_merge($args, array($re)));
 			});
 			if ($cache) {
-				$data['time']=time();
+				$data['time'] = time();
 				infra_mem_set($path, $data);
 			} else {
 				infra_mem_delete($path);
 			}
 		}
+
 		return $data['result'];
 	}, array($args, $name), $re);
 }

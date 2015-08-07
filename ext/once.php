@@ -13,7 +13,8 @@ function infra_hash($args, $r = false)
 	} else {
 		if (is_callable($args)) {
 			$a = 'func!';
-		} else {//Заглушка для функции
+		} else {
+			//Заглушка для функции
 			$a = $args;
 		}
 	}
@@ -25,15 +26,16 @@ function infra_hash($args, $r = false)
 }
 /**
  * Возвращает хэш переданных параметров name и args.
- * Используется для идентификации кэша в infra_cache
+ * Используется для идентификации кэша в infra_cache.
  */
 function infra_once_clear($name, $args)
 {
 	global $infra_once;
 	$strargs = infra_hash($args);
 	$hash = $name.$strargs;
-	
+
 	unset($infra_once[$hash]);
+
 	return $hash;
 }
 function &infra_once($name, $call, $args = array(), $re = false)

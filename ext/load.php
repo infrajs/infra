@@ -69,6 +69,7 @@ function infra_json_decode($json, $soft = false)
 		echo "\n".'</pre>';
 		exit;
 	}
+
 	return $data;
 }
 function infra_json_encode($mix)
@@ -244,7 +245,7 @@ function infra_theme($str, $debug = false)
 	}
 
 	if ($str{0} != '*') {
-//Проверка что путь уже правильный... происходит когда нет звёздочки... Неопределённость может возникнуть только с явными путями
+		//Проверка что путь уже правильный... происходит когда нет звёздочки... Неопределённость может возникнуть только с явными путями
 		//if($is_fn($str))return $str.$query;//Относительный путь в первую очередь, если повторный вызов для пути попадём сюда
 
 		if ($is_fn($str)) {
@@ -362,7 +363,7 @@ function &infra_loadTEXT($path)
 /**
  * Функция возвращет находимся ли мы в исполнении скрипта запущенного из браузера или скрипта подключённого c помощью infra_loadJSON infra_loadTEXT другим php скриптом
  * можно установить false если ещё небыло никаких установок..
- * если кто-то подключает в php через theme.php или тп... сброс в theme.php уже не сработает
+ * если кто-то подключает в php через theme.php или тп... сброс в theme.php уже не сработает.
  */
 function infra_isphp($val = null)
 {
@@ -401,18 +402,17 @@ function infra__load($path)
 			$SERVER_QUERY_STRING = $_SERVER['QUERY_STRING'];
 			$_SERVER['QUERY_STRING'] = $getstr;
 
-			
-			$from_php_old=infra_isphp();
+			$from_php_old = infra_isphp();
 			infra_isphp(true);
 
 			ob_start();
 			//headers надо ловить
-			$ans=array();
+			$ans = array();
 			$rrr = include $plug;
 			$result = ob_get_contents();
 			$resecho = $result;
 			ob_end_clean();
-			
+
 			infra_isphp($from_php_old);
 
 			if ($rrr !== 1 && !is_null($rrr)) { //Есть возвращённый результат
@@ -465,8 +465,6 @@ function infra__load($path)
 
 
 */
-
-
 
 function infra_ret($ans, $str = false)
 {

@@ -3,7 +3,8 @@
 		"test":["127.0.0.1"],
 		"debug":["127.0.0.1"],
 		"fscharset":"UTF-8",
-		"cache":"fs"
+		"cache":"fs",
+		"mysql":false
 	},
 	"admin":{
 		"login":"some",

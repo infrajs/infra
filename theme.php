@@ -37,9 +37,9 @@ $src = infra_theme($filesrc);
 infra_isphp(false);//Метка для подключаемого файла если такой будет, что он рабоает вне php и должен проверять права и делать соответствующие выводы
 
 
-
 if (!$src) {
 	header('HTTP/1.0 404 Not Found');
+
 	return;
 }
 $p = infra_srcinfo($src);
@@ -56,9 +56,9 @@ $p = infra_srcinfo($src);
 	$p = infra_srcinfo($src);
 }*/
 
-
 if ($p['path'] && (preg_match("/\/\./", $p['path']) || ($p['path']{0} == '.' && $p['path']{1} != '/'))) {
 	header('HTTP/1.0 403 Forbidden');
+
 	return;
 }
 if ($p['ext'] !== 'php') {
@@ -123,8 +123,8 @@ if ($p['ext'] !== 'php') {
 	} else {
 		$type = 'application/octet-stream';
 	}
-	$conf=infra_config();
-	if ($p['query']&&in_array($p['ext'], $conf['imager']['images'])) {
+	$conf = infra_config();
+	if ($p['query'] && in_array($p['ext'], $conf['imager']['images'])) {
 		$fex = explode('?', $filesrc);
 		$src = infra_theme('*imager/imager.php').'?src='.$fex[0].'&'.mb_substr($p['query'], 1);
 		$p = infra_srcinfo($src);
@@ -154,6 +154,7 @@ if ($p['ext'] !== 'php') {
 
 	$data = file_get_contents($p['path']);
 	echo $data;
+
 	return;
 } else {
 	$getstr = $p['query'];//get параметры в utf8, с вопросом
@@ -168,6 +169,6 @@ if ($p['ext'] !== 'php') {
 	$_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
 	$SERVER_QUERY_STRING = $_SERVER['QUERY_STRING'];
 	$_SERVER['QUERY_STRING'] = $getstr;
-	
+
 	return include $p['path'];
 }

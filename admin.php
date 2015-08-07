@@ -4,9 +4,11 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 */
 	//require_once('../../../../vendor/autoload.php');
 	//require_once(__DIR__.'/Infra.php');
-	if(isset($_REQUEST['json'])){//Для данных для слоя
-		$ans=array();
-		$ans['admin']=infra_admin();
+	if (isset($_REQUEST['json'])) {
+		//Для данных для слоя
+		$ans = array();
+		$ans['admin'] = infra_admin();
+
 		return infra_ret($ans);
 	}
 ?>
@@ -14,17 +16,18 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 <script>infra.Crumb.init()</script>
 <a href="?*infra/tests.php">Тесты</a>
 <?php
-	if(isset($_REQUEST['login'])){
+	if (isset($_REQUEST['login'])) {
 		infra_admin(true);
-?>
+		?>
 		<div style="padding:50px 100px">
 			<p>Вы администратор</p>
 			<p><a href="?">Проверить</a></p>
 		</div>
 <?php
-	}else if(isset($_REQUEST['logout'])){
-		infra_admin(false);		
-?>
+
+	} elseif (isset($_REQUEST['logout'])) {
+		infra_admin(false);
+		?>
 
 		<div style="padding:50px 100px">
 
@@ -33,17 +36,18 @@ Copyright 2008-2011 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. h
 		</div>
 
 <?php
-	}else{
-		$r=infra_admin();
-		if($r){
-?>
+
+	} else {
+		$r = infra_admin();
+		if ($r) {
+			?>
 		<div style="padding:50px 100px">
 			<p>Вы администратор</p>
 			<p><a href="?logout">Выход</a></p>
 		</div>
 <?php	
-		}else{
-?>
+		} else {
+			?>
 		<div style="padding:50px 100px">
 			<p>Вы обычный посетитель</p>
 			<p><a href="?login">Вход</a></p>

@@ -1,4 +1,5 @@
 <?php
+
 /*
 	install безопасная обработка доступная всем. Работа с файлами и постоянные изменения
 
@@ -6,14 +7,15 @@
 	весь конфиг сохраняется в data/.config.json.. 
 	интерфейс показывает сравнение собранного конфига всей системы с файлом data/.config.json
 */
+
 namespace itlife\infra;
 
 function checkParentDir($name)
 {
 	$dirs = infra_dirs();
-	$test=explode('/', $dirs[$name]);
-	$test=array_slice($test, 0, sizeof($test)-2);
-	$test=implode('/', $test).'/';
+	$test = explode('/', $dirs[$name]);
+	$test = array_slice($test, 0, sizeof($test) - 2);
+	$test = implode('/', $test).'/';
 	if (!is_dir($test)) {
 		die('Not Found folder '.$test.' for '.$name.'/');
 	}
@@ -21,7 +23,7 @@ function checkParentDir($name)
 $dirs = infra_dirs();
 $conf = infra_config();
 
-if ($conf["infra"]["cache"] == "fs") {
+if ($conf['infra']['cache'] == 'fs') {
 	if (!is_dir('infra')) { //Папка плагина
 		mkdir('infra');
 	}
@@ -29,7 +31,7 @@ if ($conf["infra"]["cache"] == "fs") {
 	if (!is_dir($dirs['cache'])) {
 		mkdir($dirs['cache']);
 	}
-	
+
 	if (!is_dir($dirs['cache'].'mem/')) {
 		mkdir($dirs['cache'].'mem/');
 	}
@@ -53,12 +55,10 @@ if (!is_file($dirs['data'].'.config.json')) {
 	@file_put_contents($dirs['data'].'.config.json', '{"infra":{"fscharset":"cp1251"},"admin":{"login":"admin","password":"'.$pass.'"}}');
 }
 
-
-$t=infra_admin_time();
+$t = infra_admin_time();
 if (!$t) {
 	infra_admin_time_set(time());//Нужно чтобы был, а то как-будто админ постоянно
 }
-
 
 infra_pluginRun(function ($dir) {
 	if (realpath($dir) == realpath(__DIR__)) {

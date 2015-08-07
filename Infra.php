@@ -38,12 +38,10 @@ statist - интегрировать как-нибудь
 	//namespace itlife\infra;
 
 
-
-
 namespace itlife\infra;
 
-require_once(__DIR__.'/../infra/ext/config.php');
-require_once(__DIR__.'/../infra/ext/load.php');
+require_once __DIR__.'/../infra/ext/config.php';
+require_once __DIR__.'/../infra/ext/load.php';
 
 class Infra
 {
@@ -53,13 +51,7 @@ class Infra
 			игнор цифр, и расширения infra/infra
 		*/
 
-		
-
-
-
-
-
-		//Продакшин должен быть таким же как и тестовый сервер, в том числе и с выводом ошибок. Это упрощает поддержку. Меньше различий в ошибках.
+//Продакшин должен быть таким же как и тестовый сервер, в том числе и с выводом ошибок. Это упрощает поддержку. Меньше различий в ошибках.
 		//ini_set('error_reporting',E_ALL ^ E_STRICT ^ E_NOTICE);
 		//error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 		//Strict Standards: Only variables should be assigned by reference
@@ -70,36 +62,24 @@ class Infra
 
 		infra_require('*infra/ext/admin.php');
 
-
 		infra_require('*infra/ext/cache.php');
-
-
-
 
 		infra_require('*infra/ext/once.php');
 
-
-
-
 		infra_require('*infra/ext/mail.php');
 		infra_require('*infra/ext/forr.php');
-
 
 		infra_require('*infra/ext/mem.php');
 		infra_require('*infra/ext/events.php');
 		infra_require('*infra/ext/connect.php');
 		infra_require('*infra/ext/view.php');
 
-
-
 		infra_require('*infra/ext/seq.php');
 		infra_require('*infra/ext/template.php');
 
-
 		infra_require('*infra/ext/html.php');
 
-
-		infra_once('infra_install',function(){
+		infra_once('infra_install', function () {
 			infra_install();
 			if (infra_test_silent()) {
 				error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);

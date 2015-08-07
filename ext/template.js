@@ -87,7 +87,7 @@ infra.template={
 	analysis:function(group){
 		/*
 		 *  as.df(sdf[as.d()])
-		 *  as.df   (  sdf[    as.d  ()    ]  )
+		 *  as.df   (  sdf[	as.d  ()	]  )
 		 *  as.df   (  sdf[  ( as.d  ())   ]  )
 		 * 'as.df', [ 'sdf[',['as.d',[]] ,']' ]
 		 *
@@ -772,7 +772,7 @@ infra.template={
 				//b,[b,c]
 				for(var e in t){
 					if(!t.hasOwnProperty(e))continue;
-				       	r.push(t[e]);
+					   	r.push(t[e]);
 				}
 			}else{
 				r.push(v);

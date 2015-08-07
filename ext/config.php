@@ -82,7 +82,7 @@ function infra_dirs()
 			'infra/data/', //Обязательно на первом месте, папка с данными пользователя!
 			'infra/layers/',
 			'./',
-			'vendor/itlife/'
+			'vendor/itlife/',
 		),
 	);
 
@@ -93,15 +93,16 @@ function infra_test_silent()
 	if (infra_debug_silent()) {
 		return true;
 	}
-	$conf=infra_config();
-	$ips=$conf['infra']['test'];
+	$conf = infra_config();
+	$ips = $conf['infra']['test'];
 	if (is_array($ips)) {
-		$is=in_array($_SERVER["REMOTE_ADDR"], $ips);
-	} else if (is_string($ips)) {
-		$is= ($_SERVER["REMOTE_ADDR"] == $ips);
+		$is = in_array($_SERVER['REMOTE_ADDR'], $ips);
+	} elseif (is_string($ips)) {
+		$is = ($_SERVER['REMOTE_ADDR'] == $ips);
 	} else {
-		$is=!!$ips;
+		$is = !!$ips;
 	}
+
 	return $is;
 }
 function infra_debug_silent()
@@ -109,25 +110,26 @@ function infra_debug_silent()
 	if (infra_admin_silent()) {
 		return true;
 	}
-	$conf=infra_config();
-	$ips=$conf['infra']['debug'];
+	$conf = infra_config();
+	$ips = $conf['infra']['debug'];
 	if (is_array($ips)) {
-		$is=in_array($_SERVER["REMOTE_ADDR"], $ips);
-	} else if (is_string($ips)) {
-		$is= ($_SERVER["REMOTE_ADDR"] == $ips);
+		$is = in_array($_SERVER['REMOTE_ADDR'], $ips);
+	} elseif (is_string($ips)) {
+		$is = ($_SERVER['REMOTE_ADDR'] == $ips);
 	} else {
-		$is=!!$ips;
+		$is = !!$ips;
 	}
+
 	return $is;
 }
 function infra_test($r = false)
 {
 	infra_cache_no();
-	$is=infra_test_silent();
+	$is = infra_test_silent();
 	if ($r) {
 		if (!$is) {
 			header('HTTP/1.0 403 Forbidden');
-			die('{"msg":"Required config.infra.test:['.$_SERVER["REMOTE_ADDR"].']"}');
+			die('{"msg":"Required config.infra.test:['.$_SERVER['REMOTE_ADDR'].']"}');
 		}
 	} else {
 		return $is;
@@ -137,19 +139,18 @@ function infra_test($r = false)
 function infra_debug($r = false)
 {
 	infra_cache_no();
-	$is=infra_debug_silent();
+	$is = infra_debug_silent();
 	if ($is) {
 		infra_admin_time_set();
 	}
 	if ($r) {
 		if (!$is) {
 			header('HTTP/1.0 403 Forbidden');
-			die('{"msg":"Required config.infra.debug:['.$_SERVER["REMOTE_ADDR"].']"}');
+			die('{"msg":"Required config.infra.debug:['.$_SERVER['REMOTE_ADDR'].']"}');
 		}
 	} else {
 		return $is;
 	}
-
 }
 function &infra_config($sec = false)
 {
@@ -197,13 +198,8 @@ function &infra_config($sec = false)
 						}
 					}
 				}
-
-				
 			}
-
 		}
-
-	
 
 		if (is_file($src.'.config.json')) {
 			$d = file_get_contents($src.'.config.json');

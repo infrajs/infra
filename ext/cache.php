@@ -40,17 +40,17 @@ function infra_install($flush = null)
 	//Изменился config...
 	if (!$flush) {
 		//проверка только если была авторизация админа
-		$cmd5=infra_mem_get('configmd5');
+		$cmd5 = infra_mem_get('configmd5');
 		//infra_admin_isTime($cmd5['time'], function () use (&$flush, &$rmd5, $cmd5) {
-		$rmd5=array('time'=>time());
-		$rmd5['result']=md5(serialize(infra_config()));
-		if (!$cmd5||$rmd5['result'] != $cmd5['result']) {
-			$flush=true;
+		$rmd5 = array('time' => time());
+		$rmd5['result'] = md5(serialize(infra_config()));
+		if (!$cmd5 || $rmd5['result'] != $cmd5['result']) {
+			$flush = true;
 		}
 		//});
 	}
-	
-	//Файл infra/data/update
+
+//Файл infra/data/update
 	if (!$flush) {
 		$dirs = infra_dirs();
 		$file = infra_theme($dirs['data'].'update');
@@ -59,20 +59,20 @@ function infra_install($flush = null)
 			if (!$r) {
 				header('Infra-Update: Error');
 			} else {
-				$flush=true;
+				$flush = true;
 			}
 		}
 	}
 
 	//Папка cache.. если fs
 	if (!$flush) {
-		$conf=infra_config();
-		if ($conf['infra']['cache']=='fs') {
+		$conf = infra_config();
+		if ($conf['infra']['cache'] == 'fs') {
 			$dirs = infra_dirs();
 			//Чтобы лишний раз не запускать install
 			//Возможна ситуация что папки cache в принципе нет и на диск ничего не записывается
 			if (!is_dir($dirs['cache'])) {
-				$flush=true;
+				$flush = true;
 			}
 		}
 	}
@@ -86,14 +86,12 @@ function infra_install($flush = null)
 	header('Infra-Update:'.($r ? 'Fail' : 'OK'));
 	infra_require('*infra/install.php');
 	if (empty($rmd5)) {
-		$rmd5=array('time'=>time());
-		$rmd5['result']=md5(serialize(infra_config()));
+		$rmd5 = array('time' => time());
+		$rmd5['result'] = md5(serialize(infra_config()));
 	}
 
 	infra_mem_set('configmd5', $rmd5);
 }
-
-
 
 function infra_cache_is()
 {
@@ -109,14 +107,14 @@ function infra_cache_is()
 	return true;
 }
 /**
- * no-store - вообще не сохранять кэш
+ * no-store - вообще не сохранять кэш.
  */
 function infra_cache_no()
 {
 	header('Cache-Control: no-store'); //Браузер всегда спрашивает об изменениях. Кэш слоя не делается.
 }
 /**
- * no-store - кэш сохранять но каждый раз спрашивать не поменялось ли чего
+ * no-store - кэш сохранять но каждый раз спрашивать не поменялось ли чего.
  */
 function infra_cache_yes()
 {
@@ -143,19 +141,21 @@ function infra_cache_check($call)
 }
 function infra_cache_clear($name, $args = array())
 {
-	$name='infra_admin_cache_'.$name;
-	$hash=infra_once_clear($name, $args);
+	$name = 'infra_admin_cache_'.$name;
+	$hash = infra_once_clear($name, $args);
 	infra_mem_delete($hash);
+
 	return $hash;
 }
 function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 {
-	$name='infra_admin_cache_'.$name;
+	$name = 'infra_admin_cache_'.$name;
+
 	return infra_once($name, function ($args, $re, $hash) use ($name, $fn, $conds) {
-		$data=infra_mem_get($hash);
+		$data = infra_mem_get($hash);
 
 		if (!$data) {
-			$data=array('time'=>0);
+			$data = array('time' => 0);
 		}
 		$execute = infra_admin_isTime($data['time'], function ($cache_time) use ($conds) {
 			if (!sizeof($conds)) {
@@ -183,6 +183,7 @@ function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 					}
 				}
 			}
+
 			return $max_time > $cache_time;
 		}, $re);
 
@@ -191,7 +192,7 @@ function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 				$data['result'] = call_user_func_array($fn, array_merge($args, array($re)));
 			});
 			if ($cache) {
-				$data['time']=time();
+				$data['time'] = time();
 				infra_mem_set($hash, $data);
 			} else {
 				infra_mem_delete($hash);

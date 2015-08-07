@@ -7,7 +7,7 @@ function infra_mem_set($key, $val)
 		$mem->delete($key);
 		$mem->set($key, $val);
 	} else {
-		$key=infra_forFS($key);
+		$key = infra_forFS($key);
 		$dirs = infra_dirs();
 		$dir = $dirs['cache'].'mem/';
 		$v = serialize($val);
@@ -20,7 +20,7 @@ function infra_mem_get($key)
 	if ($mem) {
 		$r = $mem->get($key);
 	} else {
-		$key=infra_forFS($key);
+		$key = infra_forFS($key);
 		$dirs = infra_dirs();
 		$dir = $dirs['cache'].'mem/';
 		if (is_file($dir.$key.'.ser')) {
@@ -39,7 +39,7 @@ function infra_mem_delete($key)
 	if ($mem) {
 		$r = $mem->delete($key);
 	} else {
-		$key=infra_forFS($key);
+		$key = infra_forFS($key);
 		$dirs = infra_dirs();
 		$dir = $dirs['cache'].'mem/';
 		$r = @unlink($dir.$key.'.ser');
@@ -66,9 +66,10 @@ function &infra_memcache()
 	if (isset($infra_mem)) {
 		return $infra_mem;
 	}
-	$conf=infra_config();
+	$conf = infra_config();
 	if ($conf['infra']['cache'] != 'mem') {
-		$infra_mem=false;
+		$infra_mem = false;
+
 		return $infra_mem;
 	}
 	$r = false;
