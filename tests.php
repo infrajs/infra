@@ -31,7 +31,7 @@ if (!is_file($src.$file)) {
 		} else {
 			$res = json_decode($text, true);
 			if (!is_array($res)) {
-				$res = array('title' => $name.' '.$finfo['name'], 'result' => 0, 'msg' => 'Некорректный json', 'class' => 'bg-warning');
+				$res = array('title' => $name.' '.$finfo['name'], 'result' => 0, 'msg' => 'Некорректный json');
 			}
 		}
 		$res['src'] = '?*'.$name.'/tests/'.$finfo['file'];

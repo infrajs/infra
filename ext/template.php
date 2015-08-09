@@ -7,7 +7,7 @@ parse
 		 analysis(ar); Бежим по всем скобкам и разбираем их что куда и тп 
 			 parseexp('exp')
 				parseCommaVar('asd.as[2]')
-					parsevar('asd.as[2]')
+					parsevar('asd.as[2]') и повторить потом
 		tpls=getTpls(ar) Объект свойства это шаблоны. каждый шаблон это массив элементов в которых описано что с ними делать строка или какая-то подстановка
 		res=parseEmptyTpls(tpls);
  
@@ -20,7 +20,7 @@ parse
 
  */
 
- /*
+/*
   * условия {asdf?:asdf} {asdf&asdf?:asdf} {asdf|asdf?:asdf}
   * {data:asd{asdf}}
   *
@@ -44,7 +44,7 @@ function infra_template_prepare($template)
 	$res = array();
 	$exp = '';
 	$str = '';
-	for ($i = 0, $l = strlen($template);$i < $l;++$i) {
+	for ($i = 0, $l = strlen($template); $i < $l; ++$i) {
 		$sym = $template[$i];
 		if (!$start) {
 			if ($sym === '{') {
@@ -210,6 +210,68 @@ function &infra_template_stor()
 
 	return $stor['template'];
 }
+
+function infra_template_includes(&$tpls)
+{
+	$find=array();
+	foreach ($tpls as $key => $val) {
+		if (sizeof($val)!=1) {
+			continue;
+		}
+
+		if ($key{strlen($key)-1} == ':') {
+			$tpls[$key]=array();//Иначе два раза применится
+			$tpls2=infra_template_make($val[0]);
+			
+			$key=mb_substr($key, 0, -1);
+			$key.='.';
+			$find[$key]=$tpls2;
+		}
+	}
+
+	
+	foreach ($find as $name => &$t) {
+		foreach ($t as $k => &$subtpl) {
+			$k=$name.$k;
+			if (isset($tpls[$k])) {
+				continue;
+			}
+			
+			foreach ($subtpl as &$exp) {
+				if (!is_string($exp)) {
+					infra_template_runExpTpl($exp, function (&$exp) use ($name) {
+						array_unshift($exp['tpl']['root'], $name);
+					});
+				}
+			}
+			$tpls[$k]=$subtpl;
+		}
+	}
+}
+/**
+ * Var это {(a[:b](c)?d)?e} - a,b,c,d,e 5 интераций, кроме a[:b]
+ */
+function infra_template_runExpTpl(&$exp, $call)
+{
+	if ($exp['term']) {
+		infra_template_runExpTpl($exp['term'], $call);
+		infra_template_runExpTpl($exp['yes'], $call);
+		infra_template_runExpTpl($exp['no'], $call);
+		return;
+	}
+	if ($exp['fn']) {
+		infra_template_runExpTpl($exp['fn'], $call);
+	}
+	if (isset($exp['var'])) {
+		foreach ($exp['var'] as &$com) {//comma
+			foreach ($com as &$br) {//bracket
+				if (isset($br['tpl'])) {
+					$call($br);
+				}
+			}
+		}
+	}
+}
 function &infra_template_make($url, $tplempty = 'root')
 {
 	$key = md5(print_r($url, true));
@@ -235,11 +297,10 @@ function &infra_template_make($url, $tplempty = 'root')
 		$tpls[$tplempty] = array();
 	}//Пустой шаблон добавляется когда вообще ничего нет
 	//$res=infra_template_parseEmptyTpls($tpls);
-	$res = $tpls;
-
-	$stor['cache'][$key] = $res;
-
-	return $res;
+	infra_template_includes($tpls);
+	$stor['cache'][$key] = $tpls;
+	
+	return $tpls;
 }
 function infra_template_exec(&$tpls, &$data, $tplroot = 'root', $dataroot = '')
 {
@@ -302,12 +363,13 @@ function infra_template_execTpl($conf)
 			$html .= '';
 		}
 
-return $r;
+		return $r;
 	});
 
 	//$conf['dataroot']=$dataroot;
 	return $html;
 }
+
 function &infra_template_getPath(&$conf, $var)
 {
 	//dataroot это прощитанный путь до переменной в котором нет замен
@@ -317,7 +379,8 @@ function &infra_template_getPath(&$conf, $var)
 	 * asdf[asdf()]
 	 * */
 	$ar = array();
-	infra_forr($var, function &(&$v) use (&$conf, &$ar) { //'[asdf,asdf,[asdf],asdf]'
+	infra_forr($var, function &(&$v) use (&$conf, &$ar) {
+		//'[asdf,asdf,[asdf],asdf]'
 		if (is_string($v) || is_int($v)) {
 			//name
 			$ar[] = $v;
@@ -330,7 +393,7 @@ function &infra_template_getPath(&$conf, $var)
 			//$t=array_merge($ar,$v);
 			if ($ar) {
 				//смутнопонимаемая ситуация... asdf().qewr().name после замены получаем zxcv.qewr().name потом tyui.name для того чтобы получить tyui нужно установить dataroot zxcv
-				//сделать merge zxcv и qwer нельзя потому что qwer это сложный объект и тп... {orig:'a.b[c]'} а qwer это строка путь до знанчения тогда как zxcv нужно ещё прощитать взяв его от qwer 
+				//сделать merge zxcv и qwer нельзя потому что qwer это сложный объект и тп... {orig:'a.b[c]'} а qwer это строка путь до знанчения тогда как zxcv нужно ещё прощитать взяв его от qwer
 				//в параметрах может потребоваться настоящий root
 				//ghjk настоящий root
 				//zxcv новый root чтобы корректно получить функцию qwer
@@ -365,7 +428,7 @@ function &infra_template_getPath(&$conf, $var)
 		}
 		$r = null;
 
-return $r;
+		return $r;
 	});
 
 	return $ar;
@@ -377,7 +440,7 @@ function infra_template_getVar(&$conf, $var = array())
 	//var одна переменная
 
 	if (is_null($var)) {
-		//if($checklastroot)$conf['lastroot']=false;//Афигенная ошибка. получена переменная и далее идём к шаблону переменной для которого нет, узнав об этом lastroot не сбивается и шаблон дальше загружается с переменной в lastroot {$indexOf(:asdf,:s)}{data:descr}{descr:}{}	
+		//if($checklastroot)$conf['lastroot']=false;//Афигенная ошибка. получена переменная и далее идём к шаблону переменной для которого нет, узнав об этом lastroot не сбивается и шаблон дальше загружается с переменной в lastroot {$indexOf(:asdf,:s)}{data:descr}{descr:}{}
 		$value = '';
 		$root = false;
 	} else {
@@ -437,7 +500,8 @@ function infra_template_getVar(&$conf, $var = array())
 			}
 			if (is_null($value)) {
 				$root = $right;
-			}//Афигенная ошибка. получена переменная и далее идём к шаблону переменной для которого нет, узнав об этом lastroot не сбивается и шаблон дальше загружается с переменной в lastroot {$indexOf(:asdf,:s)}{data:descr}{descr:}{}	
+			}
+			//Афигенная ошибка. получена переменная и далее идём к шаблону переменной для которого нет, узнав об этом lastroot не сбивается и шаблон дальше загружается с переменной в lastroot {$indexOf(:asdf,:s)}{data:descr}{descr:}{}
 		}
 	}
 
@@ -477,7 +541,7 @@ function infra_template_getCommaVar(&$conf, &$d, $term = false)
 		$func = infra_template_getValue($conf, $d['fn']);
 		if (is_callable($func)) {
 			$param = array();
-			for ($i = 0, $l = sizeof($d['var']);$i < $l;++$i) {
+			for ($i = 0, $l = sizeof($d['var']); $i < $l; ++$i) {
 				//Количество переменных
 				if (infra_template_bool(@$d['var'][$i]['orig'])) {
 					$v = infra_template_getValue($conf, $d['var'][$i], $term);
@@ -587,7 +651,7 @@ function infra_template_getTpls(&$ar, $subtpl = 'root')
 	//subtpl - первый подшаблон с которого начинается если конкретно имя не указано
 	$res = array();
 
-	for ($i = 0;$i < sizeof($ar);++$i) {
+	for ($i = 0; $i < sizeof($ar); ++$i) {
 		if (is_array($ar[$i]) && isset($ar[$i]['template'])) {
 			//Если это шаблон
 			$subtpl = $ar[$i]['template'];
@@ -642,7 +706,7 @@ function infra_template_parseStaple($exp)
 	$start = 0;
 	$newexp = '';
 	$specchars = array('?','|','&','[',']','{','}','=','!','>','<',':',',');//&
-	for ($i = 0, $l = strlen($exp);$i < $l;++$i) { //Делается замена (str) на xinsert.. список знаков при наличии которых в str отменяет замену и отменяет накопление имени функции перед скобками
+	for ($i = 0, $l = strlen($exp); $i < $l; ++$i) { //Делается замена (str) на xinsert.. список знаков при наличии которых в str отменяет замену и отменяет накопление имени функции перед скобками
 		/*
 		 * Механизм замен из asdf.asdf(asdf,asdf) получем временную замену xinsert0 и так каждые скобки после обработки в выражении уже нет скобок а замены расчитываются когда до них доходит дело
 		 * любые скобки считаются фукнцией функция без имени просто возвращает результат
@@ -724,7 +788,7 @@ function infra_template_parseexp($exp, $term = false, $fnnow = null)
 			$res['var'][] = infra_template_parseexp($c, true);
 			$r = null;
 
-return $r;
+			return $r;
 		});
 
 		return $res;
@@ -768,7 +832,7 @@ return $r;
 	$symbols = array('!','=','>','<');
 	$min = false;
 	$sym = false;
-	for ($i = 0, $l = sizeof($symbols);$i < $l;++$i) {
+	for ($i = 0, $l = sizeof($symbols); $i < $l; ++$i) {
 		$s = $symbols[$i];
 		$ind = strpos($exp, $s);
 		if ($ind === false) {
@@ -822,20 +886,20 @@ function infra_template_parseCommaVar($var)
 	//Далее это попадает в infra_template_getVar
 
 
-if ($var == '') {
-	$ar = array();
-} else {
-	$ar = explode(',', $var);
-}//Запятые могут быть только на первом уровне, все вложенные запятые заменены на xinsert
+	if ($var == '') {
+		$ar = array();
+	} else {
+		$ar = explode(',', $var);
+	}//Запятые могут быть только на первом уровне, все вложенные запятые заменены на xinsert
 	$res = array();
 
 	infra_fora($ar, function &($v) use (&$res, &$var) {
 		$r = infra_template_parsevar($v);
 
-$res[] = $r;
+		$res[] = $r;
 		$r = null;
 
-return $r;
+		return $r;
 	});
 	infra_template_checkInsert($res);
 
@@ -843,7 +907,8 @@ return $r;
 }
 function infra_template_checkInsert(&$r)
 {
-	infra_fora($r, function &(&$vv, $i, &$group) {//точки, скобки
+	infra_fora($r, function &(&$vv, $i, &$group) {
+		//точки, скобки
 		global $infra_template_replacement;
 		if (is_string($vv)) {
 			if (preg_match("/^xinsert(\d+)$/", $vv, $m)) {
@@ -854,7 +919,7 @@ function infra_template_checkInsert(&$r)
 		}
 		$r = null;
 
-return $r;
+		return $r;
 	});
 };
 function infra_template_parsevar($var)
@@ -869,7 +934,7 @@ function infra_template_parsevar($var)
 	$str = '';
 	$name = '';
 	$open = 0;//Количество вложенных открытий
-	for ($i = 0, $l = strlen($var);$i < $l;++$i) {
+	for ($i = 0, $l = strlen($var); $i < $l; ++$i) {
 		$sym = $var[$i];
 
 		if ($start && $sym === ']') {
@@ -1067,7 +1132,7 @@ $infra_template_scope = array(
 	'~obj' => function () {
 		$args = func_get_args();
 		$obj = array();
-		for ($i = 0, $l = sizeof($args);$i < $l;$i = $i + 2) {
+		for ($i = 0, $l = sizeof($args); $i < $l; $i = $i + 2) {
 			if ($l == $i + 1) {
 				break;
 			}
@@ -1119,7 +1184,7 @@ $infra_template_scope = array(
 		return call_user_func_array($infra_template_scope['~inArray'], $args);
 	},
 
-'~inArray' => function ($val, $arr) {
+	'~inArray' => function ($val, $arr) {
 		if (!$arr) {
 			return false;
 		}
@@ -1158,7 +1223,8 @@ $infra_template_scope = array(
 
 		return call_user_func_array($infra_template_scope['~indexOf'], $args);
 	},
-	'~indexOf' => function ($str, $v = null) {//Начиная с нуля
+	'~indexOf' => function ($str, $v = null) {
+		//Начиная с нуля
 		if (is_null($v)) {
 			return -1;
 		}
@@ -1184,7 +1250,8 @@ $infra_template_scope = array(
 		if (!$obj) {
 			return true;
 		}
-		foreach ($obj as $k => $v);
+		foreach ($obj as $k => $v) {
+		}
 		$r = ($k == $key);
 
 		return $r;
@@ -1246,7 +1313,7 @@ $infra_template_scope = array(
 	'~array' => function () {
 		$args = func_get_args();
 		$ar = array();
-		for ($i = 0, $l = sizeof($args);$i < $l;++$i) {
+		for ($i = 0, $l = sizeof($args); $i < $l; ++$i) {
 			$ar[] = $args[$i];
 		}
 
@@ -1255,7 +1322,7 @@ $infra_template_scope = array(
 	'~multi' => function () {
 		$args = func_get_args();
 		$n = 1;
-		for ($i = 0, $l = sizeof($args);$i < $l;++$i) {
+		for ($i = 0, $l = sizeof($args); $i < $l; ++$i) {
 			$n *= $args[$i];
 		}
 
@@ -1266,7 +1333,8 @@ $infra_template_scope = array(
 
 		return $infra_template_scope['~leftOver']($a, $b);
 	},
-	'~leftOver' => function ($first, $second) {//Кратное
+	'~leftOver' => function ($first, $second) {
+		//Кратное
 		$first = (int) $first;
 		$second = (int) $second;
 
@@ -1280,7 +1348,7 @@ $infra_template_scope = array(
 	'~sum' => function () {
 		$args = func_get_args();
 		$n = 0;
-		for ($i = 0, $l = sizeof($args);$i < $l;++$i) {
+		for ($i = 0, $l = sizeof($args); $i < $l; ++$i) {
 			$n += $args[$i];
 		}
 
@@ -1303,7 +1371,8 @@ $infra_template_scope = array(
 
 		return call_user_func_array($infra_template_scope['~first'], $args);
 	},
-	'~first' => function () {//Возвращает true или false первый или не первый это элемент
+	'~first' => function () {
+		//Возвращает true или false первый или не первый это элемент
 		global $infra_template_moment;
 		$conf = $infra_template_moment;
 
@@ -1323,7 +1392,8 @@ $infra_template_scope = array(
 
 		return call_user_func_array($infra_template_scope['~Number'], $args);
 	},
-	'~Number' => function ($key, $def = 0) {//Делает из переменной цифру, если это не цифра то будет def
+	'~Number' => function ($key, $def = 0) {
+		//Делает из переменной цифру, если это не цифра то будет def
 		$n = (int) $key;
 		if (!$n && $n != 0) {
 			$n = $def;
@@ -1333,7 +1403,7 @@ $infra_template_scope = array(
 	},
 	'~cost' => function ($cost, $text = false) {
 
-$cost = (string) $cost;
+		$cost = (string) $cost;
 		$ar = explode('.', $cost);
 		if (sizeof($ar) == 1) {
 			$ar = explode(',', $cost);
@@ -1386,24 +1456,36 @@ infra_seq_set($infra_template_scope, array('infra', 'theme'), $fn);
 $conf = &infra_config('secure');
 infra_seq_set($infra_template_scope, array('infra', 'conf'), $conf);
 
-$fn = function () { return infra_view_getPath(); };
+$fn = function () {
+	return infra_view_getPath();
+};
 infra_seq_set($infra_template_scope, array('infra', 'view', 'getPath'), $fn);
 
-$fn = function () { return infra_view_getHost(); };
+$fn = function () {
+	return infra_view_getHost();
+};
 infra_seq_set($infra_template_scope, array('infra', 'view', 'getHost'), $fn);
 
-$fn = function ($s) { return infra_seq_short($s); };
+$fn = function ($s) {
+	return infra_seq_short($s);
+};
 infra_seq_set($infra_template_scope, array('infra', 'seq', 'short'), $fn);
 
-$fn = function ($s) { return infra_seq_right($s); };
+$fn = function ($s) {
+	return infra_seq_right($s);
+};
 infra_seq_set($infra_template_scope, array('infra', 'seq', 'right'), $fn);
 
 //$fn=function(){ return infra_admin(); };
 //infra_seq_set($infra_template_scope,array('infra','admin'),$fn);
 
-$fn = function () { return infra_view_getRoot(); };
+$fn = function () {
+	return infra_view_getRoot();
+};
 infra_seq_set($infra_template_scope, array('infra', 'view', 'getRoot'), $fn);
-$fn = function ($src) { return infra_srcinfo($src); };
+$fn = function ($src) {
+	return infra_srcinfo($src);
+};
 infra_seq_set($infra_template_scope, array('infra', 'srcinfo'), $fn);
 
 $host = $_SERVER['HTTP_HOST'];

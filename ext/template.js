@@ -115,8 +115,96 @@ infra.template={
 	},
 	parse:function(url,data,tplroot,dataroot,tplempty){
 		var tpls=this.make(url,tplempty);
+		
 		var text=this.exec(tpls,data,tplroot,dataroot);
 		return text;
+	},
+	clone:function(obj){ 
+		if(obj === null || typeof(obj) != 'object') {
+			return obj; 
+		}
+		if(obj.constructor === Array) {
+			var temp=[];
+			for (var i=0, l=obj.length; i<l; i++) {
+				temp[i] = this.clone(obj[i]); 
+			}
+		} else {
+			var temp = {}; 
+			for(var key in obj) {
+				temp[key] = this.clone(obj[key]); 
+			}
+		}
+		return temp; 
+	},
+	includes: function (tpls)
+	{
+		var find={};
+		for(var key in tpls) {
+			var val=tpls[key];
+			if (val.length!=1) {
+				continue;
+			}
+			
+			if (key.charAt(key.length-1) == ':') {
+				tpls[key]=[];
+				
+				var src=val[0];
+				var tpls2=this.make(src);
+				
+				key=key.slice(0, -1)+'.';
+				find[key]=tpls2;
+			}
+		}
+		
+		for (var name in find) {
+			var t=find[name];
+
+			
+			for (var k in t) {
+				var subtpl=t[k];
+				k=name+k;
+				if (tpls[k]) {
+					continue;
+				}
+				subtpl=this.clone(subtpl);
+				for (var kk in subtpl) {
+					var exp=subtpl[kk];
+					if (typeof(exp)!='string') {
+						this.runExpTpl(exp, function(exp) {
+							exp['tpl']['root'].unshift(name);
+						});
+					}
+				
+				}
+				tpls[k]=subtpl;
+			}
+		}
+	},
+	/**
+	 * Var это {(a[:b](c)?d)?e} - a,b,c,d,e 5 интераций, кроме a[:b]
+	 */
+	runExpTpl: function (exp, call)
+	{
+		if (exp['term']) {
+			this.runExpTpl(exp['term'], call);
+			this.runExpTpl(exp['yes'], call);
+			this.runExpTpl(exp['no'], call);
+			return;
+		}
+		if (exp['fn']) {
+			this.runExpTpl(exp['fn'], call);
+		}
+		if (exp['var']) {
+			for (var c in exp['var']) {//comma
+				var com=exp['var'][c];
+				for (var b in com) {//bracket
+					var br=com[b];
+					if (br['tpl']) {
+						call(br);
+					}
+				}
+			}
+		}
 	},
 	/*runTpls:function(d,call){
 		infra.fora(d,function(d){
@@ -172,11 +260,13 @@ infra.template={
 		for(some in tpls)break;
 		if(!some)tpls[tplempty]=[];//Пустой шаблон добавляется когда вообще ничего нет
 		//var res=this.parseEmptyTpls(tpls);//[{root:[]}, [{some:[]}], [{asdf:[]}]]  
-		var res=tpls;
+		
 
+		this.includes(tpls);
+		stor.cache[url.toString()]=tpls;
 
-		stor.cache[url.toString()]=res;
-		return res;
+		
+		return tpls;
 	},
 	exec:function(tpls,data,tplroot,dataroot){//Только тут нет conf
 		if(typeof(tplroot)=='undefined')tplroot='root';
@@ -196,19 +286,7 @@ infra.template={
 		if(!tpl)return tplroot;//Когда нет шаблона
 
 		conftpl['tpl']=tpl;
-		//css
-		var tplcss=tplroot+'$css';
-		var css=infra.fora(tpls,function(t){
-			var css=t[tplcss];
-			if(css){
-				//delete t[tplcss]; Нельзя удалять так как добавляется в див при замене html в этом диве удалится и css инструкция
-				return css;
-			}
-		});
-		if(css){
-			var conf={'tpls':tpls,'tpl':css,'data':data,'tplroot':tplcss,'dataroot':dataroot};
-			css=this.execTpl(conf);
-		}
+	
 		//
 		//
 		////parse depricated
@@ -237,9 +315,6 @@ infra.template={
 
 
 		var html='';
-		if(css) html='<style>'+css+'</style>';
-
-		
 		html+=this.execTpl(conftpl);
 		return html;
 	},
@@ -741,8 +816,6 @@ infra.template={
 					if(r['multi'])tpl=tpl.substr(1);
 					r['tpl']=this.make([tpl]);
 					if(!r['tpl']['root'])r['tpl']['root']=[''];
-					if(!r['tpl']['root$css'])r['tpl']['root$css']=[''];
-					if(!r['tpl']['root$onparse'])r['tpl']['root$onshow']=[''];
 					return [r];
 				}
 
