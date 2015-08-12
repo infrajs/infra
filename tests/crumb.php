@@ -1,16 +1,16 @@
 <?php
 
-	use itlife\infra\ext\crumb;
+	use itlife\infra\ext\Crumb;
 
 $ans = array();
 	$ans['title'] = 'Хлебные крошки';
 
-	$obj = crumb::getInstance('test/check');
-	$parent = crumb::getInstance('test');
-	if (crumb::$childs['test/check'] !== $obj) {
+	$obj = Crumb::getInstance('test/check');
+	$parent = Crumb::getInstance('test');
+	if (Crumb::$childs['test/check'] !== $obj) {
 		return infra_err($ans, 'Некорректно определяется крошка 1');
 	}
-	if (crumb::$childs['test'] !== $parent) {
+	if (Crumb::$childs['test'] !== $parent) {
 		return infra_err($ans, 'Некорректно определяется крошка 2');
 	}
 
@@ -18,38 +18,38 @@ $ans = array();
 		return infra_err($ans, 'Некорректно определён parent');
 	}
 
-	crumb::change('test/hi');
-	$obj = crumb::getInstance('test');
+	Crumb::change('test/hi');
+	$obj = Crumb::getInstance('test');
 
 	if (!$obj->is) {
 		return infra_err($ans, 'Не применилась крошка на втором уровне');
 	}
 
-$root = crumb::getInstance();
+$root = Crumb::getInstance();
 
-	crumb::change('');
-	$crumb = crumb::getInstance('');
+	Crumb::change('');
+	$crumb = Crumb::getInstance('');
 	$f = $crumb->query;
 
-	crumb::change('test');
+	Crumb::change('test');
 
-	$s = &crumb::getInstance('some');
-	$s2 = &crumb::getInstance('some');
+	$s = &Crumb::getInstance('some');
+	$s2 = &Crumb::getInstance('some');
 	$r = infra_isEqual($s, $s2);
 
-	$s = crumb::$childs;
-	$r2 = infra_isEqual($s[''], crumb::getInstance());
+	$s = Crumb::$childs;
+	$r2 = infra_isEqual($s[''], Crumb::getInstance());
 
 	$r = $r && $r2;
 
-	$crumb = crumb::getInstance('test');
-	$crumb2 = crumb::getInstance('test2');
+	$crumb = Crumb::getInstance('test');
+	$crumb2 = Crumb::getInstance('test2');
 
 	if (!($f == null && $r && !is_null($crumb->query) && is_null($crumb2->query))) {
 		return infra_err($ans, 'Изменения крошек');
 	}
 
-	crumb::change('test/test');
-	$inst = crumb::getInstance('test/test/test');
+	Crumb::change('test/test');
+	$inst = Crumb::getInstance('test/test/test');
 
 return infra_ret($ans, 'Всё ок');

@@ -64,7 +64,13 @@ infra.Crumb.change=function(query){
 	var get = {};
 	for(var tmp, x=0; x<ar.length; x++){
 		tmp = ar[x].split('=');
-		get[unescape(tmp[0])] = unescape(tmp[1]).replace(/[+]/g, ' ');
+		var v=tmp[1];
+		if(typeof(v)!='undefined'){
+			v=unescape(tmp[1]).replace(/[+]/g, ' ');
+		} else {
+			v='';
+		}
+		get[unescape(tmp[0])] = v;
 	}
 	infra.Crumb.get=get;
 

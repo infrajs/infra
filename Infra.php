@@ -103,7 +103,7 @@ class Infra
 				@header('Infra-Admin:false');
 			}
 
-			ext\crumb::init();
+			ext\Crumb::init();
 			if (!empty($_SERVER['QUERY_STRING'])) {
 				$query = urldecode($_SERVER['QUERY_STRING']);
 				if ($query{0} == '*') {

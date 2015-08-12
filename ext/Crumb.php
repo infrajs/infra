@@ -4,7 +4,7 @@ namespace itlife\infra\ext;
 
 require_once __DIR__.'/seq.php';
 
-class crumb
+class Crumb
 {
 	public $name;
 	public $parent;
@@ -94,10 +94,10 @@ class crumb
 
 		$inst = self::getInstance();
 		$old = $inst->path;
-		//crumb::$path=$right;
-		//crumb::$value=(string)@$right[0];
-		//crumb::$query=crumb::short($right);
-		//crumb::$child=crumb::getInstance((string)@$right[0]);
+		//Crumb::$path=$right;
+		//Crumb::$value=(string)@$right[0];
+		//Crumb::$query=Crumb::short($right);
+		//Crumb::$child=Crumb::getInstance((string)@$right[0]);
 		$that = self::getInstance($right);
 		$child = null;
 
@@ -125,7 +125,7 @@ class crumb
 	}
 	public static function init()
 	{
-		//crumb::$child=crumb::getInstance();
+		//Crumb::$child=Crumb::getInstance();
 		$query = urldecode(infra_toutf($_SERVER['QUERY_STRING']));
 		self::change($query);
 	}
