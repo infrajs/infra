@@ -1,15 +1,33 @@
 infra.scrollUpt;
+infra.scroll_bias=0;
 infra.scrollUp=function(){
 
 	var top = Math.max(document.body.scrollTop,document.documentElement.scrollTop);
 
-
 	var delta=0;
-	if(infrajs.scroll){
-		if(typeof(infrajs.scroll)=='number'){
+	if(infrajs.scroll){ //depricated
+		infra.scroll=infrajs.scroll;
+		/*if(typeof(infrajs.scroll)=='number'){
 			delta=infrajs.scroll;
 		}else if(typeof(infrajs.scroll)=='string'){
 			delta=$(infrajs.scroll).offset().top;
+		}*/
+	}
+	if(infra.scroll){
+
+		if(typeof(infra.scroll)=='number'){
+			delta=infra.scroll;
+		}else if(typeof(infra.scroll)=='string'){
+
+			delta=$(infra.scroll).offset().top;
+		}
+		if(infra.scroll_bias) {
+			if(typeof(infra.scroll_bias)=='number'){
+				delta+=infra.scroll_bias;
+			}else if(typeof(infra.scroll_bias)=='string'){
+				
+				delta+=$(infra.scroll_bias).height().top+$(infra.scroll_bias).height();
+			}
 		}
 	}
 
