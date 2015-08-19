@@ -42,7 +42,7 @@ function infra_view_setCookie($name, $val = null)
 }
 function infra_view_getPath()
 {
-	return infra_view_getSchema().infra_view_getHost().'/'.infra_view_getRoot();
+	return infra_view_getSchema().infra_view_getHost().infra_view_getRoot();
 }
 
 /**

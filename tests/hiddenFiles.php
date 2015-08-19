@@ -10,11 +10,10 @@ if ($data) {
 }
 
 $dirs = infra_dirs();
-$src = infra_view_getSchema().infra_view_getHost().'/'.infra_view_getRoot().$dirs['data'].'.config.json';
+$src = infra_view_getPath().$dirs['data'].'.config.json';
 $data = @file_get_contents($src);
+
 if ($data) {
-	$ans['result'] = false;
-	echo json_encode($ans);
+	return infra_err($ans);
 }
-$ans['result'] = true;
-echo json_encode($ans);
+return infra_ret($ans);
