@@ -37,9 +37,9 @@ $html = infra_admin_cache('infra_js_php', function ($str) {
 	$html .= $require('*infra/ext/forr.js');
 	$html .= $require('*infra/ext/view.js');
 
-$html .= $require('*infra/ext/seq.js');
+	$html .= $require('*infra/ext/seq.js');
 
-$html .= $require('*infra/ext/admin.js');
+	$html .= $require('*infra/ext/admin.js');
 
 	$html .= $require('*infra/ext/events.js');
 
@@ -47,7 +47,7 @@ $html .= $require('*infra/ext/admin.js');
 	//Здесь подключение дублируется, тем более только здесь это попадёт в кэш
 	$html .= $require('*infra/ext/html.js');
 	$html .= $require('*infra/ext/template.js');
-	$html .= $require('*infra/ext/crumb.js');
+	$html .= $require('*infra/ext/Crumb.js');
 	$html .= $require('*infra/ext/loader.js');
 
 	$html .= $require('*infra/ext/config.js');

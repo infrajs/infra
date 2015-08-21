@@ -11,9 +11,10 @@ if ($data) {
 
 $dirs = infra_dirs();
 $src = infra_view_getPath().$dirs['data'].'.config.json';
-$data = @file_get_contents($src);
-
-if ($data) {
+$data1 = @file_get_contents($src);
+$src = $dirs['data'].'.config.json';
+$data2 = file_get_contents($src);
+if ($data1==$data2) {
 	return infra_err($ans);
 }
 return infra_ret($ans);

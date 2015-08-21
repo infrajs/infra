@@ -43,7 +43,7 @@ if (!$src) {
 	return;
 }
 $p = infra_srcinfo($src);
-
+$ext=infra_strtolower($p['ext']);
 //  Обращение к папке конфликтует с файлом index.php и с показом первой попавшейся картинки
 //	Так как поведение с картинкой нестандартное... то и побеждает index.php
 /*if ($p['path'][strlen($p['path']) - 1] == '/'&&is_dir($p['path'])) {
@@ -61,7 +61,7 @@ if ($p['path'] && (preg_match("/\/\./", $p['path']) || ($p['path']{0} == '.' && 
 
 	return;
 }
-if ($p['ext'] !== 'php') {
+if ($ext !== 'php') {
 	$mime_types = array(
 		'txt' => 'text/plain',
 		'htm' => 'text/html',
@@ -118,22 +118,23 @@ if ($p['ext'] !== 'php') {
 		//added
 		'tpl' => 'text/html',
 	);
-	if (isset($mime_types[$p['ext']])) {
-		$type = $mime_types[$p['ext']];
+	if (isset($mime_types[$ext])) {
+		$type = $mime_types[$ext];
 	} else {
 		$type = 'application/octet-stream';
 	}
 	$conf = infra_config();
-	if ($p['query'] && in_array($p['ext'], $conf['imager']['images'])) {
+	if ($p['query'] && in_array($ext, $conf['imager']['images'])) {
 		$fex = explode('?', $filesrc);
 		$src = infra_theme('*imager/imager.php').'?src='.$fex[0].'&'.mb_substr($p['query'], 1);
 		$p = infra_srcinfo($src);
+		$ext=infra_strtolower($p['ext']);
 	} else {
 		@header('Content-Type: '.$type);
 	}
 }
 
-if ($p['ext'] !== 'php') {
+if ($ext !== 'php') {
 	/*---------$src---------------*/
 	$date = filemtime($src);
 	$last_modified = gmdate('D, d M Y H:i:s', $date).' GMT';
