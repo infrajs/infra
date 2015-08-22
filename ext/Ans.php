@@ -44,7 +44,7 @@ class Ans
 		} else {
 			//error_reporting(E_ALL);
 			//ini_set('display_errors',1);
-			header('Content-type:application/json');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
+			header('Content-type:application/json; charset=utf-8');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
 			echo json_encode($ans, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 		}
 	}
@@ -53,7 +53,7 @@ class Ans
 		if (infra_isphp()) {
 			return $ans;
 		} else {
-			header('Content-type:text/html');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
+			header('Content-type:text/html; charset=utf-8');//Ответ формы не должен изменяться браузером чтобы корректно конвертирвоаться в объект js, если html то ответ меняется
 			echo $ans;
 		}
 	}

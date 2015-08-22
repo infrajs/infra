@@ -1,7 +1,7 @@
 {
 	"infra":{
-		"test":["127.0.0.1"],
-		"debug":["127.0.0.1"],
+		"test":["127.0.0.1","::1"],
+		"debug":["127.0.0.1","::1"],
 		"fscharset":"UTF-8",
 		"cache":"fs",
 		"mysql":false
