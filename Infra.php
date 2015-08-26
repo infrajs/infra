@@ -59,20 +59,24 @@ class Infra
 		//Notice: Undefined index:
 		//ini_set('display_errors',1);
 
-		
-		infra_require('*infra/ext/admin.php');
+
+		infra_require('*infra/ext/once.php');
 		infra_require('*infra/ext/view.php');
+		infra_require('*infra/ext/mem.php');
+	infra_require('*infra/ext/admin.php');
+		
 		
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
 
+		
+		infra_require('*infra/ext/forr.php');
+		
+		
 		infra_require('*infra/ext/cache.php');
-
-		infra_require('*infra/ext/once.php');
+		
 
 		infra_require('*infra/ext/mail.php');
-		infra_require('*infra/ext/forr.php');
-
-		infra_require('*infra/ext/mem.php');
+		
 		infra_require('*infra/ext/events.php');
 		infra_require('*infra/ext/connect.php');
 		
