@@ -30,15 +30,18 @@ class Crumb
 
 		return $root;
 	}
+	public function __toString(){	
+		return implode('/', $this->path);
+	}
 	public function getInst($name = '')
 	{
 		$right = $this->path;
-
 		return self::getInstance($name, $right);
 	}
 	public static function getInstance($name = '', $right = array())
 	{
 		$right = self::right(array_merge($right, self::right($name)));
+
 		if (@$right[0] === '') {
 			$right = array();
 		}
