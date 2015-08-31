@@ -63,7 +63,7 @@ class Infra
 		infra_require('*infra/ext/once.php');
 		infra_require('*infra/ext/view.php');
 		infra_require('*infra/ext/mem.php');
-	infra_require('*infra/ext/admin.php');
+		infra_require('*infra/ext/admin.php');
 		
 		
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
