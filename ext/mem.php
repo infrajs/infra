@@ -67,15 +67,14 @@ function &infra_memcache()
 		return $infra_mem;
 	}
 	$conf = infra_config();
-	if ($conf['infra']['cache'] != 'mem') {
-		$infra_mem = false;
-
-		return $infra_mem;
-	}
 	$r = false;
+	if ($conf['infra']['cache'] != 'mem') {
+		return $r;
+	}
 	if (!class_exists('Memcache')) {
 		return $r;
 	}
+
 	$conf = infra_config();
 	if (!@$conf['memcache']) {
 		return $r;

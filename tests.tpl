@@ -76,6 +76,7 @@
 				<li role="presentation"><a href="?*session/admin.php">session</a></li>
 				<li role="presentation"><a href="?*infra/flush.php">clear</a></li>
 				<li role="presentation"><a href="?*infra/get.php?config">myroles</a></li>
+				<li role="presentation"><a href="?*infra/phpinfo.php">phpinfo</a></li>
 				<li role="presentation"><a href=".">site</a></li>
 		  </ul>
 		</div><!-- /.navbar-collapse -->
