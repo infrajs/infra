@@ -88,6 +88,7 @@ class Infra
 
 		infra_once('infra_install', function () {
 			infra_install();
+			
 			if (infra_test_silent()) {
 				error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 				ini_set('display_errors', 1);

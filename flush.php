@@ -2,4 +2,4 @@
 
 infra_test(true);
 infra_install(true);//Установка силой
-infra_ret($ans, 'Кэш очище, install системы выполнен, заход администратора отмечен');
+infra_ret($ans, 'Cache cleared, install complete');

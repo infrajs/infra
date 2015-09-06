@@ -50,7 +50,7 @@ function infra_install($flush = null)
 		//});
 	}
 
-//Файл infra/data/update
+	//Файл infra/data/update
 	if (!$flush) {
 		$dirs = infra_dirs();
 		$file = infra_theme($dirs['data'].'update');
@@ -84,12 +84,11 @@ function infra_install($flush = null)
 	$dirs = infra_dirs();
 	$r = @infra_cache_fullrmdir($dirs['cache']);
 	header('Infra-Update:'.($r ? 'Fail' : 'OK'));
-	infra_require('*infra/install.php');
+	include(infra_theme('*infra/install.php'));
 	if (empty($rmd5)) {
 		$rmd5 = array('time' => time());
 		$rmd5['result'] = md5(serialize(infra_config()));
 	}
-
 	infra_mem_set('configmd5', $rmd5);
 }
 
