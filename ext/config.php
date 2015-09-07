@@ -28,6 +28,17 @@ if (DIRECTORY_SEPARATOR == '/') {
 		return str_replace(DIRECTORY_SEPARATOR, '/', $dir);
 	}
 }
+/* Проверка что запущенный php файл находится в корне сайта рядом с vendor
+	//Корень сайта относительно этого файла
+	$vendorroot = infra_realpath(__DIR__.'/../../../../');//AВ до vendor
+	//Корень сайта определёный по рабочей дирректории
+	$siteroot = infra_getcwd();
+	//Определёный корень сайта двумя способами сравниваем
+	//Если результат разный значит система запущена не из той папки где находится vendor с текущим кодом
+	if ($siteroot != $vendorroot) {
+		die('Start infrajs only from site root - directory which have subfolder vendor with itlife/infra/');
+	}
+*/
 function infra_pluginRun($callback)
 {
 	$dirs = infra_dirs();
@@ -63,15 +74,7 @@ function infra_dirs()
 	if (!empty($infra_dirs)) {
 		return $infra_dirs;
 	}
-	//Корень сайта относительно этого файла
-	$vendorroot = infra_realpath(__DIR__.'/../../../../');//AВ до vendor
-	//Корень сайта определёный по рабочей дирректории
-	$siteroot = infra_getcwd();
-	//Определёный корень сайта двумя способами сравниваем
-	//Если результат разный значит система запущена не из той папки где находится vendor с текущим кодом
-	if ($siteroot != $vendorroot) {
-		die('Start infrajs only from site root - directory which have subfolder vendor with itlife/infrajs');
-	}
+	
 
 	$infra_dirs = array(
 		'cache' => 'infra/cache/',
@@ -152,6 +155,30 @@ function infra_debug($r = false)
 		return $is;
 	}
 }
+function infra_config_add(&$data, $src){
+	if (!is_file($src)) {
+		return;
+	}
+	$d = file_get_contents($src);
+	$d = infra_json_decode($d);
+	if (is_array($d)) {
+		foreach ($d as $k => &$v) {
+			if (@!is_array($data[$k])) {
+				$data[$k] = array();
+			}
+			if (isset($d[$k]['pub']) && isset($data[$k]['pub'])) {
+				$d[$k]['pub'] = array_unique(array_merge($d[$k]['pub'], $data[$k]['pub']));
+			}
+			if (is_array($v)) {
+				foreach ($v as $kk => $vv) {
+					$data[$k][$kk] = $vv;
+				}
+			} else {
+				$data[$k] = $v;
+			}
+		}
+	}
+}
 function &infra_config($sec = false)
 {
 	$sec = $sec ? 'secure' : 'unsec';
@@ -160,68 +187,24 @@ function &infra_config($sec = false)
 	if (isset($infra_config[$sec])) {
 		return $infra_config[$sec];
 	}
-
+	$data = array();
 	$dirs = infra_dirs();
 	$dirs['search'] = array_reverse($dirs['search']);
-	$data = array();
-
+	
 	foreach ($dirs['search'] as $src) {
 		if (is_dir($src)) {
 			$list = scandir($src);
 			foreach ($list as $name) {
-				if ($name[0] == '.') {
+				if ($name[0] == '.' || !is_dir($src.$name)) {
 					continue;
 				}
-				if (!is_dir($src.$name)) {
-					continue;
-				}
-				if (!is_file($src.$name.'/.config.json')) {
-					continue;
-				}
-
-				$d = file_get_contents($src.$name.'/.config.json');
-				$d = infra_json_decode($d);
-				if (is_array($d)) {
-					foreach ($d as $k => &$v) {
-						if (@!is_array($data[$k])) {
-							$data[$k] = array();
-						}
-						if (isset($d[$k]['pub']) && isset($data[$k]['pub'])) {
-							$d[$k]['pub'] = array_unique(array_merge($d[$k]['pub'], $data[$k]['pub']));
-						}
-						if (is_array($v)) {
-							foreach ($v as $kk => $vv) {
-								$data[$k][$kk] = $vv;
-							}
-						} else {
-							$data[$k] = $v;
-						}
-					}
-				}
+				infra_config_add($data, $src.$name.'/'.'.config.json');
+				infra_config_add($data, $src.$name.'/'.'.infra.json');
 			}
 		}
-
-		if (is_file($src.'.config.json')) {
-			$d = file_get_contents($src.'.config.json');
-			$d = infra_json_decode($d);
-			if (is_array($d)) {
-				foreach ($d as $k => &$v) {
-					if (@!is_array($data[$k])) {
-						$data[$k] = array();
-					}
-					if (isset($d[$k]['pub']) && isset($data[$k]['pub'])) {
-						$d[$k]['pub'] = array_unique(array_merge($d[$k]['pub'], $data[$k]['pub']));
-					}
-					if (is_array($v)) {
-						foreach ($v as $kk => $vv) {
-							$data[$k][$kk] = $vv;
-						}
-					} else {
-						$data[$k] = $v;
-					}
-				}
-			}
-		}
+		//Корень искомой дирректории
+		infra_config_add($data, $src.'.config.json');
+		infra_config_add($data, $src.'.infra.json');
 	}
 
 	$infra_config['unsec'] = $data;

@@ -47,28 +47,13 @@ class Infra
 {
 	public static function init()
 	{
-		/*
-			игнор цифр, и расширения infra/infra
-		*/
-
-//Продакшин должен быть таким же как и тестовый сервер, в том числе и с выводом ошибок. Это упрощает поддержку. Меньше различий в ошибках.
-		//ini_set('error_reporting',E_ALL ^ E_STRICT ^ E_NOTICE);
-		//error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-		//Strict Standards: Only variables should be assigned by reference
-		//Notice: Only variable references should be returned by reference
-		//Notice: Undefined index:
-		//ini_set('display_errors',1);
-
-
 		infra_require('*infra/ext/once.php');
 		infra_require('*infra/ext/view.php');
 		infra_require('*infra/ext/mem.php');
 		infra_require('*infra/ext/admin.php');
 		
-		
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
 
-		
 		infra_require('*infra/ext/forr.php');
 		
 		
@@ -86,8 +71,18 @@ class Infra
 
 		infra_require('*infra/ext/html.php');
 
+		//requires
+		$conf=infra_config();
+
+		foreach ($conf as $plugin) {
+			if (empty($plugin['require'])) {
+				continue;
+			}
+			infra_require($plugin['require']);
+		}
+
 		infra_once('infra_install', function () {
-			infra_install();
+			infra_install();//Проверка если нет cache или есть infra/data/update то запустится install.php в каждом плагине
 			if (infra_test_silent()) {
 				error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 				ini_set('display_errors', 1);
@@ -111,6 +106,10 @@ class Infra
 			}
 
 			ext\Crumb::init();
+
+			global $infra;
+			infra_fire($infra,'oninit');
+
 			if (!empty($_SERVER['QUERY_STRING'])) {
 				$query = urldecode($_SERVER['QUERY_STRING']);
 				if ($query{0} == '*') {

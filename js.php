@@ -1,9 +1,10 @@
 <?php
 
-infra_admin_modified();
 $re = isset($_GET['re']); //Modified re нужно обновлять с ctrl+F5
 
 $html = infra_admin_cache('infra_js_php', function ($str) {
+	global $infra;
+	
 	$loadTEXT = function ($path) {
 		$html = infra_loadTEXT($path);
 		$html = 'infra.store("loadTEXT")["'.$path.'"]={value:"'.$html.'",status:"pre"};'; //код отметки о выполненных файлах
@@ -20,42 +21,47 @@ $html = infra_admin_cache('infra_js_php', function ($str) {
 		$html .= 'infra.store("require")["'.$path.'"]={value:true};'; //код отметки о выполненных файлах
 		return $html;
 	};
-	$html = 'window.infra={};';
 
-	//$r=infra_debug()?'true':'false';
-	//$html.='infra.debug=function(){return '.$r.";};\n";
-
-	//$r=infra_test()?'true':'false';
-	//$html.='infra.test=function(){return '.$r.";};\n";
-
+	
+	$infra['require']=$require;
+	$infra['loadJSON']=$loadJSON;
+	$infra['loadTEXT']=$loadTEXT;
+	$infra['js'] = '';
+	$infra['js'] .= 'window.infra={};';
+	$infra['js'] .= $require('*infra/ext/load.js');
+	$infra['js'] .= $require('*infra/ext/config.js');
 	$conf = infra_config('secure');
-	$html .= 'infra.conf=('.infra_json_encode($conf).');infra.config=function(){return infra.conf;};';
-	//$html.='infra.admin=function(){ return '.(infra_admin()?'true':'false').';};';//Эта функция запрещает кэш. После админа кэш будет сделан первым неадмином. и в кэше будет false и только.
+	$infra['js'] .= 'infra.conf=('.infra_json_encode($conf).');infra.config=function(){return infra.conf;};';
+
 	//=======================
 	//
-	$html .= $require('*infra/ext/load.js');
-	$html .= $require('*infra/ext/forr.js');
-	$html .= $require('*infra/ext/view.js');
 
-	$html .= $require('*infra/ext/seq.js');
+	$infra['js'] .= $require('*infra/ext/forr.js');
+	$infra['js'] .= $require('*infra/ext/view.js');
+	
 
-	$html .= $require('*infra/ext/admin.js');
+	$infra['js'] .= $require('*infra/ext/seq.js');
 
-	$html .= $require('*infra/ext/events.js');
+	$infra['js'] .= $require('*infra/ext/admin.js');
 
-//Внутри расширений зависимости подключаются, если используется API
+	$infra['js'] .= $require('*infra/ext/events.js');
+
+	//Внутри расширений зависимости подключаются, если используется API
 	//Здесь подключение дублируется, тем более только здесь это попадёт в кэш
-	$html .= $require('*infra/ext/html.js');
-	$html .= $require('*infra/ext/template.js');
-	$html .= $require('*infra/ext/Crumb.js');
-	$html .= $require('*infra/ext/loader.js');
+	$infra['js'] .= $require('*infra/ext/html.js');
+	$infra['js'] .= $require('*infra/ext/template.js');
+	$infra['js'] .= $require('*infra/ext/Crumb.js');
+	$infra['js'] .= $require('*infra/ext/loader.js');
 
-	$html .= $require('*infra/ext/config.js');
+	
 
-//$html.=$require('*infra/ext/test.js');
+	$infra['js'] .= $require('*infrajs/infrajs.js');//
 
-	$html .= $require('*infrajs/infrajs.js');//
-	return $html;
+	
+	infra_fire($infra, 'onjs');
+
+
+	return $infra['js'];
 }, array($_SERVER['QUERY_STRING']), $re);
 @header('content-type: text/javascript; charset=utf-8');
 echo $html;
