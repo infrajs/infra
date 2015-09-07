@@ -82,7 +82,7 @@ class Infra
 		}
 
 		infra_once('infra_install', function () {
-			infra_install();//Проверка если нет cache или есть infra/data/update то запустится install.php в каждом плагине
+			infra_install();
 			if (infra_test_silent()) {
 				error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 				ini_set('display_errors', 1);

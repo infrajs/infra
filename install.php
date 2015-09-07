@@ -10,17 +10,19 @@
 
 namespace itlife\infra;
 
-function checkParentDir($name)
-{
-	$dirs = infra_dirs();
-	$test = explode('/', $dirs[$name]);
-	$test = array_slice($test, 0, sizeof($test) - 2);
-	if (!sizeof($test)) {
-		return true;
-	}
-	$test = implode('/', $test).'/';
-	if (!is_dir($test)) {
-		die('Not Found folder '.$test.' for '.$name.'/');
+if(!function_exists('itlife\infra\checkParentDir')){
+	function checkParentDir($name)
+	{
+		$dirs = infra_dirs();
+		$test = explode('/', $dirs[$name]);
+		$test = array_slice($test, 0, sizeof($test) - 2);
+		if (!sizeof($test)) {
+			return true;
+		}
+		$test = implode('/', $test).'/';
+		if (!is_dir($test)) {
+			die('Not Found folder '.$test.' for '.$name.'/');
+		}
 	}
 }
 $dirs = infra_dirs();
