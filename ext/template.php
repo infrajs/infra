@@ -4,13 +4,13 @@
 parse
 	make
 		 prepare(template); Находим все вставки {}
-		 analysis(ar); Бежим по всем скобкам и разбираем их что куда и тп 
+		 analysis(ar); Бежим по всем скобкам и разбираем их что куда и тп
 			 parseexp('exp')
 				parseCommaVar('asd.as[2]')
 					parsevar('asd.as[2]') и повторить потом
 		tpls=getTpls(ar) Объект свойства это шаблоны. каждый шаблон это массив элементов в которых описано что с ними делать строка или какая-то подстановка
 		res=parseEmptyTpls(tpls);
- 
+
 	text=exec(tpls,data,tplroot,dataroot) парсится - подставляются данные выполняется то что указано в элементах массивов
 		execTpl конкретный tpl
 			getValue один шаг в шаблоне
@@ -221,22 +221,24 @@ function infra_template_includes(&$tpls)
 
 		if ($key{strlen($key)-1} == ':') {
 			$tpls[$key]=array();//Иначе два раза применится
-			$tpls2=infra_template_make($val[0]);
-			
+			$src=$val[0];
+			$src=strip_tags($src);
+			$tpls2=infra_template_make($src);
+
 			$key=mb_substr($key, 0, -1);
 			$key.='.';
 			$find[$key]=$tpls2;
 		}
 	}
 
-	
+
 	foreach ($find as $name => &$t) {
 		foreach ($t as $k => &$subtpl) {
 			$k=$name.$k;
 			if (isset($tpls[$k])) {
 				continue;
 			}
-			
+
 			foreach ($subtpl as &$exp) {
 				if (!is_string($exp)) {
 					infra_template_runExpTpl($exp, function (&$exp) use ($name) {
@@ -253,24 +255,33 @@ function infra_template_includes(&$tpls)
  */
 function infra_template_runExpTpl(&$exp, $call)
 {
+
+
 	if ($exp['term']) {
 		infra_template_runExpTpl($exp['term'], $call);
 		infra_template_runExpTpl($exp['yes'], $call);
 		infra_template_runExpTpl($exp['no'], $call);
-		return;
-	}
-	if ($exp['fn']) {
-		infra_template_runExpTpl($exp['fn'], $call);
-	}
-	if (isset($exp['var'])) {
-		foreach ($exp['var'] as &$com) {//comma
-			foreach ($com as &$br) {//bracket
-				if (isset($br['tpl'])) {
-					$call($br);
+	} else if ($exp['cond']) {
+		infra_template_runExpTpl($exp['a'], $call);
+		infra_template_runExpTpl($exp['b'], $call);
+	} else {
+		if ($exp['fn']) {
+			infra_template_runExpTpl($exp['fn'], $call);
+		}
+		if (!empty($exp['var'])) {
+			foreach ($exp['var'] as &$com) {//comma
+				foreach ($com as &$br) {//bracket
+					if (isset($br['tpl'])) {
+						$call($br);
+					}
+	                if(is_array($br)){
+	                    infra_template_runExpTpl($br, $call);
+	                }
 				}
 			}
 		}
 	}
+
 }
 function &infra_template_make($url, $tplempty = 'root')
 {
@@ -299,7 +310,7 @@ function &infra_template_make($url, $tplempty = 'root')
 	//$res=infra_template_parseEmptyTpls($tpls);
 	infra_template_includes($tpls);
 	$stor['cache'][$key] = $tpls;
-	
+
 	return $tpls;
 }
 function infra_template_exec(&$tpls, &$data, $tplroot = 'root', $dataroot = '')
@@ -675,16 +686,11 @@ function infra_template_getTpls(&$ar, $subtpl = 'root')
 		++$itn;
 
 		$str = $res[$subtpl][$t];
-		//if(strpos($str,"</span>")!==false){
+
 		$ch = $str[strlen($str) - 1];
 
-/*		echo $ch.':'.ord($ch).'<br>';
-		if(trim($str)=="</span>"){
-			echo '<textarea>'.$str.'</textarea>';
-		}*/
-		//$res[$subtpl][$t]=preg_replace('/\r$/','',$res[$subtpl][$t]);
-		$res[$subtpl][$t] = preg_replace('/[\n\r\t]+$/', '', $res[$subtpl][$t]);
-		//$res[$subtpl][$t]=preg_replace('/\s+$/','',$res[$subtpl][$t]);
+		$res[$subtpl][$t] = preg_replace('/[\r\n]+\s*$/', '', $res[$subtpl][$t]);
+
 	}
 
 	return $res;

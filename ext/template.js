@@ -2,14 +2,14 @@
 parse
 	make
 		 prepare(template); Находим все вставки {}
-		 analysis(ar); Бежим по всем скобкам и разбираем их что куда и тп 
+		 analysis(ar); Бежим по всем скобкам и разбираем их что куда и тп
 			 parseexp('exp')
 				parseStaple
 				parseCommaVar
 					parsevar
 		tpls=getTpls(ar) Объект свойства это шаблоны. каждый шаблон это массив элементов в которых описано что с ними делать строка или какая-то подстановка
 		res=parseEmptyTpls(tpls);
- 
+
 	text=exec(tpls,data,tplroot,dataroot) парсится - подставляются данные выполняется то что указано в элементах массивов
 		execTpl
 			getValue 				Полностью обрабатывает d
@@ -115,26 +115,26 @@ infra.template={
 	},
 	parse:function(url,data,tplroot,dataroot,tplempty){
 		var tpls=this.make(url,tplempty);
-		
+
 		var text=this.exec(tpls,data,tplroot,dataroot);
 		return text;
 	},
-	clone:function(obj){ 
+	clone:function(obj){
 		if(obj === null || typeof(obj) != 'object') {
-			return obj; 
+			return obj;
 		}
 		if(obj.constructor === Array) {
 			var temp=[];
 			for (var i=0, l=obj.length; i<l; i++) {
-				temp[i] = this.clone(obj[i]); 
+				temp[i] = this.clone(obj[i]);
 			}
 		} else {
-			var temp = {}; 
+			var temp = {};
 			for(var key in obj) {
-				temp[key] = this.clone(obj[key]); 
+				temp[key] = this.clone(obj[key]);
 			}
 		}
-		return temp; 
+		return temp;
 	},
 	includes: function (tpls)
 	{
@@ -144,22 +144,23 @@ infra.template={
 			if (val.length!=1) {
 				continue;
 			}
-			
+
 			if (key.charAt(key.length-1) == ':') {
 				tpls[key]=[];
-				
+
 				var src=val[0];
+				src=src.replace(/<\/?[^>]+>/gi, '');
 				var tpls2=this.make(src);
-				
+
 				key=key.slice(0, -1)+'.';
 				find[key]=tpls2;
 			}
 		}
-		
+
 		for (var name in find) {
 			var t=find[name];
 
-			
+
 			for (var k in t) {
 				var subtpl=t[k];
 				k=name+k;
@@ -174,7 +175,7 @@ infra.template={
 							exp['tpl']['root'].unshift(name);
 						});
 					}
-				
+
 				}
 				tpls[k]=subtpl;
 			}
@@ -189,18 +190,24 @@ infra.template={
 			this.runExpTpl(exp['term'], call);
 			this.runExpTpl(exp['yes'], call);
 			this.runExpTpl(exp['no'], call);
-			return;
-		}
-		if (exp['fn']) {
-			this.runExpTpl(exp['fn'], call);
-		}
-		if (exp['var']) {
-			for (var c in exp['var']) {//comma
-				var com=exp['var'][c];
-				for (var b in com) {//bracket
-					var br=com[b];
-					if (br['tpl']) {
-						call(br);
+		} else if (exp['cond']) {
+			this.runExpTpl(exp['a'], call);
+			this.runExpTpl(exp['b'], call);
+		} else {
+			if (exp['fn']) {
+				this.runExpTpl(exp['fn'], call);
+			}
+			if (exp['var']) {
+				for (var c in exp['var']) {//comma
+					var com=exp['var'][c];
+					for (var b in com) {//bracket
+						var br=com[b];
+						if (br['tpl']) {
+							call(br);
+						}
+	                    if(typeof(br)=='object'){
+	                        this.runExpTpl(br, call);
+	                    }
 					}
 				}
 			}
@@ -259,13 +266,13 @@ infra.template={
 		var some=false;
 		for(some in tpls)break;
 		if(!some)tpls[tplempty]=[];//Пустой шаблон добавляется когда вообще ничего нет
-		//var res=this.parseEmptyTpls(tpls);//[{root:[]}, [{some:[]}], [{asdf:[]}]]  
-		
+		//var res=this.parseEmptyTpls(tpls);//[{root:[]}, [{some:[]}], [{asdf:[]}]]
+
 
 		this.includes(tpls);
 		stor.cache[url.toString()]=tpls;
 
-		
+
 		return tpls;
 	},
 	exec:function(tpls,data,tplroot,dataroot){//Только тут нет conf
@@ -286,7 +293,7 @@ infra.template={
 		if(!tpl)return tplroot;//Когда нет шаблона
 
 		conftpl['tpl']=tpl;
-	
+
 		//
 		//
 		////parse depricated
@@ -374,7 +381,7 @@ infra.template={
 		//v содержит вставки по типу ['asdf',['asdf','asdf'],'asdf'] то есть это не одномерный массив. asdf[asdf.asdf].asdf
 		var root,value;
 		if(v==undefined){
-			//if(checklastroot)conf['lastroot']=false;//Афигенная ошибка. получена переменная и далее идём к шаблону переменной для которого нет, узнав об этом lastroot не сбивается и шаблон дальше загружается с переменной в lastroot {$indexOf(:asdf,:s)}{data:descr}{descr:}{}	
+			//if(checklastroot)conf['lastroot']=false;//Афигенная ошибка. получена переменная и далее идём к шаблону переменной для которого нет, узнав об этом lastroot не сбивается и шаблон дальше загружается с переменной в lastroot {$indexOf(:asdf,:s)}{data:descr}{descr:}{}
 			root=false;
 			value='';
 			return '';
@@ -386,14 +393,14 @@ infra.template={
 			var scope=infra.template.scope;
 			if(p[p.length-1]=='$key'){
 				value=conf['dataroot'][conf['dataroot'].length-1];
-				
+
 				if(!scope['kinsert'])scope['kinsert']=[];
 				var n=scope['kinsert'].length;
 				scope['kinsert'][n]=value;
 				root=['kinsert',''+n];
 			}else if(p[p.length-1]=='~key'){
 				value=conf['dataroot'][conf['dataroot'].length-1];
-				
+
 				if(!scope['kinsert'])scope['kinsert']=[];
 				var n=scope['kinsert'].length;
 				scope['kinsert'][n]=value;
@@ -403,7 +410,7 @@ infra.template={
 				if(typeof(value)!=='undefined')root=p;
 
 				//Что брать {:t}   от data или scope относительный или прямой путь
-				
+
 				if(typeof(value)=='undefined'&&p.length){//Относительный путь, от scope
 					value=infra.seq.get(scope,p);
 					if(typeof(value)!=='undefined')root=p;
@@ -479,7 +486,7 @@ infra.template={
 			var r=this.getVar(conf,d['var'][i]);
 			var v=r['value'];
 			var lastroot=r['root']||conf['dataroot'];
-			var h=''; 
+			var h='';
 			if(!d['multi']){
 				var droot=lastroot.concat();
 				h=this.exec(conf['tpls'],conf['data'],tpl,droot);
@@ -564,7 +571,7 @@ infra.template={
 			var t=res[subtpl].length-1;
 			var str=res[subtpl][t];
 			if(typeof(str)!='string')return;
-			res[subtpl][t]=str.replace(/[\r\n\t]+$/g,'');
+			res[subtpl][t]=str.replace(/[\r\n]+\s*$/g,'');
 			//res[subtpl][t]=str.replace(/\s+$/g,'');
 		});
 		return res;
@@ -640,14 +647,14 @@ infra.template={
 		if(fnnow)res['orig']=fnnow+'('+res['orig']+')';
 		else fnnow='';
 
-		
+
 		if(fnnow){
 			res['fn']=this.parseBracket(fnnow);//в имени функции могут содержаться замены xinsert asdf[xinsert1].asdf. Запятые в имени не обрабатываются. Массив как с запятыми но нужен только нулевой элемент, запятых не может быть/ Они уже отсеяны
-			
+
 		}
 
-			
-		
+
+
 
 
 		exp=this.parseStaple(exp);
@@ -731,20 +738,20 @@ infra.template={
 			res['b']=this.parseexp(cond1);
 			return res;
 		}
-		
+
 		this.parseBracket(exp,res);
 
 		return res;
 	},
 	parseBracket:function(exp,res){
-		
+
 		if(typeof(res)=='undefined'){
 			var res={};
 			res['orig']=exp;
 		}
 
 		res['var']=this.parseCommaVar(exp);
-		
+
 		return res;
 	},
 	parseCommaVar:function(v){//Ищим запятые
@@ -783,7 +790,7 @@ infra.template={
 	},
 	parsevar:function(v){//Ищим скобки as.df[asdf[y.t]][qwer][ert]   asdf[asdf][asdf]
 		if(v=='')return undefined;
-		//Замен xinsert уже нет 
+		//Замен xinsert уже нет
 		//asdf.asdf[asdf] На выходе ['asdf','asdf',['asdf']]
 		var res=[];
 
@@ -852,7 +859,7 @@ infra.template={
 			}
 		}
 		return r;
-	}, 
+	},
 	scope:{//Набор функций доступных везде ну и значений разных $ - стандартная функция шаблонизатора, которых нет в глобальной области, остальные расширения совпадающие с глобальной областью javascript и в его синтаксисе
 		'$typeof':function(v){
 			return typeof(v);
@@ -1079,7 +1086,7 @@ infra.template={
 			return n;
 		},
 		'~cost':function(cost,text){
-			
+
 
 			if(!cost&&cost!=0)cost='';
 			cost=String(cost);
@@ -1101,7 +1108,7 @@ infra.template={
 
 			if(text)inp=' ';
 			else inp='&nbsp;';
-			
+
 			if(cost.length>4){ //1000
 				var l=cost.length;
 				cost=cost.substr(0,l-3)+inp+cost.substr(l-3,l);

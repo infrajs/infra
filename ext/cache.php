@@ -152,7 +152,7 @@ function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 		infra_debug(true);
 	}
 	$name = 'infra_admin_cache_'.$name;
-	return infra_once($name, function ($args, $re, $hash) use ($name, $fn, $conds) {
+	return infra_once($name, function ($args, $r, $hash) use ($name, $fn, $conds, $re) {
 		$data = infra_mem_get($hash);
 
 		if (!$data) {
@@ -201,5 +201,5 @@ function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 		}
 
 		return $data['result'];
-	}, array($args), $re);
+	}, array($args));
 }

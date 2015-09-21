@@ -51,20 +51,20 @@ class Infra
 		infra_require('*infra/ext/view.php');
 		infra_require('*infra/ext/mem.php');
 		infra_require('*infra/ext/admin.php');
-		
+
 		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
 
 		infra_require('*infra/ext/forr.php');
-		
-		
+
+
 		infra_require('*infra/ext/cache.php');
-		
+
 
 		infra_require('*infra/ext/mail.php');
-		
+
 		infra_require('*infra/ext/events.php');
 		infra_require('*infra/ext/connect.php');
-		
+
 
 		infra_require('*infra/ext/seq.php');
 		infra_require('*infra/ext/template.php');
@@ -112,7 +112,7 @@ class Infra
 
 			if (!empty($_SERVER['QUERY_STRING'])) {
 				$query = urldecode($_SERVER['QUERY_STRING']);
-				if ($query{0} == '*') {
+				if ($query{0} == '*'||$query{0} == '~') {
 					$theme = infra_theme('*infra/theme.php');
 					include $theme;
 					exit;

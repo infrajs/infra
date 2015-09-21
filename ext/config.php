@@ -50,12 +50,8 @@ function infra_pluginRun($callback)
 			$list = scandir($dir);
 			for ($j = 0, $jl = sizeof($list); $j < $jl; ++$j) {
 				$plugin = $list[$j];
-				if ($plugin{0} == '.') {
-					continue;
-				}
-				if (!is_dir($dir.$plugin)) {
-					continue;
-				}
+				if ($plugin{0} == '.') continue;
+				if (!is_dir($dir.$plugin)) continue;
 				$infra_plugins[] = array('dir' => $dir, 'name' => $plugin);
 			}
 		}
@@ -68,13 +64,13 @@ function infra_pluginRun($callback)
 		}
 	}
 }
-function infra_dirs()
+function &infra_dirs()
 {
 	global $infra_dirs;
 	if (!empty($infra_dirs)) {
 		return $infra_dirs;
 	}
-	
+
 
 	$infra_dirs = array(
 		'cache' => 'infra/cache/',
@@ -85,7 +81,7 @@ function infra_dirs()
 			'infra/data/', //Обязательно на первом месте, папка с данными пользователя!
 			'infra/layers/',
 			'./',
-			'vendor/itlife/',
+			'vendor/itlife/'
 		),
 	);
 
@@ -155,9 +151,13 @@ function infra_debug($r = false)
 		return $is;
 	}
 }
-function infra_config_add(&$data, $src){
+function infra_config_add(&$data, $dir){
+	$src=$dir.'.infra.json';
 	if (!is_file($src)) {
-		return;
+		$src=$dir.'.config.json';
+		if (!is_file($src)) {
+			return;
+		}
 	}
 	$d = file_get_contents($src);
 	$d = infra_json_decode($d);
@@ -177,6 +177,9 @@ function infra_config_add(&$data, $src){
 				$data[$k] = $v;
 			}
 		}
+		if(!empty($d['external'])){
+			return array('dir'=>$dir, 'external'=>$d['external']);
+		}
 	}
 }
 function &infra_config($sec = false)
@@ -184,29 +187,43 @@ function &infra_config($sec = false)
 	$sec = $sec ? 'secure' : 'unsec';
 
 	global $infra_config;
-	if (isset($infra_config[$sec])) {
+	if (isset($infra_config)) {
 		return $infra_config[$sec];
 	}
+	$infra_config=array();
 	$data = array();
 	$dirs = infra_dirs();
 	$dirs['search'] = array_reverse($dirs['search']);
-	
 	foreach ($dirs['search'] as $src) {
 		if (is_dir($src)) {
-			$list = scandir($src);
+			$list = scandir($src);//Неизвестный порядок плагинов и порядок применения конфигов
 			foreach ($list as $name) {
-				if ($name[0] == '.' || !is_dir($src.$name)) {
-					continue;
-				}
-				infra_config_add($data, $src.$name.'/'.'.config.json');
-				infra_config_add($data, $src.$name.'/'.'.infra.json');
+				if ($name[0] == '.' || !is_dir($src.$name)) continue;
+				infra_config_add($data, $src.$name.'/');
 			}
 		}
 		//Корень искомой дирректории
-		infra_config_add($data, $src.'.config.json');
-		infra_config_add($data, $src.'.infra.json');
+		infra_config_add($data, $src);
 	}
 
+	$dirs=&infra_dirs();
+	foreach ($data as $plugin=>$pdata) {
+		if (empty($pdata['external'])) continue;
+		$plug=$plugin.'/'.$pdata['external'].'/';
+
+		foreach ($dirs['search'] as $src) {
+			if ($src[0] == '.' || !is_dir($src.$plug)) continue;
+			$src=$src.$plug;
+			array_unshift($dirs['search'], $src);
+			$list = scandir($src);//Неизвестный порядок плагинов и порядок применения конфигов
+			foreach ($list as $name) {
+				if ($name[0] == '.' || !is_dir($src.$name)) continue;
+				infra_config_add($data, $src.$name.'/');
+			}
+			infra_config_add($data, $src);
+			break;
+		}
+	}
 	$infra_config['unsec'] = $data;
 	foreach ($data as $i => $part) {
 		$pub = @$part['pub'];
