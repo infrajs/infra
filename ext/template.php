@@ -44,8 +44,8 @@ function infra_template_prepare($template)
 	$res = array();
 	$exp = '';
 	$str = '';
-	for ($i = 0, $l = strlen($template); $i < $l; ++$i) {
-		$sym = $template[$i];
+	for ($i = 0, $l = mb_strlen($template); $i < $l; ++$i) {
+		$sym = mb_substr($template,$i,1);
 		if (!$start) {
 			if ($sym === '{') {
 				$start = 1;
@@ -152,7 +152,6 @@ function infra_template_analysis(&$group)
 function infra_template_parse($url, $data = array(), $tplroot = 'root', $dataroot = '', $tplempty = 'root')
 {
 	$tpls = infra_template_make($url, $tplempty);
-
 	$text = infra_template_exec($tpls, $data, $tplroot, $dataroot);
 
 	return $text;
@@ -213,18 +212,17 @@ function &infra_template_stor()
 
 function infra_template_includes(&$tpls)
 {
+	
 	$find=array();
 	foreach ($tpls as $key => $val) {
 		if (sizeof($val)!=1) {
 			continue;
 		}
-
-		if ($key{strlen($key)-1} == ':') {
+		if ($key{mb_strlen($key)-1} == ':') {
 			$tpls[$key]=array();//Иначе два раза применится
 			$src=$val[0];
 			$src=strip_tags($src);
 			$tpls2=infra_template_make($src);
-
 			$key=mb_substr($key, 0, -1);
 			$key.='.';
 			$find[$key]=$tpls2;
@@ -241,6 +239,7 @@ function infra_template_includes(&$tpls)
 
 			foreach ($subtpl as &$exp) {
 				if (!is_string($exp)) {
+					
 					infra_template_runExpTpl($exp, function (&$exp) use ($name) {
 						array_unshift($exp['tpl']['root'], $name);
 					});
@@ -661,7 +660,7 @@ function infra_template_getTpls(&$ar, $subtpl = 'root')
 {
 	//subtpl - первый подшаблон с которого начинается если конкретно имя не указано
 	$res = array();
-
+	
 	for ($i = 0; $i < sizeof($ar); ++$i) {
 		if (is_array($ar[$i]) && isset($ar[$i]['template'])) {
 			//Если это шаблон
@@ -687,12 +686,10 @@ function infra_template_getTpls(&$ar, $subtpl = 'root')
 
 		$str = $res[$subtpl][$t];
 
-		$ch = $str[strlen($str) - 1];
-
+		//$ch = mb_substr($str,mb_strlen($str) - 1,1);
 		$res[$subtpl][$t] = preg_replace('/[\r\n]+\s*$/', '', $res[$subtpl][$t]);
 
 	}
-
 	return $res;
 }
 global $infra_template_replacement;
@@ -712,12 +709,12 @@ function infra_template_parseStaple($exp)
 	$start = 0;
 	$newexp = '';
 	$specchars = array('?','|','&','[',']','{','}','=','!','>','<',':',',');//&
-	for ($i = 0, $l = strlen($exp); $i < $l; ++$i) { //Делается замена (str) на xinsert.. список знаков при наличии которых в str отменяет замену и отменяет накопление имени функции перед скобками
+	for ($i = 0, $l = mb_strlen($exp); $i < $l; ++$i) { //Делается замена (str) на xinsert.. список знаков при наличии которых в str отменяет замену и отменяет накопление имени функции перед скобками
 		/*
 		 * Механизм замен из asdf.asdf(asdf,asdf) получем временную замену xinsert0 и так каждые скобки после обработки в выражении уже нет скобок а замены расчитываются когда до них доходит дело
 		 * любые скобки считаются фукнцией функция без имени просто возвращает результат
 		 */
-		$ch = $exp[$i];
+		$ch = mb_substr($exp, $i, 1);
 
 		if ($ch == ')' && $start) {
 			--$start;
@@ -782,8 +779,8 @@ function infra_template_parseexp($exp, $term = false, $fnnow = null)
 	$exp = infra_template_parseStaple($exp);
 
 //Сюда проходит выражение exp без скобок, с заменами их на псевдо переменные
-	$l = strlen($exp);
-	if ($l > 1 && $exp[$l - 1] == ':' && strpos($exp, ',') === false) {
+	$l = mb_strlen($exp);
+	if ($l > 1 && mb_substr($exp,$l - 1,1) == ':' && mb_strpos($exp, ',') === false) {
 		$res['template'] = substr($exp, 0, -1);//удалили последний символ
 		return $res;
 	}
@@ -940,8 +937,8 @@ function infra_template_parsevar($var)
 	$str = '';
 	$name = '';
 	$open = 0;//Количество вложенных открытий
-	for ($i = 0, $l = strlen($var); $i < $l; ++$i) {
-		$sym = $var[$i];
+	for ($i = 0, $l = mb_strlen($var); $i < $l; ++$i) {
+		$sym = mb_substr($var, $i, 1);
 
 		if ($start && $sym === ']') {
 			if (!$open) {
@@ -1087,24 +1084,16 @@ $infra_template_scope = array(
 			return '';
 		}
 		$st = (string) $time;
-		if (strlen($st) == 6) {
-			$y = $st{0}
-			.$st{1};
-			$m = $st{2}
-			.$st{3};
-			$d = $st{4}
-			.$st{5};
+		if (mb_strlen($st) == 6) {
+			$y = mb_substr($st, 0, 2);
+			$m = mb_substr($st, 2, 2);
+			$d = mb_substr($st, 4, 2);
 			$time = mktime(12, 12, 12, $m, $d, $y);
 		}
-		if (strlen($st) == 8) {
-			$y = $st{0}
-			.$st{1}
-			.$st{2}
-			.$st{3};
-			$m = $st{4}
-			.$st{5};
-			$d = $st{6}
-			.$st{7};
+		if (mb_strlen($st) == 8) {
+			$y = mb_substr($st, 0, 4);
+			$m = mb_substr($st, 4, 2);
+			$d = mb_substr($st, 6, 2);
 			$time = mktime(12, 12, 12, $m, $d, $y);
 		}
 		$r = date($format, $time);
@@ -1178,7 +1167,7 @@ $infra_template_scope = array(
 		if (is_array($obj)) {
 			return sizeof($obj);
 		} if (is_string($obj)) {
-			return strlen($obj);
+			return mb_strlen($obj);
 		}
 
 		return 0;
@@ -1280,8 +1269,8 @@ $infra_template_scope = array(
 		}
 		if ($count > 20) {
 			$str = (string) $count;
-			$count = $str{strlen($str) - 1};
-			$count2 = $str{strlen($str) - 2};
+			$count = mb_substr($str, mb_strlen($str) - 1, 1);
+			$count2 = mb_substr($str, mb_strlen($str) - 2, 1);
 			if ($count2 == 1) {
 				return $five;
 			}//xxx10-xxx19 (иначе 111-114 некорректно)
@@ -1419,11 +1408,11 @@ $infra_template_scope = array(
 		if (sizeof($ar) >= 2) {
 			$cost = $ar[0];
 			$cop = $ar[1];
-			if (strlen($cop) == 1) {
+			if (mb_strlen($cop) == 1) {
 				$cop .= '0';
 			}
-			if (strlen($cop) > 2) {
-				$cop = substr($cop, 0, 3);
+			if (mb_strlen($cop) > 2) {
+				$cop = mb_substr($cop, 0, 3);
 				$cop = round($cop / 10);
 			}
 			if ($cop == '00') {
@@ -1437,10 +1426,10 @@ $infra_template_scope = array(
 			$inp = '&nbsp;';
 		}
 
-		if (strlen($cost) > 4) {
+		if (mb_strlen($cost) > 4) {
 			//1000
-			$l = strlen($cost);
-			$cost = substr($cost, 0, $l - 3).$inp.substr($cost, $l - 3, $l);
+			$l = mb_strlen($cost);
+			$cost = mb_substr($cost, 0, $l - 3).$inp.mb_substr($cost, $l - 3, $l);
 		}
 
 		if ($cop) {

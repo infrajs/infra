@@ -237,7 +237,7 @@ function infra_theme($str, $debug = false)
 	$q = explode('?', $str, 2);
 	$str = $q[0];
 
-	$is_fn = ($str{strlen($str) - 1} == '/' || $str == '*') ? 'is_dir' : 'is_file';
+	$is_fn = (mb_substr($str, mb_strlen($str) - 1, 1) == '/' || $str == '*') ? 'is_dir' : 'is_file';
 
 	$query = '';
 	if (isset($q[1])) {
