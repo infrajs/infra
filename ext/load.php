@@ -226,50 +226,46 @@ function infra_theme($str, $debug = false)
 {
 	//Небезопасная функция
 	//Повторно для адреса не работает Путь только отностельно корня сайта или со звёздочкой
-	$str = infra_tofs($str);
+	$str = infra_toutf($str);
+	$origstr=$str;
 	$dirs = infra_dirs();
 	if (!$str) {
 		return;
 	}
-	//if($str=='*')return $dirs['data'];
-
-
 	$q = explode('?', $str, 2);
 	$str = $q[0];
-
-	$is_fn = (mb_substr($str, mb_strlen($str) - 1, 1) == '/' || $str == '*') ? 'is_dir' : 'is_file';
-
+	$is_fn = (mb_substr($str, mb_strlen($str) - 1, 1) == '/' || $str == '*') ? 'is_dir' : 'is_file';	
 	$query = '';
 	if (isset($q[1])) {
 		$query = '?'.$q[1];
 	}
-
-	if ($str{0} != '*') {
-		if ($str{0} == '~') {
+	if (mb_substr($str, 0, 1) != '*') {
+		if (mb_substr($str, 0, 1) == '~') {
 			$str = mb_substr($str, 1);
+			$str = infra_tofs($str);
 			if ($is_fn($dirs['data'].$str)) {
 				return $dirs['data'].$str.$query;
+			} else {
+				return;
 			}
 		}
 		//Проверка что путь уже правильный... происходит когда нет звёздочки... Неопределённость может возникнуть только с явными путями
 		//if($is_fn($str))return $str.$query;//Относительный путь в первую очередь, если повторный вызов для пути попадём сюда
-
+		
+		$str = infra_tofs($str);
 		if ($is_fn($str)) {
 			return $str.$query;
 		}
 
 		return;
 	}
-
-
 	$str = mb_substr($str, 1);
-
+	$str = infra_tofs($str);
 	foreach ($dirs['search'] as $dir) {
 		if ($is_fn($dir.$str)) {
 			return $dir.$str.$query;
 		}
 	}
-
 	return;
 }
 
