@@ -44,8 +44,11 @@ function infra_template_prepare($template)
 	$res = array();
 	$exp = '';
 	$str = '';
-	for ($i = 0, $l = mb_strlen($template); $i < $l; ++$i) {
-		$sym = mb_substr($template,$i,1);
+	
+	$strar=str_split($template);
+	for ($i = 0, $l = sizeof($strar); $i < $l; ++$i) {
+		$sym=$strar[$i];
+		
 		if (!$start) {
 			if ($sym === '{') {
 				$start = 1;
@@ -709,13 +712,16 @@ function infra_template_parseStaple($exp)
 	$start = 0;
 	$newexp = '';
 	$specchars = array('?','|','&','[',']','{','}','=','!','>','<',':',',');//&
-	for ($i = 0, $l = mb_strlen($exp); $i < $l; ++$i) { //Делается замена (str) на xinsert.. список знаков при наличии которых в str отменяет замену и отменяет накопление имени функции перед скобками
+	
+	//Делается замена (str) на xinsert.. список знаков при наличии которых в str отменяет замену и отменяет накопление имени функции перед скобками
+	
+	$expar=str_split($exp);
+	for ($i = 0, $l = sizeof($expar); $i < $l; ++$i) {
+		$ch=$expar[$i];
 		/*
 		 * Механизм замен из asdf.asdf(asdf,asdf) получем временную замену xinsert0 и так каждые скобки после обработки в выражении уже нет скобок а замены расчитываются когда до них доходит дело
 		 * любые скобки считаются фукнцией функция без имени просто возвращает результат
 		 */
-		$ch = mb_substr($exp, $i, 1);
-
 		if ($ch == ')' && $start) {
 			--$start;
 			if (!$start) {
@@ -937,8 +943,10 @@ function infra_template_parsevar($var)
 	$str = '';
 	$name = '';
 	$open = 0;//Количество вложенных открытий
-	for ($i = 0, $l = mb_strlen($var); $i < $l; ++$i) {
-		$sym = mb_substr($var, $i, 1);
+	
+	$varar=str_split($var);
+	for ($i = 0, $l = sizeof($varar); $i < $l; ++$i) {
+		$sym=$varar[$i];
 
 		if ($start && $sym === ']') {
 			if (!$open) {

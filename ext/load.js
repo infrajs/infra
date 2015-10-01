@@ -110,10 +110,11 @@ infra.loadTEXT=function(path){
 	return store[path].value;
 }
 infra.forFS=function(str){
-	str=str.replace(/[\*<>\'"\|\:\/\\\\#\?\$&]/g,' ');
+	str=str.replace(/[\+\*<>\'"\|\:\/\\\\#\?\$&\s]/g,' ');
 	str=str.replace(/^\s+/g,'');
 	str=str.replace(/\s+$/g,'');
 	str=str.replace(/\s+/g,' ');
+	//str=str.replace(/\s/g,'-');
 	return str;
 }
 infra.srcinfo=function(src){
@@ -199,8 +200,3 @@ infra.nameinfo=function(file){//Имя файла без папок// Звёзд
 
 //require('no-cache') не сохраняется в localStorage??
 //require('no-cache') не сохраняется в localStorage
-
-
-
-
-

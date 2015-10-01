@@ -126,13 +126,16 @@ function infra_forFS($str)
 	//символов ' " /\#&?$ быть не может удаляются som e будет some
 	//& этого символа нет, значит не может быть htmlentities
 	//символов <> удаляются из-за безопасности
+	//В адресной строке + заменяется на пробел, значит и тут удаляем
 	//Виндовс запрещает символы в именах файлов  \/:*?"<>|
 	//% приводит к ошибке malfomed URI при попадании в адрес так как там используется decodeURI
-	$str = preg_replace('/[%\*<>\'"\|\:\/\\\\#\?\$&]/', ' ', $str);
+	//Пробельные символы кодируются в адресе и не приняты в файловой системе
+	//Папки каталога давно созданы и нельзя изменить логику, так как папки перестанут совпадать с именем
+	$str = preg_replace('/[\+%\*<>\'"\|\:\/\\\\#\?\$&\s]/', ' ', $str);
 	$str = preg_replace('/^\s+/', '', $str);
 	$str = preg_replace('/\s+$/', '', $str);
 	$str = preg_replace('/\s+/', ' ', $str);
-
+	//$str = preg_replace('/\s/', '-', $str);
 	return $str;
 }
 function infra_srcinfo($src)
@@ -234,7 +237,7 @@ function infra_theme($str, $debug = false)
 	}
 	$q = explode('?', $str, 2);
 	$str = $q[0];
-	$is_fn = (mb_substr($str, mb_strlen($str) - 1, 1) == '/' || $str == '*') ? 'is_dir' : 'is_file';	
+	$is_fn = (mb_substr($str, mb_strlen($str) - 1, 1) == '/' || $str == '*' || $str == '~') ? 'is_dir' : 'is_file';	
 	$query = '';
 	if (isset($q[1])) {
 		$query = '?'.$q[1];

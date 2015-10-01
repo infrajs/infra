@@ -11,7 +11,7 @@ function infra_mem_set($key, $val)
 		$dirs = infra_dirs();
 		$dir = $dirs['cache'].'mem/';
 		$v = serialize($val);
-		file_put_contents($dir.$key.'.ser', $v);
+		@file_put_contents($dir.$key.'.ser', $v);
 	}
 }
 function infra_mem_get($key)

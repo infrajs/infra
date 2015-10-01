@@ -74,9 +74,7 @@ function &infra_forr(&$el, $callback, $back = false)
 {
 	//Бежим по индекснему массиву
 	$r = null;//Notice без этого генерируется Only variable references should be returned by reference
-	if (!is_array($el)) {
-		return $r;
-	}
+	if (!is_array($el)) return $r;
 
 	if ($back) {
 		for ($i = sizeof($el) - 1;$i >= 0;--$i) {
@@ -84,9 +82,7 @@ function &infra_forr(&$el, $callback, $back = false)
 				continue;
 			}
 			$r = &$callback($el[$i], $i, $el); //3тий аргумент $el depricated
-			if (is_null($r)) {
-				continue;
-			}
+			if (is_null($r)) continue;
 			if ($r instanceof infra_Fix) {
 				if ($r->opt['del']) {
 					array_splice($el, $i, 1);
@@ -100,14 +96,11 @@ function &infra_forr(&$el, $callback, $back = false)
 			}
 		}
 	} else {
-		for ($i = 0, $l = sizeof($el);$i < $l;++$i) {
-			if (@is_null($el[$i])) {
-				continue;
-			}
+		for ($i = 0, $l = sizeof($el); $i < $l; ++$i) {
+			if (is_null($el[$i])) continue;
+			
 			$r = &$callback($el[$i], $i, $el);
-			if (is_null($r)) {
-				continue;
-			}
+			if (is_null($r)) continue;
 			if ($r instanceof infra_Fix) {
 				if ($r->opt['del']) {
 					array_splice($el, $i, 1);
