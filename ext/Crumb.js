@@ -41,7 +41,8 @@ infra.Crumb.prototype={
 infra.Crumb.change=function(query){
 	//static
 	//Запускается паблик у класса
-
+	
+	infra.Crumb.search=query;
 	var amp=query.split('&');
 	if(amp.length>1)amp=[amp.shift(),amp.join('&')];
 
@@ -113,12 +114,11 @@ infra.Crumb.init=function(){
 			infra.Crumb.prefix='?'+q.shift();
 			query=q.join('?');
 		}
-
-		if(infra.Crumb.query===query)return;//chrome при загрузки запускает собыите а FF нет. Первый запуск мы делаем сами по этому отдельно для всех а тут игнорируются совпадения.
+		if(infra.Crumb.search===query)return;//chrome при загрузки запускает собыите а FF нет. Первый запуск мы делаем сами по этому отдельно для всех а тут игнорируются совпадения.
 		infra.Crumb.popstate=true;
 		infra.Crumb.change(query);
 		infra.fire(infra.Crumb,'onchange');
-		if(infra.Crumb.prefix){
+		if(infra.Crumb.prefix){//Попытка реалзиовать сайт во вложенных папках на тойже системе.... утопия
 			infra.Crumb.setA(document);
 		}
 	}
