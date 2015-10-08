@@ -6,7 +6,8 @@ function infra_view_getHost()
 }
 function infra_view_getSchema()
 {
-	return $_SERVER['REQUEST_SCHEME'].'://';
+	if(!empty($_SERVER['REQUEST_SCHEME']))return $_SERVER['REQUEST_SCHEME'].'://';
+	return 'http://';
 }
 function infra_view_getAgent()
 {
