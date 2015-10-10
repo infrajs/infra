@@ -46,7 +46,7 @@ infra.require=function(path){
 	 
 }
 infra.theme=function(path){
-	if(/^\*/.test(path))return '?'+encodeURI(path);
+	if(/^[\*~]/.test(path))return '?'+encodeURI(path);
 	else return path;
 }
 infra.loadJSON=function(path){
