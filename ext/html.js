@@ -177,6 +177,7 @@
 				infra.html(html,div);
 			}else{
 				if(infra.debug()){
+					debugger;
 					alert('Нужен document.write.div указать или создать ещё элемент с id '+sdiv);
 				}
 			}
