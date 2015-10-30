@@ -165,6 +165,11 @@ infra.Crumb.setA=function(div){
 
 		
 		var href=a.getAttribute('href');
+		if(href===null)href='';
+		href=href.split('#',2);
+		if(href[1])var anchor='#'+href[1];
+		else var anchor='';
+		href=href[0];
 		if(typeof(href)=='undefined'||href==null)continue;//У ссылки нет ссылки
 		if(/^javascript:/.test(href))continue;
 		if(/^mailto:/.test(href))continue;
@@ -237,7 +242,7 @@ infra.Crumb.setA=function(div){
 		}else{
 			var sethref=href?('http://'+location.host+siteroot+infra.Crumb.prefix+'?'+encodeURI(href)):('http://'+location.host+siteroot+infra.Crumb.prefix);	
 		}
-		a.setAttribute('href',sethref);//Если параметров нет, то указывам путь на главную страницу
+		a.setAttribute('href',sethref+anchor);//Если параметров нет, то указывам путь на главную страницу
 		
 
 		a.onclick=function(old_func,a,crumb,exception,sethref){
