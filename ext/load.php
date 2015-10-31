@@ -210,7 +210,7 @@ function infra_nameinfo($file)
 		'fname' => $fname,
 		'file' => $file,
 		'date' => $date,
-		'ext' => $ext,
+		'ext' => mb_strtolower($ext),
 	);
 
 	return $ans;
