@@ -76,7 +76,7 @@ function &infra_dirs()
 		'cache' => 'infra/cache/',
 		'data' => 'infra/data/',
 		'backup' => 'infra/backup/',
-		'layers' => 'infra/layers', //Папка с плагинами текущего сайта
+		'layers' => 'infra/layers/', //Папка с плагинами текущего сайта
 		'search' => array(
 			'infra/data/', //Обязательно на первом месте, папка с данными пользователя!
 			'infra/layers/',
