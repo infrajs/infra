@@ -29,9 +29,6 @@ $dirs = infra_dirs();
 $conf = infra_config();
 
 if ($conf['infra']['cache'] == 'fs') {
-	if (!is_dir('infra')) { //Папка плагина
-		mkdir('infra');
-	}
 	checkParentDir('cache');
 	if (!is_dir($dirs['cache'])) {
 		mkdir($dirs['cache']);

@@ -71,20 +71,26 @@ function &infra_dirs()
 		return $infra_dirs;
 	}
 
-
 	$infra_dirs = array(
 		'cache' => 'infra/cache/',
 		'data' => 'infra/data/',
-		'backup' => 'infra/backup/',
 		'layers' => 'infra/layers/', //Папка с плагинами текущего сайта
 		'search' => array(
-			'infra/data/', //Обязательно на первом месте, папка с данными пользователя!
-			'infra/layers/',
 			'./',
 			'vendor/itlife/'
 		),
 	);
 
+	if(is_file('.infra.json')){
+		$conf=file_get_contents('.infra.json');
+		$conf=json_decode($conf, true);
+		if(!empty($conf['dirs'])){
+			$infra_dirs=array_merge($infra_dirs, $conf['dirs']);
+		}
+	}
+
+	$search=array($infra_dirs['data'], $infra_dirs['layers']);
+	$infra_dirs['search']=array_merge($search, $infra_dirs['search']);
 	return $infra_dirs;
 }
 function infra_test_silent()
