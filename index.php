@@ -2,4 +2,7 @@
 chdir('../../../');
 require_once('vendor/autoload.php');
 
-itlife\infra\Infra::init();
+require_once('infra.php');
+$conf=infra_config();
+
+itlife\infrajs\Infrajs::controller($conf['infra']['controller']);

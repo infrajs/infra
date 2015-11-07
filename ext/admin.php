@@ -148,13 +148,12 @@ function infra_admin($break = null, $ans = array('msg' => 'Требуется а
 function infra_admin_time_set($t = null)
 {
 	$dirs = infra_dirs();
-	if (is_null($t)) {
-		$t = time();
-	}
+	if (is_null($t)) $t = time();
 	$adm = array('time' => $t);
 
 	infra_mem_set('infra_admin_time', $adm);
 	infra_once('infra_admin_time', $adm['time']);
+	return true;
 }
 
 /**

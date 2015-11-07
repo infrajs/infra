@@ -77,7 +77,7 @@ function infra_seq_right($val, $offen = INFRA_SEQ_OFFEN, $seldom = INFRA_SEQ_SEL
 }
 function &infra_seq_set(&$obj, $right, &$val)
 {
-	$make = is_null($val) ? false : true;
+	$make = !is_null($val);
 	$i = sizeof($right) - 1;
 	if ($i == -1) {
 		$obj = &$val;

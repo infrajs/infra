@@ -46,10 +46,6 @@ checkParentDir('data');
 if (!is_dir($dirs['data'])) {
 	@mkdir($dirs['data']); //Режим без записи на жёсткий диск
 }
-checkParentDir('layers');
-if (!is_dir($dirs['layers'])) {
-	mkdir($dirs['layers']);
-}
 
 if (!is_file($dirs['data'].'.config.json')&&!is_file($dirs['data'].'.infra.json')) {
 	$pass = substr(md5(time()), 2, 8);

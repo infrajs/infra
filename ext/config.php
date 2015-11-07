@@ -74,11 +74,12 @@ function &infra_dirs()
 	$infra_dirs = array(
 		'cache' => 'infra/cache/',
 		'data' => 'infra/data/',
-		'layers' => 'infra/layers/', //Папка с плагинами текущего сайта
 		'search' => array(
+			'infra/data/',
+			'infra/layers/',
 			'./',
 			'vendor/itlife/'
-		),
+		)
 	);
 
 	if(is_file('.infra.json')){
@@ -88,9 +89,6 @@ function &infra_dirs()
 			$infra_dirs=array_merge($infra_dirs, $conf['dirs']);
 		}
 	}
-
-	$search=array($infra_dirs['data'], $infra_dirs['layers']);
-	$infra_dirs['search']=array_merge($search, $infra_dirs['search']);
 	return $infra_dirs;
 }
 function infra_test_silent()

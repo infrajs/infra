@@ -9,49 +9,48 @@ infra_cache(true,'somefn',array($arg1,$arg2),$data); - Установка нов
 
 function infra_cache_fullrmdir($delfile, $ischild = true)
 {
-	//$dirs=infra_dirs();
 	$delfile = infra_theme($delfile);
-	if (file_exists($delfile)) {
-		//chmod($delfile,0777);
+	if (file_exists($delfile)) {		
 		if (is_dir($delfile)) {
 			$handle = opendir($delfile);
 			while ($filename = readdir($handle)) {
 				if ($filename != '.' && $filename != '..') {
 					$src = $delfile.$filename;
-					if (is_dir($src)) {
-						$src .= '/';
-					}
-					infra_cache_fullrmdir($src, true);
+					if (is_dir($src)) $src .= '/';
+					$r=infra_cache_fullrmdir($src, true);
+					if(!$r)return false;
 				}
 			}
 			closedir($handle);
 			if ($ischild) {
-				rmdir($delfile);
+				return rmdir($delfile);
 			}
 
-			return;
+			return true;
 		} else {
 			return unlink($delfile);
 		}
 	}
+	return true;
 }
-function infra_install($flush = null)
+function infra_install($readmin = null, $flush = null)
 {
 	//Изменился config...
-	if (!$flush) {
+	if (!$readmin&&!$flush) {
 		//проверка только если была авторизация админа
 		$cmd5 = infra_mem_get('configmd5');
 		//infra_admin_isTime($cmd5['time'], function () use (&$flush, &$rmd5, $cmd5) {
 		$rmd5 = array('time' => time());
 		$rmd5['result'] = md5(serialize(infra_config()));
 		if (!$cmd5 || $rmd5['result'] != $cmd5['result']) {
-			$flush = true;
+			$readmin = true;
 		}
 		//});
 	}
 
 	//Файл infra/data/update
-	if (!$flush) {
+	
+	if (!$readmin&&!$flush) {
 		$dirs = infra_dirs();
 		$file = infra_theme($dirs['data'].'update');
 		if ($file) {
@@ -59,7 +58,7 @@ function infra_install($flush = null)
 			if (!$r) {
 				header('Infra-Update: Error');
 			} else {
-				$flush = true;
+				$readmin=true;
 			}
 		}
 	}
@@ -76,14 +75,17 @@ function infra_install($flush = null)
 			}
 		}
 	}
-	if (!$flush) {
-		return;
-	}
+	if (!$flush&&!$readmin) return;
 
-	infra_mem_flush();
-	$dirs = infra_dirs();
-	$r = @infra_cache_fullrmdir($dirs['cache']);
-	header('Infra-Update:'.($r ? 'Fail' : 'OK'));
+	if ($flush) {
+		infra_mem_flush();
+		$dirs = infra_dirs();
+		$r = @infra_cache_fullrmdir($dirs['cache']);
+		header('Infra-Update:'.($r ? 'flush' : 'Fail'));
+	}else if($readmin){
+		$r=infra_admin_time_set();
+		header('Infra-Update:'.($r ? 'readmin' : 'Fail'));
+	}
 	include(infra_theme('*infra/install.php'));
 	if (empty($rmd5)) {
 		$rmd5 = array('time' => time());

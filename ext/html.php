@@ -40,12 +40,13 @@ function infra_html($html = null, $id = null)
 	if (is_null($id)) {
 		$infra_store_html .= $html;
 
-		return $infra_store_html;
+		//return $infra_store_html;
+		return true;
 	}
 	if ($id === true) {
 		$infra_store_html = $html;
 
-		return;
+		return true;
 	}
 
 	$t = '·';
