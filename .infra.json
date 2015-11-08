@@ -4,8 +4,10 @@
 		"debug":["127.0.0.1","::1"],
 		"fscharset":"UTF-8",
 		"cache":"fs",
-		"mysql":false,
-		"controller":"index.json"
+		"mysql":false
+	},
+	"controller":{
+		"external":"infra.json"
 	},
 	"admin":{
 		"login":"some",
