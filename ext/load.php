@@ -237,7 +237,7 @@ function infra_theme($str, $debug = false)
 	}
 	$q = explode('?', $str, 2);
 	$str = $q[0];
-	$is_fn = (mb_substr($str, mb_strlen($str) - 1, 1) == '/' || $str == '*' || $str == '~') ? 'is_dir' : 'is_file';	
+	$is_fn = (mb_substr($str, mb_strlen($str) - 1, 1) == '/' || $str == '*' || $str == '~'  || $str == '|') ? 'is_dir' : 'is_file';	
 	$query = '';
 	if (isset($q[1])) {
 		$query = '?'.$q[1];
@@ -248,6 +248,14 @@ function infra_theme($str, $debug = false)
 			$str = infra_tofs($str);
 			if ($is_fn($dirs['data'].$str)) {
 				return $dirs['data'].$str.$query;
+			} else {
+				return;
+			}
+		} else if (mb_substr($str, 0, 1) == '|') {
+			$str = mb_substr($str, 1);
+			$str = infra_tofs($str);
+			if ($is_fn($dirs['cache'].$str)) {
+				return $dirs['cache'].$str.$query;
 			} else {
 				return;
 			}

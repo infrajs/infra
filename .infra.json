@@ -7,7 +7,7 @@
 		"mysql":false
 	},
 	"controller":{
-		"external":"infra.json"
+		
 	},
 	"admin":{
 		"login":"some",

@@ -10,8 +10,9 @@ function infra_mem_set($key, $val)
 		$key = infra_forFS($key);
 		$dirs = infra_dirs();
 		$dir = $dirs['cache'].'mem/';
-		$v = serialize($val);
-		@file_put_contents($dir.$key.'.ser', $v);
+		//$v = serialize($val);
+		$v = json_encode($val,JSON_UNESCAPED_UNICODE);
+		@file_put_contents($dir.$key.'.json', $v);
 	}
 }
 function infra_mem_get($key)
@@ -23,9 +24,9 @@ function infra_mem_get($key)
 		$key = infra_forFS($key);
 		$dirs = infra_dirs();
 		$dir = $dirs['cache'].'mem/';
-		if (is_file($dir.$key.'.ser')) {
-			$r = file_get_contents($dir.$key.'.ser');
-			$r = unserialize($r);
+		if (is_file($dir.$key.'.json')) {
+			$r = file_get_contents($dir.$key.'.json');
+			$r = json_decode($r,true);
 		} else {
 			$r = null;
 		}
@@ -42,7 +43,7 @@ function infra_mem_delete($key)
 		$key = infra_forFS($key);
 		$dirs = infra_dirs();
 		$dir = $dirs['cache'].'mem/';
-		$r = @unlink($dir.$key.'.ser');
+		$r = @unlink($dir.$key.'.json');
 	}
 
 	return $r;

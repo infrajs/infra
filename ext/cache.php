@@ -50,7 +50,7 @@ function infra_install($readmin = null, $flush = null)
 
 	//Файл infra/data/update
 	
-	if (!$readmin&&!$flush) {
+	if (!$flush) {
 		$dirs = infra_dirs();
 		$file = infra_theme($dirs['data'].'update');
 		if ($file) {
@@ -58,7 +58,7 @@ function infra_install($readmin = null, $flush = null)
 			if (!$r) {
 				header('Infra-Update: Error');
 			} else {
-				$readmin=true;
+				$flush=true;
 			}
 		}
 	}

@@ -112,7 +112,7 @@ class Infra
 
 			if (!empty($_SERVER['QUERY_STRING'])) {
 				$query = urldecode($_SERVER['QUERY_STRING']);
-				if ($query{0} == '*'||$query{0} == '~') {
+				if ($query{0} == '*'||$query{0} == '~'||$query{0} == '|') {
 					$theme = infra_theme('*infra/theme.php');
 					include $theme;
 					exit;
