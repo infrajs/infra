@@ -104,10 +104,8 @@ infra.Crumb.change=function(query){
 	};
 }
 infra.Crumb.init=function(){
-	//static
-	//infra.Crumb.child=infra.Crumb.getInstance();
-
-	var listen=function(){		
+	
+	var listen=function(){	
 		var query=decodeURI(location.search.slice(1));
 		if(query[0]=='*'){
 			var q=query.split('?');
@@ -118,38 +116,57 @@ infra.Crumb.init=function(){
 		infra.Crumb.popstate=true;
 		infra.Crumb.change(query);
 		infra.fire(infra.Crumb,'onchange');
-		if(infra.Crumb.prefix){//Попытка реалзиовать сайт во вложенных папках на тойже системе.... утопия
-			infra.Crumb.setA(document);
-		}
 	}
+
 	if(document.readyState === "complete") return listen();
-	document.addEventListener("DOMContentLoaded",function(){
-		if(history.pushState){//Первый запус должен проходить после того как все слои подключились все кому интересно подписались на события и потом проходит событие и всё работает
-			//Вперёд назад
-			window.addEventListener('popstate',listen, false); //Генерировать заранее нельзя
-		}
+	document.addEventListener("DOMContentLoaded", function () {
+		window.addEventListener('popstate',listen, false); //Генерировать заранее нельзя
 		listen();//Даже если html5 не поддерживается мы всё равно считаем первую загрузку а дальше уже будут полные переходы и всё повториться
 	});
 }
-infra.Crumb.go=function(query){
-	var q=query.split('?',2);
-	if(q.length>1)query=q[1];
-	//if(infra.Crumb.query===query)return;
-	if(!infra.Crumb.prefix&&history.pushState){
-		var path=(query?('?'+encodeURI(query)):location.pathname);
-		document.http_referrer=location.href;
-		history.pushState(null,null,path);//При переходе назад этой записи не должно быть
-	}else{
-		if(query&&query[0]=='*')infra.Crumb.prefix='';
-		var path=(query?(infra.Crumb.prefix+'?'+query):location.pathname+infra.Crumb.prefix);
-		location.href=path;	
+infra.Crumb.go=function(href){
+	if (typeof(href) == 'undefined' || href == null) return;//У ссылки нет ссылки
+
+	href=href.split('#',2);
+	if(href[1])var anchor='#'+href[1];
+	else var anchor='';
+	href=href[0];
+	
+	if(/^javascript:/.test(href))return;
+	if(/^mailto:/.test(href))return;
+
+	if (href=='.') { //Правильная ссылка на главную страницу
+		href='';
+	} else {
+		var r=href.split('?');
+		var val=r.shift();
+		if(val) return;	
+		href=r.join('?');
 	}
+	if(href[0]=='*') return;
+	query=href;
+
+	
+	var path=(query?('?'+encodeURI(query)):location.pathname);
+	document.http_referrer=location.href;
+	history.pushState(null,null,path);//При переходе назад этой записи не должно быть
+	
 	infra.Crumb.popstate=false;
 	infra.Crumb.change(query);
 	infra.fire(infra.Crumb,'onchange');
 }
+infra.Crumb.handA = function(a) {
+	var ainfra=a.getAttribute('infra');
+	if (ainfra) return;//Ссылка проверена обновлять её не нужно
+	a.setAttribute('infra','true');
+	a.addEventListener('click', function (event) {
+		console.log('Crumb');
+		infra.Crumb.go(a.getAttribute('href'));
+		event.preventDefault();
+	});
+}
 infra.Crumb.setA=function(div){
-	
+	if(infra.Crumb.prefix)return;
 	if(typeof(div)=='string')div=document.getElementById(div);
 	if(!div)return;
 
@@ -157,117 +174,7 @@ infra.Crumb.setA=function(div){
 
 	for(var i=0,len=as.length; i<len; i++){
 		var a = as[i];
-
-		var ainfra=a.getAttribute('infra');
-		if(ainfra) continue;//Ссылка проверена обновлять её не нужно
-
-		a.setAttribute('infra','true');
-
-		
-		var href=a.getAttribute('href');
-		if(href===null)href='';
-		href=href.split('#',2);
-		if(href[1])var anchor='#'+href[1];
-		else var anchor='';
-		href=href[0];
-		if(typeof(href)=='undefined'||href==null)continue;//У ссылки нет ссылки
-		if(/^javascript:/.test(href))continue;
-		if(/^mailto:/.test(href))continue;
-
-		var exception=false;
-		if (href=='.') { //Правильная ссылка на главную страницу
-			if(infra.Crumb.prefix)exception=true;
-			var beforequest='';
-			var href='';//На главную без префикса
-		} else {
-			var r=href.split('?');
-			var beforequest=r.shift();
-
-			if(r.length>0){
-				try{ //error malfomed URI
-					//Пытаемся убрать проценты из адреса
-					var href=decodeURI(r.join('?'));
-				}catch(e){
-					var href=r.join('?');
-				}
-			}else{
-				var href='';//На главную с префиксом
-			}
-		}
-		if(beforequest) {
-			var t=beforequest.split('/');
-			if(t.length>=3){
-				//разобрали строчку вида http://yandex.ru/site/?test
-				var method=t.shift();
-				if(method=='http:'||method=='https:'){
-					t.shift();//слэш пустой
-					sitehost=t.shift();
-					siteroot=t.join('/');
-					beforequest=siteroot;
-					
-					if((method=='http:'&&sitehost==location.host&&('/'+siteroot==location.pathname))){
-						//Домен есть но он совпадает с текущим включая siteroot. Значит просто домен не учитывается.
-					}else{
-						a.setAttribute('target','_blank');//Если target не установлен
-						continue;
-					}
-				}
-			}
-			continue;//В ссылке есть что-то до вопроса
-		}
-	
-		if(typeof(a.onclick)==='function'){
-			var old_func=a.onclick;
-		}else{
-			var old_func=function(){};
-		}
-		
-		var crumb=infra.Crumb.getInstance(href);
-		href=crumb.toString();
-
-		if(href[0]=='*'){
-			var q=href.split('?');
-			var prefix='?'+q.shift();
-			if(infra.Crumb.prefix!=prefix){
-				continue;
-			}
-		}
-	
-		var siteroot=infra.view.getPath();
-
-		a.setAttribute('data-infra-href',href);//Признак того что эта ссылка внутренняя и веблайфная... так сохраняется первоначальный адрес
-		
-		if(href[0]=='*'||exception){
-			var sethref=href?('http://'+location.host+siteroot+'?'+encodeURI(href)):('http://'+location.host+siteroot);
-		}else{
-			var sethref=href?('http://'+location.host+siteroot+infra.Crumb.prefix+'?'+encodeURI(href)):('http://'+location.host+siteroot+infra.Crumb.prefix);	
-		}
-		a.setAttribute('href',sethref+anchor);//Если параметров нет, то указывам путь на главную страницу
-		
-
-		a.onclick=function(old_func,a,crumb,exception,sethref){
-			
-			return function(event){
-
-				setTimeout(function(){//Сначало должны выполниться все другие подписки а это как дефолтное поведение в самом конце
-					
-					var re=old_func.apply(a);
-
-					if(re===false){
-						if(typeof(event)!=='undefined')event.returnValue=false;
-						return false;
-					}
-					var nohref=a.getAttribute('nohref');
-					if(nohref)return false;
-					if(exception) {
-						location.href=sethref;
-						return;
-					}
-					infra.Crumb.go(crumb.toString());
-				},1);
-				return false;
-			}
-		}(old_func,a,crumb,exception,sethref);
+		infra.Crumb.handA(a);
 	}
 }
 /*public $name;

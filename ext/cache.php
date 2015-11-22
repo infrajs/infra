@@ -151,7 +151,7 @@ function infra_cache_clear($name, $args = array())
 function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 {
 	if ($re) {
-		infra_debug(true);
+		//infra_debug(true);
 	}
 	$name = 'infra_admin_cache_'.$name;
 	return infra_once($name, function ($args, $r, $hash) use ($name, $fn, $conds, $re) {

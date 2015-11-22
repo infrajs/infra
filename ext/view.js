@@ -2,9 +2,6 @@ infra.view={
 	getPath:function(){//depricated плохо связано с такойже функцией на сервере
 		return location.pathname;
 	},
-	/*getRoot:function(){//Дай путь до корня сайта от корня домена
-		return location.pathname;
-	},*/
 	getRoot:function(){
 		//Путь начинается без слэша svn/project/ например
 		var p=this.getPath();
