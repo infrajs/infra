@@ -165,13 +165,15 @@ infra.Crumb.handA = function(a) {
 		var href=a.getAttribute('href');
 		var is=a.getAttribute('infra');
 		if (is !=  'true') return;
-		infra.Crumb.a=a;
-		infra.Crumb.go(href, true);
-		infra.Crumb.a=false;
+		
 		if (!event.defaultPrevented) { //Добавляется ли адрес в историю? Кто отменил стандартное действие тот и добавил в историю
 			event.preventDefault();
 			window.history.pushState(null, null, href);
 		}
+		
+		infra.Crumb.a=a;
+		infra.Crumb.go(href, true);
+		infra.Crumb.a=false;
 	});
 }
 infra.Crumb.setA=function(div){
