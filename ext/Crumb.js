@@ -124,14 +124,14 @@ infra.Crumb.init=function(){
 		listen();//Даже если html5 не поддерживается мы всё равно считаем первую загрузку а дальше уже будут полные переходы и всё повториться
 	});
 }
-infra.Crumb.go=function(href){
+infra.Crumb.go=function(href, nopushstate){
 	if (typeof(href) == 'undefined' || href == null) return;//У ссылки нет ссылки
 
 	href=href.split('#',2);
 	if(href[1])var anchor='#'+href[1];
 	else var anchor='';
 	href=href[0];
-	
+
 	if(/^javascript:/.test(href))return;
 	if(/^mailto:/.test(href))return;
 
@@ -145,11 +145,12 @@ infra.Crumb.go=function(href){
 	}
 	if(href[0]=='*') return;
 	query=href;
-
 	
 	var path=(query?('?'+encodeURI(query)):location.pathname);
-	document.http_referrer=location.href;
-	history.pushState(null,null,path);//При переходе назад этой записи не должно быть
+	
+	if(!nopushstate) {
+		history.pushState(null,null,path+anchor);
+	}
 	
 	infra.Crumb.popstate=false;
 	infra.Crumb.change(query);
@@ -157,12 +158,20 @@ infra.Crumb.go=function(href){
 }
 infra.Crumb.handA = function(a) {
 	var ainfra=a.getAttribute('infra');
+	//nothref заменяем на infra=false
 	if (ainfra) return;//Ссылка проверена обновлять её не нужно
 	a.setAttribute('infra','true');
 	a.addEventListener('click', function (event) {
-		console.log('Crumb');
-		infra.Crumb.go(a.getAttribute('href'));
-		event.preventDefault();
+		var href=a.getAttribute('href');
+		var is=a.getAttribute('infra');
+		if (is !=  'true') return;
+		infra.Crumb.a=a;
+		infra.Crumb.go(href, true);
+		infra.Crumb.a=false;
+		if (!event.defaultPrevented) { //Добавляется ли адрес в историю? Кто отменил стандартное действие тот и добавил в историю
+			event.preventDefault();
+			window.history.pushState(null, null, href);
+		}
 	});
 }
 infra.Crumb.setA=function(div){
