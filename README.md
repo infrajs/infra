@@ -11,6 +11,7 @@
 * Одноразовое выполнение infra_once()
 * Шаблонизатор infra_template()
 * События infra_fire() infra_listen()
+* Управление кэшем браузера infra_cache_no() infra_cache_yes()
 * Кэш по дате изменения файла infra_cache
 * Подготовка html выдачи infra_html()
 * Работа с последовательностями в строке. Разделитель любой символ. infra_seq_right() infra_seq_short()
