@@ -3,8 +3,7 @@
 		"test":["127.0.0.1","::1"],
 		"debug":["127.0.0.1","::1"],
 		"fscharset":"UTF-8",
-		"cache":"fs",
-		"mysql":false
+		"cache":"fs"
 	},
 	"controller":{
 		
@@ -18,12 +17,5 @@
 	"memcache":{
 		"host":"127.0.0.1",
 		"port":"11211"
-	},
-	"mysql":{
-		"user":"some",
-		"host":"host",
-		"database":"some",
-		"password":"pass",
-		"port":"3306"
 	}
 }

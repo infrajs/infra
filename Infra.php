@@ -47,7 +47,6 @@ class Infra
 {
 	public static function init()
 	{
-		infra_require('*infra/ext/once.php');
 		infra_require('*infra/ext/view.php');
 		infra_require('*infra/ext/mem.php');
 		infra_require('*infra/ext/admin.php');
@@ -63,7 +62,6 @@ class Infra
 		infra_require('*infra/ext/mail.php');
 
 		infra_require('*infra/ext/events.php');
-		infra_require('*infra/ext/connect.php');
 
 
 		infra_require('*infra/ext/seq.php');
