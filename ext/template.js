@@ -879,13 +879,11 @@ infra.template={
 		'~date':function(format,time){
 			if(!time)return '';
 			if(time===true)time=new Date();
-			infra.require('vendor/itlife/phpdate/phpdate.js');
 			return phpdate(format,time);
 		},
 		'$date':function(format,time){
 			if(!time)return '';
 			if(time===true)time=new Date();
-			infra.require('vendor/itlife/phpdate/phpdate.js');
 			return phpdate(format,time);
 		},
 		'$obj':function(){

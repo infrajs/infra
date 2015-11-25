@@ -55,7 +55,7 @@ $html = infra_admin_cache('infra_js_php', function ($str) {
 
 	
 
-	$infra['js'] .= $require('*infrajs/infrajs.js');//
+	$infra['js'] .= $require('*controller/infrajs.js');//
 
 	
 	infra_fire($infra, 'onjs');

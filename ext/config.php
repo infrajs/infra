@@ -36,7 +36,7 @@ if (DIRECTORY_SEPARATOR == '/') {
 	//Определёный корень сайта двумя способами сравниваем
 	//Если результат разный значит система запущена не из той папки где находится vendor с текущим кодом
 	if ($siteroot != $vendorroot) {
-		die('Start infrajs only from site root - directory which have subfolder vendor with itlife/infra/');
+		die('Start infrajs only from site root - directory which have subfolder vendor with infrajs/infra/');
 	}
 */
 function infra_pluginRun($callback)
