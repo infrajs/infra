@@ -1,6 +1,6 @@
 <?php
 
-namespace itlife\infra\ext;
+namespace infrajs\infra\ext;
 
 require_once __DIR__.'/seq.php';
 

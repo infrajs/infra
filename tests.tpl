@@ -1,10 +1,10 @@
 {root:}
 <html>
 <head>
-	<link href="vendor/twbs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+	<link href="?*vendor/twbs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
 	<script src="?*infra/js.php"></script>
-	<script src="vendor/components/jquery/jquery.js"></script>
-	<script src="vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="?*vendor/components/jquery/jquery.js"></script>
+	<script src="?*vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script>infra.Crumb.init()</script>
 </head>
 <body>

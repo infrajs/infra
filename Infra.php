@@ -1,7 +1,7 @@
 <?php
 
 /*
-Copyright 2008-2013 ITLife, Ltd. http://itlife-studio.ru
+Copyright 2008 ITLife, Ltd. http://itlife-studio.ru
 
 infrajs.php Общий инклуд для всех скриптов
 
@@ -35,10 +35,10 @@ state - серверная обработка адреса сайта
 statist - интегрировать как-нибудь
 
 */
-	//namespace itlife\infra;
+	//namespace infrajs\infra;
 
 
-namespace itlife\infra;
+namespace infrajs\infra;
 
 require_once __DIR__.'/../infra/ext/config.php';
 require_once __DIR__.'/../infra/ext/load.php';

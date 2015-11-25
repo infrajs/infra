@@ -1,6 +1,6 @@
 <?php
 
-	use itlife\infra\ext\Crumb;
+	use infrajs\infra\ext\Crumb;
 
 $ans = array();
 	$ans['title'] = 'Хлебные крошки';

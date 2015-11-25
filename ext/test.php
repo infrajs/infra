@@ -1,6 +1,6 @@
 <?php
 
-use itlife\infra\ext\Ans;
+use infrajs\infra\ext\Ans;
 
 infra_test(true);
 

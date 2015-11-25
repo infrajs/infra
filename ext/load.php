@@ -14,7 +14,7 @@
 	infra_loadTEXT
 	infra_loadJSON
 */
-use itlife\infra\ext\Ans;
+use infrajs\infra\ext\Ans;
 
 function infra_toutf($str)
 {
@@ -151,9 +151,17 @@ function infra_srcinfo($src)
 	$p = explode('/', $file);
 	$file = array_pop($p);
 
-	if (sizeof($p) == 0 && preg_match("/^\*/", $file)) {
-		$file = preg_replace("/^\*/", '', $file);
-		$p[] = '*';
+	if (sizeof($p) == 0) {
+		if (preg_match("/^\~/", $file)) {
+			$file = preg_replace("/^\~/", '', $file);
+			$p[] = '~';
+		} else if (preg_match("/^\*/", $file)) {
+			$file = preg_replace("/^\*/", '', $file);
+			$p[] = '*';
+		} else if (preg_match("/^\|/", $file)) {
+			$file = preg_replace("/^\|/", '', $file);
+			$p[] = '*';
+		}
 	}
 	$folder = implode('/', $p);
 	if ($folder) {

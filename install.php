@@ -8,9 +8,9 @@
 	интерфейс показывает сравнение собранного конфига всей системы с файлом data/.config.json
 */
 
-namespace itlife\infra;
+namespace infrajs\infra;
 
-if(!function_exists('itlife\infra\checkParentDir')){
+if(!function_exists('infrajs\infra\checkParentDir')){
 	function checkParentDir($name)
 	{
 		$dirs = infra_dirs();

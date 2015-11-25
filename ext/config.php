@@ -72,13 +72,12 @@ function &infra_dirs()
 	}
 
 	$infra_dirs = array(
-		'cache' => 'infra/cache/',
-		'data' => 'infra/data/',
+		'cache' => 'cache/',
+		'data' => 'data/',
 		'search' => array(
-			'infra/data/',
-			'infra/layers/',
+			'data/',
 			'./',
-			'vendor/itlife/'
+			'vendor/infrajs/'
 		)
 	);
 
