@@ -30,10 +30,10 @@
 			background-color:lightblue;
 		}
 		.bg-warning {
-			background-color:yellow;
+			background-color:aquamarine;
 		}
 		.bg-danger {
-			background-color:red;
+			background-color: pink;
 		}
 		.bg-primary {
 			background-color:gray;
