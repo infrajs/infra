@@ -3,9 +3,5 @@
 	"license": "GPL3",
 	"autoload": {
 		"psr-4": { "infrajs\\infra\\": "/" }
-	},
-	"require":{
-		"components/jquery": "~2",
-		"twbs/bootstrap": "~3"
 	}
 }

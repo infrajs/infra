@@ -1,15 +1,56 @@
 {root:}
 <html>
 <head>
-	<link href="?*vendor/twbs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+	
 	<script src="?*infra/js.php"></script>
+	
+	<link href="?*vendor/twbs/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
 	<script src="?*vendor/components/jquery/jquery.js"></script>
 	<script src="?*vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
-	<script>infra.Crumb.init()</script>
+	
+	<style>
+		.navbar ul {
+			list-style:none;
+		}
+		.navbar li {
+			display:block;
+			float:left;
+			padding:5px 10px;
+		}
+		.collapsed {
+			display:none;
+		}
+		.table {
+			margin-top:30px;
+		}
+		.bg-success {
+			background-color:lightgreen;
+		}
+		.bg-info {
+			background-color:lightblue;
+		}
+		.bg-warning {
+			background-color:yellow;
+		}
+		.bg-danger {
+			background-color:red;
+		}
+		.bg-primary {
+			background-color:gray;
+		}
+		.table thead {
+			font-size:20px;
+			
+		}
+		.table td,.table th {
+			padding:5px 5px;
+		}
+	</style>
 </head>
 <body>
 	{:head}
-	<table class="table">
+	<div style="clear:both;"></div>
+	<table cellpadding="0" cellspacing="0" class="table">
 	<thead>
 		<tr class="bg-primary">
 			<td>
@@ -77,7 +118,6 @@
 				<li role="presentation"><a href="?*infra/flush.php">clear</a></li>
 				<li role="presentation"><a href="?*infra/get.php?config">myroles</a></li>
 				<li role="presentation"><a href="?*infra/phpinfo.php">phpinfo</a></li>
-				<li role="presentation"><a href=".">site</a></li>
 		  </ul>
 		</div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
