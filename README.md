@@ -8,7 +8,7 @@
 * Авторизация админа infra_admin()
 * Автоустановка install.php
 * Автоподключение config.plugin.require
-* infra_once()
+* Одноразовое выполнение infra_once()
 * Шаблонизатор infra_template()
 * События infra_fire() infra_listen()
 * Кэш по дате изменения файла infra_cache
