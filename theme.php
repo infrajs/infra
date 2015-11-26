@@ -124,7 +124,8 @@ if ($ext !== 'php') {
 		$type = 'application/octet-stream';
 	}
 	$conf = infra_config();
-	if ($p['query'] && in_array($ext, $conf['imager']['images'])) {
+
+	if ($conf['imager'] && $p['query'] && in_array($ext, $conf['imager']['images'])) {
 		$fex = explode('?', $filesrc);
 		$src = infra_theme('*imager/imager.php').'?src='.$fex[0].'&'.mb_substr($p['query'], 1);
 		$p = infra_srcinfo($src);
