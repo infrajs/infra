@@ -1,5 +1,5 @@
 # infra
-* Модель выполнения php файлов в пространстве infra. (infra/index.php?*path/to/file.php)
+* Модель выполнения php файлов в пространстве infra. (index.php?*path/to/file.php)
 * Конфиг - Файлы .infra.json infra_config()
 * Работа с путям - config.dirs, ~ data, * search, | cahce. infra_theme() infra_srcinfo() infra_dirs()
 * Работа с json ответы сервера. infra_ans(), infra_ret(), infra_err()
@@ -39,21 +39,26 @@
 $dirs=infra_dirs();
 ```
 
-# Если в корне проекта есть index.php с поддержкой infra
-Пример кода для index.php, который должен быть в корне проекта
+Если строка параметров начинается с одного из символов (\*) (~) (|), то она будет интерпретироваться, как путь до файла. 
+
+В папке ```data``` есть файл ```mypic.jpg```. Путь будет  ```?~mypic.jpg``` Если файл находится в расширении infrajs/sample в папке vendor, то путь будет ```index.php?*sample/mypic.jpg```. 
+
+Все другие указанные в get параметры будут переданны указанному файлу. В infrajs все расширения подджеривают указанные сокращения.
+```php
+$src = infra_theme('~mypic.jpg'); //data/mypic.jpg
+```
+
+Расширение [infrajs/imager](https://github.com/infrajs/imager) принимает путь до картинки и ширину, к которой картинку нужно привести.
+```
+?*imager/imager.php?src=~mypic.jpg&w=100
+```
+
+# index.php с поддержкой infra
 ```php
 <?php
 	require_once('vendor/autoload.php');
 	infrajs\infra\Infra::init();
 ```
-В этом случае если строка параметров будет начинаться с символа (\*) (~) (|), то она будет интерпретироваться, как путь до файла. 
-
-В папке data есть файл ```mypic.jpg```. Путь до указанного файла может быть  ```index.php?~mypic.jpg``` ```index.php?*mypic.jpg``` или без указания index.php ```?~mypic.jpg``` ```?*mypic.jpg``` 
-
-Все указанные get параметры в таком пути будут переданны указанному файлами, а сам index.php эти параметры проигнорирует. В infrajs все расширения подджеривают указанные сокращения. ```?*imager/imager.php?src=~mypic.jpg&w=100```
-В примере расширение imager принимает путь до картинки и ширину к которой картинку нужно привести.
-
 # infra только что установлен
-Для только что установленного infra будет работать путь
-* ```vendor/infrajs/infra/index.php?*~mypic.jpg```
-* ```vendor/infrajs/infra/?*~mypic.jpg```
+* ```vendor/infrajs/infra/index.php?~mypic.jpg```
+* ```vendor/infrajs/infra/?~mypic.jpg```
