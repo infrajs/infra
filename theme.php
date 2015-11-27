@@ -43,7 +43,7 @@ if (!$src) {
 	return;
 }
 $p = infra_srcinfo($src);
-$ext=infra_strtolower($p['ext']);
+$ext=$p['ext'];
 //  Обращение к папке конфликтует с файлом index.php и с показом первой попавшейся картинки
 //	Так как поведение с картинкой нестандартное... то и побеждает index.php
 /*if ($p['path'][strlen($p['path']) - 1] == '/'&&is_dir($p['path'])) {
@@ -123,16 +123,11 @@ if ($ext !== 'php') {
 	} else {
 		$type = 'application/octet-stream';
 	}
-	$conf = infra_config();
-
-	if ($conf['imager'] && $p['query'] && in_array($ext, $conf['imager']['images'])) {
-		$fex = explode('?', $filesrc);
-		$src = infra_theme('*imager/imager.php').'?src='.$fex[0].'&'.mb_substr($p['query'], 1);
-		$p = infra_srcinfo($src);
-		$ext=infra_strtolower($p['ext']);
-	} else {
-		@header('Content-Type: '.$type);
-	}
+				
+	@header("Content-Disposition: filename=\"".$p['file']."\"");
+		
+	@header('Content-Type: '.$type);
+	
 }
 
 if ($ext !== 'php') {

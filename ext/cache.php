@@ -1,5 +1,5 @@
 <?php
-
+use infrajs\once\Once;
 /*
 (c) All right reserved. http://itlife-studio.ru
 
@@ -143,7 +143,7 @@ function infra_cache_check($call)
 function infra_cache_clear($name, $args = array())
 {
 	$name = 'infra_admin_cache_'.$name;
-	$hash = infra_once_clear($name, $args);
+	$hash = Once::clear($name, $args);
 	infra_mem_delete($hash);
 
 	return $hash;
@@ -154,7 +154,7 @@ function infra_cache($conds, $name, $fn, $args = array(), $re = false)
 		//infra_debug(true);
 	}
 	$name = 'infra_admin_cache_'.$name;
-	return infra_once($name, function ($args, $r, $hash) use ($name, $fn, $conds, $re) {
+	return Once::exec($name, function ($args, $r, $hash) use ($name, $fn, $conds, $re) {
 		$data = infra_mem_get($hash);
 
 		if (!$data) {

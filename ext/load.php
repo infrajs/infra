@@ -18,18 +18,10 @@ use infrajs\infra\ext\Ans;
 
 function infra_toutf($str)
 {
-	if (!is_string($str)) {
-		return $str;
-	}
-	if (preg_match('//u', $str)) {
-		return $str;
-	} else {
-		if (function_exists('mb_convert_encoding')) {
-			return mb_convert_encoding($str, 'UTF-8', 'CP1251');
-		} else {
-			return iconv('CP1251', 'UTF-8', $str);//Некоторые строки обрубаются на каком-то месте... замечено в mht
-		}
-	}
+	if (!is_string($str)) return $str;
+	if (preg_match('//u', $str)) return $str;
+	
+	return mb_convert_encoding($str, 'UTF-8', mb_detect_encoding($text));
 }
 function infra_strtolower($str)
 {
@@ -226,7 +218,8 @@ function infra_nameinfo($file)
 function infra_tofs($str)
 {
 	$conf = infra_config();
-	if ($conf['infra']['fscharset'] != 'UTF-8') {
+	//if ($conf['infra']['fscharset'] != 'UTF-8') {
+	if(isset($_SERVER['WINDIR'])){
 		$str = infra_toutf($str);
 		$str = iconv('UTF-8', 'CP1251', $str);
 	}

@@ -1,5 +1,6 @@
 <?php
-
+use infrajs\hash\Hash;
+use infrajs\once\Once;
 /*
 Copyright 2008-2010 ITLife, Ltd. http://itlife-studio.ru
 
@@ -152,7 +153,7 @@ function infra_admin_time_set($t = null)
 	$adm = array('time' => $t);
 
 	infra_mem_set('infra_admin_time', $adm);
-	infra_once('infra_admin_time', $adm['time']);
+	Once::exec('infra_admin_time', $adm['time']);
 	return true;
 }
 
@@ -187,7 +188,7 @@ function infra_admin_isTime($cachetime = 0, $callback = false, $re = false)
  */
 function infra_admin_time()
 {
-	return infra_once('infra_admin_time', function () {
+	return Once::exec('infra_admin_time', function () {
 		$adm = infra_mem_get('infra_admin_time');
 		if (!$adm) {
 			$adm = array();
@@ -204,8 +205,8 @@ function infra_admin_cache($name, $fn, $args = array(), $re = false)
 	//Запускается один раз для админа, остальные разы возвращает кэш из памяти
 	$name = 'infra_admin_cache_'.$name;
 
-	return infra_once($name, function ($args, $name) use ($name, $fn, $re) {
-		$path = $name.'_'.infra_hash($args);
+	return Once::exec($name, function ($args, $name) use ($name, $fn, $re) {
+		$path = $name.'_'.Hash::make($args);
 		$data = infra_mem_get($path);
 		if (!$data) {
 			$data = array('time' => 0);

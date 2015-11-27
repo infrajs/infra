@@ -39,7 +39,7 @@ statist - интегрировать как-нибудь
 
 
 namespace infrajs\infra;
-
+use infrajs\once\Once;
 require_once __DIR__.'/../infra/ext/config.php';
 require_once __DIR__.'/../infra/ext/load.php';
 
@@ -79,7 +79,7 @@ class Infra
 			infra_require($plugin['require']);
 		}
 
-		infra_once('infra_install', function () {
+		Once::exec('infra_install', function () {
 			infra_install();
 			if (infra_test_silent()) {
 				error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);

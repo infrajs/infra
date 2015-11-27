@@ -125,16 +125,30 @@ infra.Crumb.init=function(){
 		listen();//Даже если html5 не поддерживается мы всё равно считаем первую загрузку а дальше уже будут полные переходы и всё повториться
 	});
 }
-infra.Crumb.go=function(href, nopushstate){
-	if (typeof(href) == 'undefined' || href == null) return;//У ссылки нет ссылки
+infra.Crumb.isInternal = function(href){
+
+	if (typeof(href) == 'undefined' || href == null) return false;//У ссылки нет ссылки
+	if(/^javascript:/.test(href))return false;
+	if(/^mailto:/.test(href))return false;
+	if(/^http.?:/.test(href))return false;
+	if(infra.conf.infra.addressquest){
+		if(!/^\?/.test(href))return false;
+	}
+	href=href.replace(/^\?/,'');
+
+	if(href[0]=='*') return false;
+	if(href[0]=='|') return false;
+	if(href[0]=='~') return false;
+	return true;
+}
+infra.Crumb.go = function(href, nopushstate){
+	if (!infra.Crumb.isInternal(href)) return;
 
 	href=href.split('#',2);
 	if(href[1])var anchor='#'+href[1];
 	else var anchor='';
 	href=href[0];
 
-	if(/^javascript:/.test(href))return;
-	if(/^mailto:/.test(href))return;
 
 	if (href=='.') { //Правильная ссылка на главную страницу
 		href='';
@@ -144,7 +158,7 @@ infra.Crumb.go=function(href, nopushstate){
 		if(val) return;	
 		href=r.join('?');
 	}
-	if(href[0]=='*') return;
+	
 	query=href;
 	
 	var path=(query?('?'+encodeURI(query)):location.pathname);
@@ -156,6 +170,7 @@ infra.Crumb.go=function(href, nopushstate){
 	infra.Crumb.popstate=false;
 	infra.Crumb.change(query);
 	infra.fire(infra.Crumb,'onchange');
+	
 }
 infra.Crumb.handA = function(a) {
 	var ainfra=a.getAttribute('infra');
@@ -166,6 +181,8 @@ infra.Crumb.handA = function(a) {
 		var href=a.getAttribute('href');
 		var is=a.getAttribute('infra');
 		if (is !=  'true') return;
+		
+		if (!infra.Crumb.isInternal(href)) return;
 		
 		if (!event.defaultPrevented) { //Добавляется ли адрес в историю? Кто отменил стандартное действие тот и добавил в историю
 			event.preventDefault();

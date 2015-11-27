@@ -1,9 +1,10 @@
 {
 	"infra":{
+		"pub":["addressquest"],
 		"test":["127.0.0.1","::1"],
 		"debug":["127.0.0.1","::1"],
-		"fscharset":"UTF-8",
-		"cache":"fs"
+		"cache":"fs",
+		"addressquest":true //Навигация с вопросом ? в адресе без urlrewrite. Если true ссылки без ? - /contacts будут обновлять страницу
 	},
 	"controller":{
 		

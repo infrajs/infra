@@ -50,7 +50,7 @@ if (!is_dir($dirs['data'])) {
 if (!is_file($dirs['data'].'.config.json')&&!is_file($dirs['data'].'.infra.json')) {
 	$pass = substr(md5(time()), 2, 8);
 	//Режим без записи на жёсткий диск
-	@file_put_contents($dirs['data'].'.infra.json', '{"infra":{"fscharset":"cp1251"},"admin":{"login":"admin","password":"'.$pass.'"}}');
+	@file_put_contents($dirs['data'].'.infra.json', '{"infra":{"admin":{"login":"admin","password":"'.$pass.'"}}');
 }
 
 $t = infra_admin_time();
