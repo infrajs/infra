@@ -1,5 +1,4 @@
 # infra
-Включает расширения Config
 
 * Модель выполнения php файлов в пространстве infra. (index.php?*path/to/file.php)
 * Конфиг - Файлы .infra.json infra_config()

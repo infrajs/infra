@@ -1,11 +1,10 @@
 <?php
-
+namespace infrajs\infra;
 use infrajs\infra\Ans;
 use infrajs\infra\Load;
 use infrajs\view\View;
 use infrajs\path\Path;
 use infrajs\event\Event;
-use infrajs\infra\Config;
 use infrajs\template\Template;
 use infrajs\sequence\Sequence;
 
