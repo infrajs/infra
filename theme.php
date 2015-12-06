@@ -1,23 +1,14 @@
 <?php
+namespace infrajs\infra;
+use infrajs\infra\Config;
+use infrajs\infra\Load;
+use infrajs\path\Path;
 
-/*
-Copyright 2008 ITLife, Ltd. Togliatti, Samara Oblast, Russian Federation. http://itlife-studio.ru
-
-History
-- Проверяется что указанный путь ведёт к файлу из папки infra
-- Запрет на файлы начинающийся с точки
-- Путь не может быть от корня
-- Если файл php то результат файла возвращается через веб сервер иначе файл берётся напрямую
-
-10.04.2010
-Добавлена проверка HTTP_X_REQUESTED_WITH и передача заголовка json
-25.04.2010
-Добавлено кэширование modified
-24.10.2010 
-адаптирован для infra
-
-*/
-require_once __DIR__.'/Infra.php';
+$src='vendor/autoload.php';
+if(!is_file($src)) {
+	chdir('../../../');
+	require_once($src);
+}
 
 $file = urldecode($_SERVER['QUERY_STRING']);
 
@@ -33,8 +24,9 @@ if ($a !== false) {
 		$filesrc = substr_replace($file, '?', $a, 1);
 	}
 }
-$src = infra_theme($filesrc);
-infra_isphp(false);//Метка для подключаемого файла если такой будет, что он рабоает вне php и должен проверять права и делать соответствующие выводы
+$src = Path::theme($filesrc);
+
+Load::isphp(false);//Метка для подключаемого файла если такой будет, что он рабоает вне php и должен проверять права и делать соответствующие выводы
 
 
 if (!$src) {
@@ -42,7 +34,16 @@ if (!$src) {
 
 	return;
 }
-$p = infra_srcinfo($src);
+$p = Load::srcInfo($src);
+
+if(is_dir($p['path'])){
+	$p['path'].='index.php';
+	$p['file']='index.php';
+	$p['fname']='index';
+	$p['name']='index';
+	$p['ext']='php';
+}
+
 $ext=$p['ext'];
 //  Обращение к папке конфликтует с файлом index.php и с показом первой попавшейся картинки
 //	Так как поведение с картинкой нестандартное... то и побеждает index.php
@@ -157,15 +158,13 @@ if ($ext !== 'php') {
 	$getstr = $p['query'];//get параметры в utf8, с вопросом
 	$getstr = preg_replace("/^\?/", '', $getstr);
 	parse_str($getstr, $get);
-	if (!$get) {
-		$get = array();
-	}
+	if (!$get) $get = array();
 	$GET = $_GET;
 	$_GET = $get;
 	$REQUEST = $_REQUEST;
 	$_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
 	$SERVER_QUERY_STRING = $_SERVER['QUERY_STRING'];
 	$_SERVER['QUERY_STRING'] = $getstr;
-
+	//chdir($p['folder']);
 	return include $p['path'];
 }

@@ -113,7 +113,7 @@
 				<li role="presentation"><a href="?*imager/admin.php">imager</a></li>
 				<li role="presentation"><a href="?*infra/install.php">install</a></li>
 				<li role="presentation"><a href="?*infra/dirs.php">dirs</a></li>
-				<li role="presentation"><a href="?*infra/config.php">config</a></li>
+				<li role="presentation"><a href="?*infra/showconfig.php">config</a></li>
 				<li role="presentation"><a href="?*session/admin.php">session</a></li>
 				<li role="presentation"><a href="?*infra/flush.php">clear</a></li>
 				<li role="presentation"><a href="?*infra/get.php?config">myroles</a></li>

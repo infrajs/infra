@@ -1,22 +1,17 @@
 {
 	"infra":{
-		"pub":["addressquest"],
+		"pub":["questinternal"],
 		"test":["127.0.0.1","::1"],
 		"debug":["127.0.0.1","::1"],
-		"cache":"fs",
-		"addressquest":true //Навигация с вопросом ? в адресе без urlrewrite. Если true ссылки без ? - /contacts будут обновлять страницу
-	},
-	"controller":{
-		
+		"cache":true,
+		"data":true,
+		"questinternal":true,
+		"require":"*infra/global.php"
 	},
 	"admin":{
 		"login":"some",
 		"password":"som",
 		"email":"info@itlf.ru",
 		"support":"aky.pp.ru@gmail.com"
-	},
-	"memcache":{
-		"host":"127.0.0.1",
-		"port":"11211"
 	}
 }

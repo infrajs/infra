@@ -39,83 +39,44 @@ statist - интегрировать как-нибудь
 
 
 namespace infrajs\infra;
+use infrajs\infra\Config;
+use infrajs\infra\Install;
+use infrajs\infra\Access;
 use infrajs\once\Once;
-require_once __DIR__.'/../infra/ext/config.php';
-require_once __DIR__.'/../infra/ext/load.php';
+use infrajs\path\Path;
+
+require_once('vendor/infrajs/path/infra.php');
 
 class Infra
 {
-	public static function init()
-	{
-		infra_require('*infra/ext/view.php');
-		infra_require('*infra/ext/mem.php');
-		infra_require('*infra/ext/admin.php');
-
-		infra_admin_modified();//Здесь уже выход если у браузера сохранена версия
-
-		infra_require('*infra/ext/forr.php');
-
-
-		infra_require('*infra/ext/cache.php');
-
-
-		infra_require('*infra/ext/mail.php');
-
-		infra_require('*infra/ext/events.php');
-
-
-		infra_require('*infra/ext/seq.php');
-		infra_require('*infra/ext/template.php');
-
-		infra_require('*infra/ext/html.php');
-
-		//requires
-		$conf=infra_config();
-
-		foreach ($conf as $plugin) {
-			if (empty($plugin['require'])) {
-				continue;
-			}
-			infra_require($plugin['require']);
+	/* Проверка что запущенный php файл находится в корне сайта рядом с vendor
+		//Корень сайта относительно этого файла
+		$vendorroot = infra_realpath(__DIR__.'/../../../../');//AВ до vendor
+		//Корень сайта определёный по рабочей дирректории
+		$siteroot = infra_getcwd();
+		//Определёный корень сайта двумя способами сравниваем
+		//Если результат разный значит система запущена не из той папки где находится vendor с текущим кодом
+		if ($siteroot != $vendorroot) {
+			die('Start infrajs only from site root - directory which have subfolder vendor with infrajs/infra/');
 		}
+	*/
+	public static function init()
+	{	
 
-		Once::exec('infra_install', function () {
-			infra_install();
-			if (infra_test_silent()) {
-				error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-				ini_set('display_errors', 1);
-				@header('Infra-Test:true');
-			} else {
-				error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-				@header('Infra-Test:false');
-				ini_set('display_errors', 0);
-			}
-			if (infra_debug_silent()) {
-				@header('Infra-Debug:true');
-				infra_cache_no(); //Браузер не кэширует no-store.
-			} else {
-				@header('Infra-Debug:false');
-				infra_cache_yes(); //Браузер кэширует, но проверяет каждый раз no-cache
-			}
-			if (infra_admin_silent()) {
-				@header('Infra-Admin:true');
-			} else {
-				@header('Infra-Admin:false');
-			}
+		Once::exec('Infra::init', function () {
 
-			ext\Crumb::init();
+			Access::adminModified();//Здесь уже выход если у браузера сохранена версия
+			
+			Config::initRequire();
+			
+			Access::initHeaders();
 
-			global $infra;
-			infra_fire($infra,'oninit');
+			//Load::req('*infra/ext/cache.php');
+			//Load::req('*infra/ext/mail.php');
+						
+			Install::initCheck();
 
-			if (!empty($_SERVER['QUERY_STRING'])) {
-				$query = urldecode($_SERVER['QUERY_STRING']);
-				if ($query{0} == '*'||$query{0} == '~'||$query{0} == '|') {
-					$theme = infra_theme('*infra/theme.php');
-					include $theme;
-					exit;
-				}
-			}
+			Path::init();
 		});
 	}
 }

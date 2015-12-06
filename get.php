@@ -1,9 +1,26 @@
 <?php
+namespace infrajs\infra;
+use infrajs\infra\Access;
+use infrajs\infra\Config;
+use infrajs\ans\Ans;
 
-if (isset($_GET['config'])) {
-	$ans['test'] = infra_test();
-	$ans['debug'] = infra_debug();
-	$ans['admin'] = infra_admin();
 
-	return infra_ret($ans);
+/** 
+ * infrajs and standalone
+ **/
+$src='vendor/autoload.php';
+if(!is_file($src)) {
+	chdir('../../../');
+	require_once($src);
 }
+
+$ans=array();
+
+if (isset($_GET['access'])) {
+	$ans['test'] = Access::test();
+	$ans['debug'] = Access::debug();
+	$ans['admin'] = Access::admin();
+	return Ans::ret($ans);
+}
+
+return Ans::err($ans,'Wrong parameters');

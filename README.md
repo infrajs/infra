@@ -1,4 +1,6 @@
 # infra
+Включает расширения Config
+
 * Модель выполнения php файлов в пространстве infra. (index.php?*path/to/file.php)
 * Конфиг - Файлы .infra.json infra_config()
 * Работа с путям - config.dirs, ~ data, * search, | cahce. infra_theme() infra_srcinfo() infra_dirs()
@@ -20,39 +22,28 @@
 После установки через composer функционал доступен через файл ```vendor/infrajs/infra/index.php```. 
 Чтобы выполнить тесты нужно открыть в браузере ```vendor/infrajs/infra/index.php?*infra/tests.php```
 
-# Работа с путями
-Работа с путями это основной функционал расширения ```infrajs/infra```. В конфиге указывается по каким папкам искать скрипты - search (\*), где будет папка данных - data (~), где будет папка кэша - cache (|). По умолчанию .infra.json:
-```json
-{
-  "dirs":{
-		"cache" : "cache/",
-		"data" : "data/",
-		"search" : [
-			"data/",
-			"./",
-			"vendor/infrajs/"
-		]
-  }
-}
-``` 
-```php
-$dirs=infra_dirs();
-```
 
-Если строка параметров начинается с одного из символов (\*) (~) (|), то она будет интерпретироваться, как путь до файла. 
-
-В папке ```data``` есть файл ```mypic.jpg```. Путь будет  ```?~mypic.jpg``` Если файл находится в расширении infrajs/sample в папке vendor, то путь будет ```index.php?*sample/mypic.jpg```. 
-
-Все другие указанные в get параметры будут переданны указанному файлу. В infrajs все расширения подджеривают указанные сокращения.
-```php
-$src = infra_theme('~mypic.jpg'); //data/mypic.jpg
-```
 
 Расширение [infrajs/imager](https://github.com/infrajs/imager) принимает путь до картинки и ширину, к которой картинку нужно привести.
 ```
 ?*imager/imager.php?src=~mypic.jpg&w=100
 ```
 
+В php и javascript скриптах используется единый формат путей - путь относительно корня сайта вне зависимости от расположения php или js файла. Все функции работающие с файловой системой настроены на работу именно с таким форматом адреса. Путь также может содержать указанные выше специальные символы *, ~, |.
+
+Если расширение работает самостоятельно:
+```
+vendor/infrajs/imager/imager.php?src=images/mypic.jpg&w=100
+```
+и в пространстве infra.
+```
+vendor/infrajs/infra/?*imager/imager.php?src=~mypic.jpg&w=100
+?*imager/imager.php?src=*mypic.jpg&w=100
+```
+Пути внутри библиотеки должны приводится к абсолютному виду. Фактически оба варианта работы отличаются текущей рабочей дирректорией в php.
+```php
+require_once(__DIR__.'/../../../vendor/autoload.php'); //Правильная запись
+```
 # index.php с поддержкой infra
 ```php
 <?php
@@ -62,3 +53,5 @@ $src = infra_theme('~mypic.jpg'); //data/mypic.jpg
 # infra только что установлен
 * ```vendor/infrajs/infra/index.php?~mypic.jpg```
 * ```vendor/infrajs/infra/?~mypic.jpg```
+
+  

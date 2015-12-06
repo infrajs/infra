@@ -40,11 +40,11 @@ $html = infra_admin_cache('infra_js_php', function ($str) {
 	$infra['js'] .= $require('*infra/ext/view.js');
 	
 
-	$infra['js'] .= $require('*infra/ext/seq.js');
+	$infra['js'] .= $require('*sequence/sequence.js');
 
-	$infra['js'] .= $require('*infra/ext/admin.js');
+	$infra['js'] .= $require('*infra/access.js');
 
-	$infra['js'] .= $require('*infra/ext/events.js');
+	$infra['js'] .= $require('*event/event.js');
 
 	//Внутри расширений зависимости подключаются, если используется API
 	//Здесь подключение дублируется, тем более только здесь это попадёт в кэш
@@ -60,6 +60,7 @@ $html = infra_admin_cache('infra_js_php', function ($str) {
 	
 	infra_fire($infra, 'onjs');
 
+	$infra['js'] .= 'define(["?*once/once.js"], function(){ return infra })';
 
 	return $infra['js'];
 }, array($_SERVER['QUERY_STRING']), $re);

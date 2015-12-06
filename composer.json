@@ -5,6 +5,13 @@
 		"psr-4": { "infrajs\\infra\\": "/" }
 	},
 	"require":{
-		"infrajs/once":"~1"
+		"infrajs/once":"~1",
+		"infrajs/hash":"~1",
+		"infrajs/mem":"~1",
+		"infrajs/cache":"~1",
+		"infrajs/path":"~1",
+		"infrajs/view":"~1",
+		"infrajs/ans":"~1"
+
 	}
 }
