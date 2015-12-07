@@ -10,7 +10,7 @@
 	//back ret
 	$ar = array('a','b','c','e');
 	$count = 0;
-	infra_forr($ar, function ($v) use (&$count) {
+	Each::forr($ar, function ($v) use (&$count) {
 		++$count;
 		if ($v == 'b') {
 			return new infra_Fix('del', true);
@@ -25,7 +25,7 @@
 	//back ret
 	$ar = array('a','b','c','e');
 	$count = 0;
-	infra_forr($ar, function ($v) use (&$count) {
+	Each::forr($ar, function ($v) use (&$count) {
 		++$count;
 		if ($v == 'b') {
 			return new infra_Fix('del', true);
@@ -41,7 +41,7 @@
 	//back
 	$ar = array('a','b','c','e');
 	$count = 0;
-	infra_forr($ar, function ($v) use (&$count) {
+	Each::forr($ar, function ($v) use (&$count) {
 		++$count;
 		if ($v == 'b') {
 			return new infra_Fix('del');
@@ -57,7 +57,7 @@
 	//simple
 	$ar = array('a','b','c','e');
 	$count = 0;
-	infra_forr($ar, function ($v) use (&$count) {
+	Each::forr($ar, function ($v) use (&$count) {
 		++$count;
 		if ($v == 'b') {
 			return new infra_Fix('del');
@@ -73,7 +73,7 @@
 	//obj
 	$ar = array('a' => 111,'b' => 222,'c' => 333,'e' => 444);
 	$count = 0;
-	infra_foro($ar, function ($v, $key) use (&$count) {
+	Each::foro($ar, function ($v, $key) use (&$count) {
 		++$count;
 		if ($key == 'b') {
 			return new infra_Fix('del');
@@ -87,7 +87,7 @@
 	//obj back
 	$ar = array('a' => 111,'b' => 222,'c' => 333,'e' => 444);
 	$count = 0;
-	infra_foro($ar, function ($v, $key) use (&$count) {
+	Each::foro($ar, function ($v, $key) use (&$count) {
 		++$count;
 		if ($key == 'b') {
 			return new infra_Fix('del');
@@ -101,7 +101,7 @@
 	//obj back ret
 	$ar = array('a' => 111,'b' => 222,'c' => 333,'e' => 444);
 	$count = 0;
-	infra_foro($ar, function ($v, $key) use (&$count) {
+	Each::foro($ar, function ($v, $key) use (&$count) {
 		++$count;
 		if ($key == 'b') {
 			return new infra_Fix('del', true);
@@ -115,7 +115,7 @@
 	//obj ret
 	$ar = array('a' => 111,'b' => 222,'c' => 333,'e' => 444);
 	$count = 0;
-	infra_foro($ar, function ($v, $key) use (&$count) {
+	Each::foro($ar, function ($v, $key) use (&$count) {
 		++$count;
 		if ($key == 'b') {
 			return new infra_Fix('del', true);
@@ -127,7 +127,7 @@
 	}
 
 	if (!$result) {
-		return infra_err($ans, 'err');
+		return Ans::err($ans, 'err');
 	}
 
-	return infra_ret($ans, 'ret');
+	return Ans::ret($ans, 'ret');

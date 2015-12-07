@@ -6,9 +6,9 @@
 	$ans['title'] = 'Тест на декодирование JSON';
 	$source = '""';
 
-	$data = infra_json_decode($source);
+	$data = Load::json_decode($source);
 	if ($data !== '') {
-		return infra_err($ans, 'Не может декодировать');
+		return Ans::err($ans, 'Не может декодировать');
 	}
 
-	return infra_ret($ans, 'Декодировано');
+	return Ans::ret($ans, 'Декодировано');

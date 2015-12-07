@@ -8,11 +8,11 @@ use infrajs\event\Event;
 use infrajs\template\Template;
 use infrajs\sequence\Sequence;
 
-function infra_ret($ans, $str = false)
+function Ans::ret($ans, $str = false)
 {
 	return Ans::ret($ans, $str);
 }
-function infra_err($ans, $str = false)
+function Ans::err($ans, $str = false)
 {
 	return Ans::err($ans, $str);
 }
@@ -24,9 +24,9 @@ function infra_log($ans, $str, $data)
 {
 	return Ans::log($ans, $str);
 }
-function infra_require($path)
+function Path::req($path)
 {
-	return Load::req($path);
+	return Path::req($path);
 }
 
 

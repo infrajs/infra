@@ -1,6 +1,6 @@
 <?php
 
-	use infrajs\infra\ext\Crumb;
+	use infrajs\controller\ext\Crumb;
 
 $ans = array();
 	$ans['title'] = 'Хлебные крошки';
@@ -8,21 +8,21 @@ $ans = array();
 	$obj = Crumb::getInstance('test/check');
 	$parent = Crumb::getInstance('test');
 	if (Crumb::$childs['test/check'] !== $obj) {
-		return infra_err($ans, 'Некорректно определяется крошка 1');
+		return Ans::err($ans, 'Некорректно определяется крошка 1');
 	}
 	if (Crumb::$childs['test'] !== $parent) {
-		return infra_err($ans, 'Некорректно определяется крошка 2');
+		return Ans::err($ans, 'Некорректно определяется крошка 2');
 	}
 
 	if ($obj->parent !== $parent) {
-		return infra_err($ans, 'Некорректно определён parent');
+		return Ans::err($ans, 'Некорректно определён parent');
 	}
 
 	Crumb::change('test/hi');
 	$obj = Crumb::getInstance('test');
 
 	if (!$obj->is) {
-		return infra_err($ans, 'Не применилась крошка на втором уровне');
+		return Ans::err($ans, 'Не применилась крошка на втором уровне');
 	}
 
 $root = Crumb::getInstance();
@@ -46,10 +46,10 @@ $root = Crumb::getInstance();
 	$crumb2 = Crumb::getInstance('test2');
 
 	if (!($f == null && $r && !is_null($crumb->query) && is_null($crumb2->query))) {
-		return infra_err($ans, 'Изменения крошек');
+		return Ans::err($ans, 'Изменения крошек');
 	}
 
 	Crumb::change('test/test');
 	$inst = Crumb::getInstance('test/test/test');
 
-return infra_ret($ans, 'Всё ок');
+return Ans::ret($ans, 'Всё ок');

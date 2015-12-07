@@ -6,18 +6,18 @@ $html = infra_admin_cache('infra_js_php', function ($str) {
 	global $infra;
 	
 	$loadTEXT = function ($path) {
-		$html = infra_loadTEXT($path);
+		$html = Load::loadTEXT($path);
 		$html = 'infra.store("loadTEXT")["'.$path.'"]={value:"'.$html.'",status:"pre"};'; //код отметки о выполненных файлах
 		return $html;
 	};
 	$loadJSON = function ($path) {
-		$obj = infra_loadJSON($path);
+		$obj = Load::loadJSON($path);
 		$html = 'infra.store("loadJSON")["'.$path.'"]={value:'.infra_json_encode($obj).',status:"pre"};'; //код отметки о выполненных файлах
 		return $html;
 	};
 	$require = function ($path) {
 		$html = "\n\n".'//requrie '.$path."\n";
-		$html .= infra_loadTEXT($path).';';
+		$html .= Load::loadTEXT($path).';';
 		$html .= 'infra.store("require")["'.$path.'"]={value:true};'; //код отметки о выполненных файлах
 		return $html;
 	};
@@ -30,7 +30,7 @@ $html = infra_admin_cache('infra_js_php', function ($str) {
 	$infra['js'] .= 'window.infra={};';
 	$infra['js'] .= $require('*infra/ext/load.js');
 	$infra['js'] .= $require('*infra/ext/config.js');
-	$conf = infra_config('secure');
+	$conf = Infra::config('secure');
 	$infra['js'] .= 'infra.conf=('.infra_json_encode($conf).');infra.config=function(){return infra.conf;};';
 
 	//=======================
@@ -58,7 +58,7 @@ $html = infra_admin_cache('infra_js_php', function ($str) {
 	$infra['js'] .= $require('*controller/infrajs.js');//
 
 	
-	infra_fire($infra, 'onjs');
+	Event::fireg('onjs');
 
 	$infra['js'] .= 'define(["?*once/once.js"], function(){ return infra })';
 

@@ -7,10 +7,10 @@
 	);
 
 	$file = infra_nameinfo('*1 file@23.txt');
-	$src = infra_srcinfo('*1 file@23.txt');
+	$src = Load::srcInfo('*1 file@23.txt');
 
 	if ($file['id'] != 23 && $src['src'] != '*1 file@23.txt') {
-		return infra_err($ans, 'Такого файла не существует или не правидьно указан путь');
+		return Ans::err($ans, 'Такого файла не существует или не правидьно указан путь');
 	}
 
-		return infra_ret($ans, 'Путь указан правильно, файл найден');
+		return Ans::ret($ans, 'Путь указан правильно, файл найден');

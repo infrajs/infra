@@ -5,11 +5,11 @@
 	$ans = array(
 		'title' => 'Проверка функции strtolower',
 	);
-	$s1 = infra_tofs('Кирилица utf8');
-	$s2 = infra_tofs('кирилица utf8');
+	$s1 = Path::tofs('Кирилица utf8');
+	$s2 = Path::tofs('кирилица utf8');
 
 	if (mb_strtolower($s1) != $s2) {
-		return infra_err($ans, 'mb_strtolower не работает');
+		return Ans::err($ans, 'mb_strtolower не работает');
 	}
 
-	return infra_ret($ans, 'infra strtolower работает');
+	return Ans::ret($ans, 'infra strtolower работает');

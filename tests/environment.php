@@ -6,7 +6,7 @@ $ans['title'] = 'Проверка окружения';
 $v = phpversion();
 $ver = explode('.', $v);
 if ($ver[0] < 5 || ($ver[0] == 5 && $ver[1] < 4)) {
-	return infra_err($ans, 'Требуется более новая версия php от 5.4 сейчас '.$v);
+	return Ans::err($ans, 'Требуется более новая версия php от 5.4 сейчас '.$v);
 }
 
 /*
@@ -15,10 +15,10 @@ if ($ver[0] < 5 || ($ver[0] == 5 && $ver[1] < 4)) {
 	5.3 - не всегда ставится закрывающие тег php
 */
 if (mb_internal_encoding() !== 'UTF-8') {
-	return infra_err($ans, 'mb_internal_encoding()!=="UTF-8" '.mb_internal_encoding());
+	return Ans::err($ans, 'mb_internal_encoding()!=="UTF-8" '.mb_internal_encoding());
 }
 
 //allow_call_time_reference http://php.net/manual/en/language.references.pass.php
 
 
-return infra_ret($ans, 'ОК');
+return Ans::ret($ans, 'ОК');

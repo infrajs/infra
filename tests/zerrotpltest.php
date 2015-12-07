@@ -16,7 +16,7 @@ $tpl = '{root:}{0:test}{test:}{title}';
 
 $ans['class'] = 'bg-warning';
 	if ($html != 'good') {
-		return infra_err($ans, '0 элемент принят за false как будто его нет');
+		return Ans::err($ans, '0 элемент принят за false как будто его нет');
 	}
 
-return infra_ret($ans, 'Теcт пройдены. Получился ожидаемый результат поле распарсивания шаблона.');
+return Ans::ret($ans, 'Теcт пройдены. Получился ожидаемый результат поле распарсивания шаблона.');

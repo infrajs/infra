@@ -9,12 +9,12 @@ require_once __DIR__.'/../../infra/Infra.php';
 
 	$ans['res'] = infra_template_parse(array(''), true);
 	if ($ans['res'] !== '') {
-		return infra_err($ans, 'Непройден тест 1 {res}');
+		return Ans::err($ans, 'Непройден тест 1 {res}');
 	}
 
 	$ans['res'] = infra_template_parse(array(''));
 	if ($ans['res'] !== '') {
-		return infra_err($ans, 'Непройден тест 2 {res}');
+		return Ans::err($ans, 'Непройден тест 2 {res}');
 	}
 
-	return infra_ret($ans, 'Все теcты пройдены');
+	return Ans::ret($ans, 'Все теcты пройдены');

@@ -25,7 +25,7 @@
 	global $j;
 
 	$j = 1;
-	infra_listen($infra, 'obj.onsome', function ($obj) {
+	Event::listeng('obj.onsome', function ($obj) {
 		global $j;
 		++$j;
 	});
@@ -37,7 +37,7 @@
 	infra_fire($obj2, 'obj.onsome');
 
 	if ($i != 4 && $j != 4) {
-		return infra_err($ans, 'err');
+		return Ans::err($ans, 'err');
 	}
 
-	return infra_ret($ans, 'ret');
+	return Ans::ret($ans, 'ret');

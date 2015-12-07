@@ -1,7 +1,6 @@
 <?php
 
 /*
-Copyright 2008 ITLife, Ltd. http://itlife-studio.ru
 
 infrajs.php Общий инклуд для всех скриптов
 
@@ -24,7 +23,7 @@ infra_theme - (*some/path/to/file) возвращает пусть от корн
 infra_cache - ($conds,$fn,$args); conds - файлы или метки.
 
 ----------- login.php Авторизация ---------------
-infra_admin(true);//bool, //если true, выкидывает окно авторизации если не авторизирован
+Access::admin(true);//bool, //если true, выкидывает окно авторизации если не авторизирован
 
 
 ----------- не реализовано --------------
@@ -42,9 +41,10 @@ namespace infrajs\infra;
 use infrajs\infra\Install;
 use infrajs\infra\Access;
 use infrajs\once\Once;
+use infrajs\load\Load;
 use infrajs\path\Path;
 
-require_once('vendor/infrajs/path/infra.php');
+
 
 class Infra
 {
@@ -63,22 +63,60 @@ class Infra
 	{	
 
 		Once::exec('Infra::init', function () {
+			/**
+			 * Надо чтобы применился .infra.json конфиг с путями
+			 * Infra::config('path') сейчас возвращает данные, которые не используются в функции Path::theme
+			 * Интеграция описана в *path/infra.php путь на который по умолчанию Path находить уж должен
+			 **/
+			Path::req('*path/infra.php');
 
-			Access::adminModified();//Здесь уже выход если у браузера сохранена версия
+			/**
+			 * Выход если у браузера сохранена версия.
+			 * Проверяется debug или нет и пути path должны уже быть установлены
+			 **/
+			Access::adminModified();
 			
+
+			Infra::initUpdate();
+
 			Infra::initRequire();
 			
 			Access::initHeaders();
-
-			//Load::req('*infra/ext/cache.php');
-			//Load::req('*infra/ext/mail.php');
 						
-			Install::initCheck();
-
 			Path::init();
 		});
 	}
-	private static function addConf(&$conf, $dir){
+	private static function initUpdate()
+	{
+		Event::wheng('update', function () {
+			header('Infra-Update: OK');
+		});
+		$update=false;
+		$file = Path::theme('~update');
+		if ($file) {
+			$r = @unlink($file);//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
+			if (!$r) throw new \Exception('Infra-Update: Error');	
+			if (Path::theme('|')) $update=true;
+		}
+
+		//Изменился config...
+		//проверка только если была авторизация админа
+		$cmd5 = Mem::get('configmd5');
+		$rmd5 = array('time' => time());
+		$rmd5['result'] = md5(serialize(Infra::config()));
+		if (!$cmd5 || $rmd5['result'] != $cmd5['result']) {
+			Mem::set('configmd5', $rmd5);//Кофиг .infra.json нельзя геренировать программно, только читать.	
+			$update=true;
+		}
+
+		if ($update) {
+			$r = Path::fullrmdir('|');
+			if(!$r) throw new \Exception('Infra-Update: Error');
+			Event::fireg('update');
+		}
+	}
+	private static function addConf(&$conf, $dir)
+	{
 		$src = $dir.'.infra.json';
 		if (!is_file($src)) return;
 		$d = file_get_contents($src);
@@ -124,12 +162,11 @@ class Infra
 		
 		$conf=Once::exec('Infra::config', function (){
 			$conf = array();
-			$dirs = Infra::config('path');
+			$dirs = &Infra::dirs();
 			$dirs['search'] = array_reverse($dirs['search']);
 			foreach ($dirs['search'] as $src) {
 				Infra::addVendor($conf, $src);
 			}
-			$dirs=&Infra::config('path');
 			/*
 				Обработка свойства external
 				external: "catalog" включает поиск в папке catalog файлов для Зависимости catalog
@@ -185,7 +222,7 @@ class Infra
 			$dirs=file_get_contents('vendor/infrajs/path/.infra.json');
 			$dirs=Load::json_decode($dirs, true);
 			$dirs=$dirs['path'];
-			$dirs=array_merge(Path::$conf, $conf['path']); // Объединили конфиги 
+			$dirs=array_merge(Path::$conf, $dirs); // Объединили конфиги 
 
 			if (is_file('.infra.json')) {
 				$conf=file_get_contents('.infra.json');
@@ -197,33 +234,11 @@ class Infra
 			return $dirs;
 		});
 	}
-	public static function runPlugins($callback)
-	{
-		$plugins=Once::exec('Infra::runPlugins', function () {
-			$plugins=array();
-			$dirs = Infra::dirs();
-			for ($i = 0, $il = sizeof($dirs['search']); $i < $il; ++$i) {
-				$dir = $dirs['search'][$i];
-				$list = scandir($dir);
-				for ($j = 0, $jl = sizeof($list); $j < $jl; ++$j) {
-					$plugin = $list[$j];
-					if ($plugin{0} == '.') continue;
-					if (!is_dir($dir.$plugin)) continue;
-					$plugins[] = array('dir' => $dir, 'name' => $plugin);
-				}
-			}
-			return $plugins;
-		});
-		
-		for ($i = 0, $il = sizeof($plugins); $i < $il; ++$i) {
-			$pl = $plugins[$i];
-			$r = $callback($pl['dir'].$pl['name'].'/', $pl['name']);
-			if (!is_null($r)) return $r;
-		}
-	}
+	
 	public static function initRequire()
 	{
 		Once::exec('Infra::initRequire', function() {
+
 			$conf=Infra::config();
 			foreach ($conf as $name => $plugin) {
 				if (empty($plugin['require'])) continue;
@@ -234,7 +249,7 @@ class Infra
 					print_r($plugin);
 					continue;
 				}
-				Load::req($plugin['require']);
+				Path::req($plugin['require']);
 			}
 		});
 	}

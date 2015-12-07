@@ -1,20 +1,20 @@
 # infra
 
 * Модель выполнения php файлов в пространстве infra. (index.php?*path/to/file.php)
-* Конфиг - Файлы .infra.json infra_config()
-* Работа с путям - config.dirs, ~ data, * search, | cahce. infra_theme() infra_srcinfo() infra_dirs()
-* Работа с json ответы сервера. infra_ans(), infra_ret(), infra_err()
+* Конфиг - Файлы .infra.json Infra::config()
+* Работа с путям - config.dirs, ~ data, * search, | cahce. Path::theme() Load::srcInfo() infra_dirs()
+* Работа с json ответы сервера. infra_ans(), Ans::ret(), Ans::err()
 * Тесты - *infra/tests.php (папка tests в расширении)
 * Система прав - разработчик, тестер infra_test() infra_debug() 
-* Авторизация админа infra_admin()
+* Авторизация админа Access::admin()
 * Автоустановка install.php
 * Автоподключение config.plugin.require
 * Шаблонизатор infra_template()
 * События infra_fire() infra_listen()
-* Управление кэшем браузера infra_cache_no() infra_cache_yes()
+* Управление кэшем браузера header('Cache-Controll: no-store') infra_cache_yes()
 * Кэш по дате изменения файла infra_cache
-* Подготовка html выдачи infra_html()
-* Работа с последовательностями в строке. Разделитель любой символ. infra_seq_right() infra_seq_short()
+* Подготовка html выдачи View::html()
+* Работа с последовательностями в строке. Разделитель любой символ. Sequence::right() Sequence::short()
 * Отправка писем infra_mail_toAdmin() infra_mail_fromAdmin()
 * Работа с кэшем в файловой системе или в memcached
 
