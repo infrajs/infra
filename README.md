@@ -2,15 +2,15 @@
 
 * Модель выполнения php файлов в пространстве infra. (index.php?*path/to/file.php)
 * Конфиг - Файлы .infra.json Infra::config()
-* Работа с путям - config.dirs, ~ data, * search, | cahce. Path::theme() Load::srcInfo() infra_dirs()
+* Работа с путям - config.dirs, ~ data, * search, | cahce. Path::theme() Load::srcInfo() Infra::dirs()
 * Работа с json ответы сервера. infra_ans(), Ans::ret(), Ans::err()
 * Тесты - *infra/tests.php (папка tests в расширении)
-* Система прав - разработчик, тестер infra_test() infra_debug() 
+* Система прав - разработчик, тестер Access::test() Access::debug() 
 * Авторизация админа Access::admin()
 * Автоустановка install.php
 * Автоподключение config.plugin.require
-* Шаблонизатор infra_template()
-* События infra_fire() infra_listen()
+* Шаблонизатор Template::parse()
+* События Event::fire() Event::handler()
 * Управление кэшем браузера header('Cache-Controll: no-store') infra_cache_yes()
 * Кэш по дате изменения файла infra_cache
 * Подготовка html выдачи View::html()

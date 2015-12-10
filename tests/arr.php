@@ -34,21 +34,21 @@
 	//Проверить, являются ли переданые переменные ссылкой друг на друга
 	$a=15; // создаем переменную a
 	$b=$a; // записываем копию переменной a в переменную b
-	$equal=infra_isEqual($a,$b);
+	$equal=Each::isEqual($a,$b);
 	if($equal!==false)return Ans::err($ans,'Функция infra_isEqual работает неверно $b не является ссылкой на $a');
 	$b=&$a; // делаем b ссылкой на a
-	$equal=infra_isEqual($a,$b);
+	$equal=Each::isEqual($a,$b);
 	if($equal!==true)return Ans::err($ans,'Функция infra_isEqual работает неверно $b является ссылкой на $a');
 	
 	$a=array(1,2,4,7); // интересно получается, так как раннее мы $b=&$a то уже здесь, даже если присваивать массивы этим переменным, то всё равно при изменении $b всё записывается в $a
 	$b=array(1,2,4,11);
-	$equal=infra_isEqual($a,$b);
+	$equal=Each::isEqual($a,$b);
 	if($equal!==true)return Ans::err($ans,'Функция infra_isEqual работает неверно $b является ссылкой на $a');
 	
 	$b=array(1,2,4,15);
 	$c=array(1,2,4,11);
 	//print_r($a);
-	$equal=infra_isEqual($b,$c);
+	$equal=Each::isEqual($b,$c);
 	if($equal!==false)return Ans::err($ans,'Функция infra_isEqual работает не правильно, массив $с не является ссылкой на $b');
 	
 	return Ans::ret($ans,'Всё ок');

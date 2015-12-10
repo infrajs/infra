@@ -2,7 +2,7 @@
 
 $re = isset($_GET['re']); //Modified re нужно обновлять с ctrl+F5
 
-$html = infra_admin_cache('infra_js_php', function ($str) {
+$html = Access::adminCache('infra_js_php', function ($str) {
 	global $infra;
 	
 	$loadTEXT = function ($path) {
@@ -58,7 +58,7 @@ $html = infra_admin_cache('infra_js_php', function ($str) {
 	$infra['js'] .= $require('*controller/infrajs.js');//
 
 	
-	Event::fireg('onjs');
+	Event::fire('onjs');
 
 	$infra['js'] .= 'define(["?*once/once.js"], function(){ return infra })';
 

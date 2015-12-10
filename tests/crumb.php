@@ -35,10 +35,10 @@ $root = Crumb::getInstance();
 
 	$s = &Crumb::getInstance('some');
 	$s2 = &Crumb::getInstance('some');
-	$r = infra_isEqual($s, $s2);
+	$r = Each::isEqual($s, $s2);
 
 	$s = Crumb::$childs;
-	$r2 = infra_isEqual($s[''], Crumb::getInstance());
+	$r2 = Each::isEqual($s[''], Crumb::getInstance());
 
 	$r = $r && $r2;
 

@@ -74,7 +74,7 @@ Sequence::set(Template::$scope, array('location', 'host'), $host);
 Sequence::set(Template::$scope, array('location', 'pathname'), $pathname);
 
 
-Event::wheng('onjs', function () {	
+Event::handler('onjs', function () {	
 	View::js('*infra/access.js');
 });
 

@@ -77,7 +77,7 @@ class Infra
 			Access::adminModified();
 			
 
-			Infra::initUpdate();
+			Infra::initInstall();
 
 			Infra::initRequire();
 			
@@ -86,9 +86,9 @@ class Infra
 			Path::init();
 		});
 	}
-	private static function initUpdate()
+	private static function initInstall()
 	{
-		Event::wheng('update', function () {
+		Event::handler('install', function () {
 			header('Infra-Update: OK');
 		});
 		$update=false;
@@ -112,7 +112,7 @@ class Infra
 		if ($update) {
 			$r = Path::fullrmdir('|');
 			if(!$r) throw new \Exception('Infra-Update: Error');
-			Event::fireg('update');
+			Event::fire('install');
 		}
 	}
 	private static function addConf(&$conf, $dir)
