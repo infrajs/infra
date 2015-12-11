@@ -8,26 +8,7 @@ use infrajs\event\Event;
 use infrajs\template\Template;
 use infrajs\sequence\Sequence;
 
-function Ans::ret($ans, $str = false)
-{
-	return Ans::ret($ans, $str);
-}
-function Ans::err($ans, $str = false)
-{
-	return Ans::err($ans, $str);
-}
-function infra_ans($ans)
-{
-	return Ans::ans($ans);
-}
-function infra_log($ans, $str, $data)
-{
-	return Ans::log($ans, $str);
-}
-function Path::req($path)
-{
-	return Path::req($path);
-}
+
 
 
 $fn = function ($path) {
@@ -35,7 +16,7 @@ $fn = function ($path) {
 };
 Sequence::set(Template::$scope, array('infra', 'theme'), $fn);
 
-$conf = &Config::pub();
+$conf = &Infra::pub();
 Sequence::set(Template::$scope, array('infra', 'conf'), $conf);
 
 $fn = function () {

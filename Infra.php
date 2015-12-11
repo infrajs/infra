@@ -137,9 +137,6 @@ class Infra
 					$conf[$k] = $v;
 				}
 			}
-			if(!empty($d['external'])){
-				return array('dir'=>$dir, 'external'=>$d['external']);
-			}
 		}
 	}
 	/**
@@ -168,27 +165,27 @@ class Infra
 				Infra::addVendor($conf, $src);
 			}
 			/*
-				Обработка свойства external
-				external: "catalog" включает поиск в папке catalog файлов для Зависимости catalog
-				Данные записываются в $dirs
-				external:{
-					catalog:[path/to/"catalog"/]
+				Обработка свойства clutch
+				clutch: "catalog" включает поиск в папке catalog файлов для Зависимости catalog
+				Данные записываются в $dirs в следующем виде
+				clutch:{
+					catalog:[path/to/"catalog"/] //* использовать нельзя
 				}
 			*/
 			foreach ($conf as $plugin=>$pdata) { //Сейчас уже неизвестно кто добавил этот параметр в конфиг или кто подменил
-				if (empty($pdata['external'])) continue;
-				if (!$dirs['external'][$pdata['external']]) $dirs['external'][$pdata['external']]=array(); //Создали dirs.external.catalog=[]
-				$plug=$plugin.'/'.$pdata['external'].'/'; //Например cart/catalog/
+				if (empty($pdata['clutch'])) continue;
+				if (!$dirs['clutch'][$pdata['clutch']]) $dirs['clutch'][$pdata['clutch']]=array(); //Создали dirs.external.catalog=[]
+				$plug=$plugin.'/'.$pdata['clutch'].'/'; //Например cart/catalog/
 
 				foreach ($dirs['search'] as $src) { //Ищим эту указанную в external папку, определяем path/to/
 					if (!is_dir($src.$plug)) continue;
 					// Нашли vendor/infrajs/cart/catalog/ или data/cart/catalog/
-					$dirs['external'][$pdata['external']][]=$src.$plugin.'/'; //Сохраняем без слова catalog
-					Infra::addConf($conf, $src.$plug); //Этот конфиг важней того который в data
+					$dirs['clutch'][$pdata['clutch']][]=$src.$plugin.'/'; //Сохраняем без слова catalog
+					Infra::addConf($conf, $src.$plug);
 					
 				}
 			}
-			Infra::addVendor($conf, './'); //В корне и в data не может быть external
+			Infra::addVendor($conf, './'); //В корне и в data не может быть clutch
 			Infra::addVendor($conf, $dirs['data']);
 			$conf['path']=array_merge($conf['path'], $dirs);
 			return $conf;
@@ -234,23 +231,19 @@ class Infra
 			return $dirs;
 		});
 	}
-	
-	public static function initRequire()
-	{
-		Once::exec('Infra::initRequire', function() {
-
-			$conf=Infra::config();
-			foreach ($conf as $name => $plugin) {
-				if (empty($plugin['require'])) continue;
-
-				if (!Path::theme($plugin['require'])) {
-					echo '<pre>';
-					echo 'Plugin "'.$name.'" require error. File not found'."\n";
-					print_r($plugin);
-					continue;
-				}
-				Path::req($plugin['require']);
-			}
+	public static function req($src) {
+		Each::exec($src, function ($src){
+			Path::req($src);
 		});
+	}
+	public static function initRequire($name = null)
+	{
+		Path::req('*infra/global.php');
+		$conf=Infra::config();
+		if ($name) return Infra::req($conf[$name]['require']);
+		foreach ($conf as $name => $plugin) {
+			if(empty($plugin['require'])) continue;
+			Infra::req($plugin['require']);
+		}
 	}
 }
