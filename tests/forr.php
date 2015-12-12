@@ -68,7 +68,7 @@ $len=sizeof($ar3);
 $count3=0;
 $res=Each::forr($ar3,function($el,$i) use(&$count3){
 	$count3++;
-	if($el==4)return new infra_Fix('del'); //пробовал передавать не new infra_Fix, а просто infra_Fix массив удалялся полностью, ну или просто функция неправильно срабатывала.
+	if($el==4)return new Fix('del'); //пробовал передавать не new infra_Fix, а просто infra_Fix массив удалялся полностью, ну или просто функция неправильно срабатывала.
 });
 if($res!==null)return Ans::err($ans,'Странный результат');
 if($count3!=$len)return Ans::err($ans,'Неожиданное количество выполненией');
@@ -78,7 +78,7 @@ if($ar3[3]==4)return Ans::err($ans, 'Не работает удаление');
 $ar=array(1,2,3,4,5,6);
 $count=0;
 $res=Each::forr($ar,function($el) use(&$count){
-	return new infra_Fix('del',false);
+	return new Fix('del',false);
 }, true);
 if(isset($ar[5]))return Ans::err($ans, 'Не работает back');
 

@@ -86,7 +86,7 @@ class Infra
 	}
 	private static function initInstall()
 	{
-		Event::handler('install', function () {
+		Event::handler('oninstall', function () {
 			header('Infra-Update: OK');
 		});
 		$update=false;
@@ -110,7 +110,7 @@ class Infra
 		if ($update) {
 			$r = Path::fullrmdir('|');
 			if(!$r) throw new \Exception('Infra-Update: Error');
-			Event::fire('install');
+			Event::fire('oninstall');
 		}
 	}
 	private static function addConf(&$conf, $dir)

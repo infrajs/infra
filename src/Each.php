@@ -16,7 +16,7 @@ class Each {
 				}
 				$r = &$callback($el[$i], $i, $el); //3тий аргумент $el depricated
 				if (is_null($r)) continue;
-				if ($r instanceof infra_Fix) {
+				if ($r instanceof Fix) {
 					if ($r->opt['del']) {
 						array_splice($el, $i, 1);
 					}
@@ -34,7 +34,7 @@ class Each {
 				
 				$r = &$callback($el[$i], $i, $el);
 				if (is_null($r)) continue;
-				if ($r instanceof infra_Fix) {
+				if ($r instanceof Fix) {
 					if ($r->opt['del']) {
 						array_splice($el, $i, 1);
 						--$l;
@@ -152,7 +152,7 @@ class Each {
 			if (is_null($r)) {
 				return $r;
 			}
-			if ($r instanceof infra_Fix) {
+			if ($r instanceof Fix) {
 				if ($r->opt['del']) {
 					unset($obj[$el['key']]);
 				}
@@ -176,19 +176,4 @@ class Each {
 		}, $back);
 	}
 
-}
-class infra_Fix
-{
-	public function __construct($opt, $ret = null)
-	{
-		if (is_string($opt)) {
-			if ($opt == 'del') {
-				$opt = array(
-					'del' => true,
-					'ret' => $ret,
-				);
-			}
-		}
-		$this->opt = $opt;
-	}
 }

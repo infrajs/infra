@@ -12,7 +12,7 @@ if (!is_file('vendor/autoload.php')) {
 $result = true;
 
 $ans = array();
-$ans['title'] = 'fix.php';
+$ans['title'] = 'Each Fix';
 
 //back ret
 $ar = array('a','b','c','e');
@@ -20,7 +20,7 @@ $count = 0;
 Each::forr($ar, function ($v) use (&$count) {
 	++$count;
 	if ($v == 'b') {
-		return new infra_Fix('del', true);
+		return new Fix('del', true);
 	}
 
 });
@@ -35,7 +35,7 @@ $count = 0;
 Each::forr($ar, function ($v) use (&$count) {
 	++$count;
 	if ($v == 'b') {
-		return new infra_Fix('del', true);
+		return new Fix('del', true);
 	}
 
 }, true);
@@ -51,7 +51,7 @@ $count = 0;
 Each::forr($ar, function ($v) use (&$count) {
 	++$count;
 	if ($v == 'b') {
-		return new infra_Fix('del');
+		return new Fix('del');
 	}
 
 }, true);
@@ -67,7 +67,7 @@ $count = 0;
 Each::forr($ar, function ($v) use (&$count) {
 	++$count;
 	if ($v == 'b') {
-		return new infra_Fix('del');
+		return new Fix('del');
 	}
 
 });
@@ -83,7 +83,7 @@ $count = 0;
 Each::foro($ar, function ($v, $key) use (&$count) {
 	++$count;
 	if ($key == 'b') {
-		return new infra_Fix('del');
+		return new Fix('del');
 	}
 });
 if ($count == 4 && sizeof($ar) == 3 && !isset($ar['b'])) {
@@ -97,7 +97,7 @@ $count = 0;
 Each::foro($ar, function ($v, $key) use (&$count) {
 	++$count;
 	if ($key == 'b') {
-		return new infra_Fix('del');
+		return new Fix('del');
 	}
 }, true);
 if ($count == 4 && sizeof($ar) == 3 && !isset($ar['b'])) {
@@ -111,7 +111,7 @@ $count = 0;
 Each::foro($ar, function ($v, $key) use (&$count) {
 	++$count;
 	if ($key == 'b') {
-		return new infra_Fix('del', true);
+		return new Fix('del', true);
 	}
 }, true);
 if ($count == 3 && sizeof($ar) == 3 && !isset($ar['b'])) {
@@ -125,7 +125,7 @@ $count = 0;
 Each::foro($ar, function ($v, $key) use (&$count) {
 	++$count;
 	if ($key == 'b') {
-		return new infra_Fix('del', true);
+		return new Fix('del', true);
 	}
 });
 if ($count == 2 && sizeof($ar) == 3 && !isset($ar['b'])) {
