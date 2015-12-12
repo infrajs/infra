@@ -39,7 +39,10 @@ statist - интегрировать как-нибудь
 
 namespace infrajs\infra;
 use infrajs\once\Once;
+use infrajs\access\Access;
+use infrajs\event\Event;
 use infrajs\load\Load;
+use infrajs\mem\Mem;
 use infrajs\path\Path;
 
 
@@ -74,14 +77,13 @@ class Infra
 			 **/
 			Access::adminModified();
 			
+			Infra::req();
 
 			Infra::initInstall();
-
-			Infra::req();
-			
 			Access::initHeaders();
-						
-			Path::init();
+
+			$query=urldecode($_SERVER['QUERY_STRING']);		
+			Path::init($query);
 		});
 	}
 	private static function initInstall()
@@ -90,27 +92,38 @@ class Infra
 			header('Infra-Update: OK');
 		});
 		$update=false;
-		$file = Path::theme('~update');
-		if ($file) {
-			$r = @unlink($file);//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
-			if (!$r) throw new \Exception('Infra-Update: Error');	
-			if (Path::theme('|')) $update=true;
+		if(Path::$conf['fs']){
+			$file = Path::theme('~update');
+			if ($file) {
+				$update=true;
+			} else {
+				$dir = Path::theme('|');
+				if (!$dir) {
+					$update=true;
+				}
+			}
 		}
-
 		//Изменился config...
 		//проверка только если была авторизация админа
 		$cmd5 = Mem::get('configmd5');
 		$rmd5 = array('time' => time());
 		$rmd5['result'] = md5(serialize(Infra::config()));
 		if (!$cmd5 || $rmd5['result'] != $cmd5['result']) {
-			Mem::set('configmd5', $rmd5);//Кофиг .infra.json нельзя геренировать программно, только читать.	
 			$update=true;
 		}
-
+		
 		if ($update) {
 			$r = Path::fullrmdir('|');
 			if(!$r) throw new \Exception('Infra-Update: Error');
 			Event::fire('oninstall');
+		}
+		//Сначало инстал а потом уже можно делать Mem::set
+		if (Path::$conf['fs'] && $file) {
+			$r = @unlink($file);//Файл появляется после заливки из svn и если с транка залить без проверки на продакшин, то файл зальётся и на продакшин
+			if (!$r) throw new \Exception('Infra-Update: Error');
+		}
+		if ($update) {
+			Mem::set('configmd5', $rmd5);//Кофиг .infra.json нельзя геренировать программно, только читать.		
 		}
 	}
 	private static function addConf(&$conf, $dir)
