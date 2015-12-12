@@ -1,13 +1,14 @@
 <?php
-	
-	
-	$ans=array('title'=>'Тестируем функции infra_isAssoc и infra_isEqual'); //какие есть аргументы, что она возрващает и вообще как она работает
+	namespace infrajs\infra;
+	use infrajs\ans\Ans;
+	if (!is_file('vendor/autoload.php')) {
+		chdir('../../../../');
+		require_once('vendor/autoload.php');
+	}
 
-	//Проверить что функция существует
-	$funtrue='infra_isAssoc';
-	$res=function_exists($funtrue);
-	if(!$res)return Ans::err($ans,'Error, no function '.$funtrue);
-	//return Ans::ret($ans,'Ok, function '.$funtrue.' true');
+	$ans=array('title'=>'Тестируем функции isAssoc и isEqual'); //какие есть аргументы, что она возрващает и вообще как она работает
+
+	
 	
 	//Проверить что функция infra_isAssoc возвращает ассоциативный массив
 	$arr=array(1,2,3,4,5,6); // задаем индексный массив
@@ -25,11 +26,7 @@
 
 	//if($arr!=false)return Ans::err($ans,'функция infra_isAssoc вернула неверный результат, переданный массив является индексным');
 	
-	//Проверить что функция существует
-	$funtrue='infra_isEqual';
-	$res=function_exists($funtrue);
-	if(!$res)return Ans::err($ans,'Error, no function '.$funtrue);
-	//return Ans::ret($ans,'Ok, function '.$funtrue.' true');
+	
 	
 	//Проверить, являются ли переданые переменные ссылкой друг на друга
 	$a=15; // создаем переменную a

@@ -1,16 +1,25 @@
 <?php
+namespace infrajs\infra;
+use infrajs\access\Access;
+use infrajs\event\Event;
+use infrajs\ans\Ans;
 
-infra_test(true);
+if (!is_file('vendor/autoload.php')) {
+	chdir('../../../../');
+	require_once('vendor/autoload.php');
+}
+
+Access::test(true);
 $ans = array();
 $ans['title'] = 'Тест на значение отладки debug и test';
 
 $conf = Infra::config();
 $conf = $conf['infra'];
-if (infra_debug() && !is_string($conf['debug']) && !is_array($conf['debug'])) {
+if (Access::debug() && !is_string($conf['debug']) && !is_array($conf['debug'])) {
 	return Ans::err($ans, 'Значение config.infra.debug = true');
 }
 
-if (infra_test() && !is_string($conf['test']) && !is_array($conf['test'])) {
+if (Access::test() && !is_string($conf['test']) && !is_array($conf['test'])) {
 	return Ans::err($ans, 'Значение config.infra.test = true');
 }
 

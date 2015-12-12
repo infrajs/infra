@@ -1,7 +1,10 @@
 <?php
-
-	require_once __DIR__.'/../../infra/Infra.php';
-
+	use infrajs\ans\Ans;
+	if (!is_file('vendor/autoload.php')) {
+		chdir('../../../../');
+		require_once('vendor/autoload.php');
+	}
+	
 	$ans = array();
 	$ans['title'] = 'Тест амперсанда &';
 

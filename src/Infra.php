@@ -38,8 +38,6 @@ statist - интегрировать как-нибудь
 
 
 namespace infrajs\infra;
-use infrajs\infra\Install;
-use infrajs\infra\Access;
 use infrajs\once\Once;
 use infrajs\load\Load;
 use infrajs\path\Path;
@@ -79,7 +77,7 @@ class Infra
 
 			Infra::initInstall();
 
-			Infra::initRequire();
+			Infra::req();
 			
 			Access::initHeaders();
 						
@@ -120,7 +118,7 @@ class Infra
 		$src = $dir.'.infra.json';
 		if (!is_file($src)) return;
 		$d = file_get_contents($src);
-		$d = Load::json_decode($d,true);
+		$d = Load::json_decode($d);
 		if (is_array($d)) {
 			foreach ($d as $k => &$v) {
 				if (@!is_array($conf[$k])) {
@@ -231,19 +229,20 @@ class Infra
 			return $dirs;
 		});
 	}
-	public static function req($src) {
+	public static function reqsrc($src) {
 		Each::exec($src, function ($src){
 			Path::req($src);
 		});
 	}
-	public static function initRequire($name = null)
+	public static function req($name = null)
 	{
-		Path::req('*infra/global.php');
+		
 		$conf=Infra::config();
-		if ($name) return Infra::req($conf[$name]['require']);
+		if ($name) return Infra::reqsrc($conf[$name]['require']);
+		Infra::reqsrc($conf['infra']['require']);//Сначало надо самого себя установить
 		foreach ($conf as $name => $plugin) {
 			if(empty($plugin['require'])) continue;
-			Infra::req($plugin['require']);
+			Infra::reqsrc($plugin['require']);
 		}
 	}
 }

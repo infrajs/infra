@@ -2,7 +2,7 @@
 	"name": "infrajs/infra",
 	"license": "GPL3",
 	"autoload": {
-		"psr-4": { "infrajs\\infra\\": "/" }
+		"psr-4": { "infrajs\\infra\\": "src/" }
 	},
 	"require":{
 		"infrajs/once":"~1",
