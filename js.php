@@ -1,68 +1,46 @@
 <?php
+use infrajs\access\Access;
+use infrajs\load\Load;
+use infrajs\infra\Infra;
+use infrajs\infra\Each;
+use infrajs\event\Event;
+use infrajs\view\View;
+use infrajs\path\Path;
 
 $re = isset($_GET['re']); //Modified re нужно обновлять с ctrl+F5
 
+Infra::req();
+
 $html = Access::adminCache('infra_js_php', function ($str) {
-	global $infra;
 	
-	$loadTEXT = function ($path) {
-		$html = Load::loadTEXT($path);
-		$html = 'infra.store("loadTEXT")["'.$path.'"]={value:"'.$html.'",status:"pre"};'; //код отметки о выполненных файлах
-		return $html;
-	};
-	$loadJSON = function ($path) {
-		$obj = Load::loadJSON($path);
-		$html = 'infra.store("loadJSON")["'.$path.'"]={value:'.infra_json_encode($obj).',status:"pre"};'; //код отметки о выполненных файлах
-		return $html;
-	};
-	$require = function ($path) {
-		$html = "\n\n".'//requrie '.$path."\n";
-		$html .= Load::loadTEXT($path).';';
-		$html .= 'infra.store("require")["'.$path.'"]={value:true};'; //код отметки о выполненных файлах
-		return $html;
-	};
+	View::js('-jquery/jquery.js');
+	View::$js .= 'window.infra={};';
+	View::js('-load/load.js');
+	View::js('-layer-config/config.js');
+	$conf = Infra::pub();
+	View::$js .= 'infra.conf=('.Load::json_encode($conf).');infra.config=function(){return infra.conf;};';
 
-	
-	$infra['require']=$require;
-	$infra['loadJSON']=$loadJSON;
-	$infra['loadTEXT']=$loadTEXT;
-	$infra['js'] = '';
-	$infra['js'] .= 'window.infra={};';
-	$infra['js'] .= $require('*infra/ext/load.js');
-	$infra['js'] .= $require('*infra/ext/config.js');
-	$conf = Infra::config('secure');
-	$infra['js'] .= 'infra.conf=('.infra_json_encode($conf).');infra.config=function(){return infra.conf;};';
+	View::js('-infra/src/Each.js');
+	View::js('-view/view.js');
 
-	//=======================
-	//
+	View::js('-template/template.js');
+	View::js('-controller/src/Crumb.js');
+	View::js('-loader/loader.js');
 
-	$infra['js'] .= $require('*infra/ext/forr.js');
-	$infra['js'] .= $require('*infra/ext/view.js');
-	
 
-	$infra['js'] .= $require('*sequence/sequence.js');
+	View::js('-controller/infrajs.js');//
 
-	$infra['js'] .= $require('*infra/access.js');
-
-	$infra['js'] .= $require('*event/event.js');
-
-	//Внутри расширений зависимости подключаются, если используется API
-	//Здесь подключение дублируется, тем более только здесь это попадёт в кэш
-	$infra['js'] .= $require('*infra/ext/html.js');
-	$infra['js'] .= $require('*infra/ext/template.js');
-	$infra['js'] .= $require('*infra/ext/Crumb.js');
-	$infra['js'] .= $require('*infra/ext/loader.js');
-
-	
-
-	$infra['js'] .= $require('*controller/infrajs.js');//
-
-	
 	Event::fire('onjs');
 
-	$infra['js'] .= 'define(["?*once/once.js"], function(){ return infra })';
+	$conf=Infra::config();
+	foreach($conf as $name=>$c){
+		if (empty($c['js'])) continue;
+		Each::exec($c['js'], function($js){
+			View::js($js);
+		});
+	}
 
-	return $infra['js'];
+	return View::js();
 }, array($_SERVER['QUERY_STRING']), $re);
 @header('content-type: text/javascript; charset=utf-8');
 echo $html;

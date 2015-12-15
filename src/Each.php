@@ -20,7 +20,6 @@ class Each {
 					if ($r->opt['del']) {
 						array_splice($el, $i, 1);
 					}
-
 					if (!is_null($r->opt['ret'])) {
 						return $r->opt['ret'];
 					}

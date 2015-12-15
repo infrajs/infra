@@ -67,9 +67,9 @@ class Infra
 			/**
 			 * Надо чтобы применился .infra.json конфиг с путями
 			 * Infra::config('path') сейчас возвращает данные, которые не используются в функции Path::theme
-			 * Интеграция описана в *path/infra.php путь на который по умолчанию Path находить уж должен
+			 * Интеграция описана в -path/infra.php путь на который по умолчанию Path находить уж должен
 			 **/
-			Path::req('*path/infra.php');
+			Path::req('-path/infra.php');
 
 			/**
 			 * Выход если у браузера сохранена версия.
@@ -97,7 +97,7 @@ class Infra
 			if ($file) {
 				$update=true;
 			} else {
-				$dir = Path::theme('|');
+				$dir = Path::theme('!');
 				if (!$dir) {
 					$update=true;
 				}
@@ -113,7 +113,7 @@ class Infra
 		}
 		
 		if ($update) {
-			$r = Path::fullrmdir('|');
+			$r = Path::fullrmdir('!');
 			if(!$r) throw new \Exception('Infra-Update: Error');
 			Event::fire('oninstall');
 		}
@@ -251,8 +251,11 @@ class Infra
 	{
 		
 		$conf=Infra::config();
-		if ($name) return Infra::reqsrc($conf[$name]['require']);
-		Infra::reqsrc($conf['infra']['require']);//Сначало надо самого себя установить
+		if ($name) {
+			if(empty($conf[$name]['require'])) return;
+			return Infra::reqsrc($conf[$name]['require']);
+		}
+		//Infra::reqsrc($conf['infra']['require']);//Сначало надо самого себя установить
 		foreach ($conf as $name => $plugin) {
 			if(empty($plugin['require'])) continue;
 			Infra::reqsrc($plugin['require']);

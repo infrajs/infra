@@ -6,7 +6,7 @@
 		"cache":true,
 		"data":true,
 		"questinternal":true,
-		"require":"*infra/init/infra.php"
+		"tester":"-infra/tests/"
 	},
 	"admin":{
 		"login":"some",

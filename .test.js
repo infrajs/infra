@@ -6,7 +6,7 @@ infra.wait(infrajs,'onshow',function(){
 			
 			test.check();
 		},function(){
-			var tpl="{:inc.test}{inc::}*infra/tests/resources/inc.tpl";
+			var tpl="{:inc.test}{inc::}-infra/tests/resources/inc.tpl";
 			var data={};
 			var res=infra.template.parse([tpl], data);
 			if(res!='Привет!') {
