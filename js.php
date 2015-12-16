@@ -13,7 +13,7 @@ Infra::req();
 
 $html = Access::adminCache('infra_js_php', function ($str) {
 	
-	View::js('-jquery/jquery.js');
+	View::js('-jquery/jquery.min.js');
 	View::$js .= 'window.infra={};';
 	View::js('-load/load.js');
 	View::js('-layer-config/config.js');
