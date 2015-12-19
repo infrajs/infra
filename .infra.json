@@ -1,17 +1,5 @@
 {
-	"infra":{
-		"pub":["questinternal"],
-		"test":["127.0.0.1","::1"],
-		"debug":["127.0.0.1","::1"],
-		"cache":true,
-		"data":true,
-		"questinternal":true,
-		"tester":"-infra/tests/"
-	},
-	"admin":{
-		"login":"some",
-		"password":"som",
-		"email":"info@itlf.ru",
-		"support":"aky.pp.ru@gmail.com"
-	}
+	"cache":true,
+	"data":true,
+	"tester":"tests/"
 }

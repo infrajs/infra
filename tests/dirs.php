@@ -14,9 +14,9 @@ $ans = array();
 
 $ans['title'] = 'Проверка наличия папок';
 
-$conf = Infra::config();
+$conf = Config::get();
 
-if ($conf['infra']['cache'] == 'fs') {
+if ($conf['mem']['type'] == 'fs') {
 	$dirs = Infra::dirs();
 
 	if (!Path::theme($dirs['cache'])) {

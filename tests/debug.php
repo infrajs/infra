@@ -13,7 +13,7 @@ Access::test(true);
 $ans = array();
 $ans['title'] = 'Тест на значение отладки debug и test';
 
-$conf = Infra::config();
+$conf = Config::get();
 $conf = $conf['infra'];
 if (Access::debug() && !is_string($conf['debug']) && !is_array($conf['debug'])) {
 	return Ans::err($ans, 'Значение config.infra.debug = true');
