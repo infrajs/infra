@@ -1,5 +1,3 @@
 {
-	"cache":true,
-	"data":true,
 	"tester":"tests/"
 }

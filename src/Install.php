@@ -46,45 +46,11 @@ use infrajs\mem\Mem;
 use infrajs\path\Path;
 
 
-
-class Infra
+class Install
 {
-	/* Проверка что запущенный php файл находится в корне сайта рядом с vendor
-		//Корень сайта относительно этого файла
-		$vendorroot = infra_realpath(__DIR__.'/../../../../');//AВ до vendor
-		//Корень сайта определёный по рабочей дирректории
-		$siteroot = infra_getcwd();
-		//Определёный корень сайта двумя способами сравниваем
-		//Если результат разный значит система запущена не из той папки где находится vendor с текущим кодом
-		if ($siteroot != $vendorroot) {
-			die('Start infrajs only from site root - directory which have subfolder vendor with infrajs/infra/');
-		}
-	*/
 	public static function init()
-	{	
-
-		Once::exec('Infra::init', function () {
-			/**
-			 * Надо чтобы применился .infra.json конфиг с путями
-			 * Config::get('path') сейчас возвращает данные, которые не используются в функции Path::theme
-			 * Интеграция описана в -path/infra.php путь на который по умолчанию Path находить уж должен
-			 **/
-
-			/**
-			 * Выход если у браузера сохранена версия.
-			 * Проверяется debug или нет и пути path должны уже быть установлены
-			 **/
-
-			
-			
-			
-		});
-	}
-	private static function initInstall()
 	{
-		Event::handler('oninstall', function () {
-			header('Infra-Update: OK');
-		});
+		
 		$update=false;
 		if(Path::$conf['fs']){
 			$file = Path::theme('~update');

@@ -2,7 +2,7 @@
 
 * Модель выполнения php файлов в пространстве infra. (index.php?-path/to/file.php)
 * Конфиг - Файлы .infra.json Config::get()
-* Работа с путям - config.dirs, ~ data, * search, | cahce. Path::theme() Load::srcInfo() Infra::dirs()
+* Работа с путям - path, ~ data, - search, ! cahce. Path::theme() Load::srcInfo()
 * Работа с json ответы сервера. infra_ans(), Ans::ret(), Ans::err()
 * Тесты - -infra/tests.php (папка tests в расширении)
 * Система прав - разработчик, тестер Access::test() Access::debug() 

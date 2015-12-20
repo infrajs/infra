@@ -1,5 +1,7 @@
 <?php
-namespace infrajs\path;
+namespace infrajs\infra;
+
+use infrajs\path\Path;
 
 if (!is_file('vendor/autoload.php')) {
 	chdir('../../../');	
@@ -20,7 +22,8 @@ require_once('vendor/autoload.php');
 });
 */
 
-
 Path::$conf['sefurl']=true;
+
+Config::init();
 
 Path::req('-infra/index.php');

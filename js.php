@@ -18,7 +18,7 @@ if (!is_file('vendor/autoload.php')) {
 
 
 
-$html = Access::adminCache('infra_js_php', function ($str) {
+$html = Access::cache('infra_js_php', function ($str) {
 	View::$js .= 'window.infra={}; window.infrajs={};';
 	View::$js .= 'infra.conf=('.Load::json_encode($conf).');infra.config=function(){return infra.conf;};';
 	View::$js .= '
@@ -66,8 +66,8 @@ $html = Access::adminCache('infra_js_php', function ($str) {
 	$conf=Config::get();
 	foreach($conf as $name=>$c){
 		if (empty($c['js'])) continue;
-		Each::exec($c['js'], function($js){
-			View::js($js);
+		Each::exec($c['js'], function ($js) use ($name) {
+			View::js('-'.$name.'/'.$js);
 		});
 	}
 

@@ -11,34 +11,76 @@ class Config {
 	public static $conf=array();
 	public static $exec=false;
 	public static function init(){
-		Config::load('.infra.json');
-		Config::load('~.infra.json');
-		Config::get('load');
-		Config::get('once');
-		Config::get('path');
+		Once::exec('infrajs::Config::init', function() {
+			Config::load('.infra.json');
+			Config::load('~.infra.json');
 
-		spl_autoload_register(function($class_name){
-			if(Config::$exec) return;
-			$p=explode('\\',$class_name);
-			if(sizeof($p)<3) return;
-			$name=$p[1];
-			if(!Path::theme('-'.$name.'/')) return;
-			Config::$exec=true;
-			spl_autoload_call($class_name);
-			Config::$exec=false;
-			static::get($name);			
-		}, true, true);
-		set_error_handler(function(){ //bugfix
-			ini_set('display_errors',true);
+			Config::get('path');
+			Config::get('infra');
+			Config::get('once');
+			Config::get('hash');
+			Config::get('load');
+			Config::get('ans');
+			/*
+
+				echo '<pre>';
+				print_r(get_declared_classes());
+			 	exit;
+			
+				Debug проврить классы каких расширений после композера загружены и в ручную инициализировать их конфиги
+			    [139] => infrajs\path\Path
+			    [140] => infrajs\infra\Config
+			    [141] => infrajs\once\Once
+			    [142] => infrajs\hash\Hash
+			    [143] => infrajs\load\Load
+			    [144] => infrajs\infra\Each
+			    [145] => infrajs\ans\Ans
+
+			*/
+			spl_autoload_register(function($class_name){
+				if(Config::$exec) return;
+				$p=explode('\\',$class_name);
+				if(sizeof($p)<3) return;
+				$name=$p[1];
+				if(!Path::theme('-'.$name.'/')) return;
+				Config::$exec=true;
+				spl_autoload_call($class_name);
+				Config::$exec=false;
+				static::get($name);			
+			}, true, true);
+			set_error_handler(function(){ //bugfix
+				ini_set('display_errors',true);
+			});
 		});
-		
-		
-
-		
 	}
-	public static function get($name)
+	public static function getAll()
 	{
+		Once::exec('Infrajs::Config::getAll', function () {
+			header('Infrajs-Config: All');
+			/**
+			 * Для того чтобы в текущем сайте можно было разрабатывать расширения со своим конфигом, 
+			 * нужно добавить путь до родительской папки с расширениями в path.config.search
+			 * Папки data может конфликтовать так как она содержит общий конфиг, 
+			 * А если родительская папка защитается за папку с расширениями папка .infra.json в data буде лишним
+			 **/
+			$path=Path::$conf;
+			foreach($path['search'] as $tsrc) {
+
+				$files = scandir($tsrc);
+				foreach($files as $file){
+					if ($file{0} == '.') continue;
+					if (is_file($tsrc.$file)) continue;
+					Config::load($tsrc.$file.'/.infra.json', $file);
+				}
+			}
+		});
+		return Config::$conf;
+	}
+	public static function get($name = null)
+	{
+		if (!$name) return static::getAll();
 		Config::load('-'.$name.'/.infra.json', $name);
+		if (!isset(Config::$conf[$name])) return null;
 		return Config::$conf[$name];
 	}
 	public static function reqsrc($src)
@@ -77,7 +119,9 @@ class Config {
 		foreach ($v as $kk => $vv) {
 			if (isset($conf[$name][$kk])) continue; //То что уже есть в конфиге круче вновь прибывшего
 			if ($kk == 'require') {
-				static::reqsrc('-'.$name.'/'.$vv);
+				Each::exec($vv, function($s) use ($name) {
+					static::reqsrc('-'.$name.'/'.$s);
+				});
 			}else if ($kk == 'conf') {
 				$conf[$name]=array_merge($vv::$conf, $conf[$name]);
 				$vv::$conf=&$conf[$name];
@@ -87,7 +131,7 @@ class Config {
 		}
 	}
 	public static function &pub ($plugin = false) {
-		//$conf=Config::get();
+		$conf=Config::get();
 		foreach ($conf as $i => $part) {
 			$pub = @$part['pub'];
 			if (is_array($pub)) {

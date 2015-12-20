@@ -17,7 +17,7 @@ $ans['title'] = 'Проверка наличия папок';
 $conf = Config::get();
 
 if ($conf['mem']['type'] == 'fs') {
-	$dirs = Infra::dirs();
+	$dirs = Config::get('path');
 
 	if (!Path::theme($dirs['cache'])) {
 		return Ans::err($ans, 'Нет папки '.$dirs['cache']);
