@@ -11,7 +11,7 @@
 * Автоподключение config.plugin.require
 * Шаблонизатор Template::parse()
 * События Event::fire() Event::handler()
-* Управление кэшем браузера header('Cache-Controll: no-store') infra_cache_yes()
+* Управление кэшем браузера header('Cache-Control: no-store') infra_cache_yes()
 * Кэш по дате изменения файла infra_cache
 * Подготовка html выдачи View::html()
 * Работа с последовательностями в строке. Разделитель любой символ. Sequence::right() Sequence::short()
