@@ -1,9 +1,11 @@
 <?php
-namespace infrajs\infra;
+
 use infrajs\access\Access;
 use infrajs\event\Event;
 use infrajs\ans\Ans;
 use infrajs\path\Path;
+use infrajs\each\Each;
+use infrajs\config\Config;
 
 if (!is_file('vendor/autoload.php')) {
 	chdir('../../../../');

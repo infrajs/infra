@@ -1,6 +1,10 @@
 <?php
 	namespace infrajs\infra;
+
 	use infrajs\ans\Ans;
+	use infrajs\each\Each;
+	use infrajs\config\Config;
+
 	if (!is_file('vendor/autoload.php')) {
 		chdir('../../../../');
 		require_once('vendor/autoload.php');
