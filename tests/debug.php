@@ -17,11 +17,13 @@ $ans['title'] = 'Тест на значение отладки debug и test';
 $conf = Config::get('access');
 
 if (Access::debug() && !is_string($conf['debug']) && !is_array($conf['debug'])) {
-	return Ans::err($ans, 'Значение config.infra.debug = true');
+	$ans['class']='bg-warning';
+	return Ans::ret($ans, 'Значение config.infra.debug = true');
 }
 
 if (Access::test() && !is_string($conf['test']) && !is_array($conf['test'])) {
-	return Ans::err($ans, 'Значение config.infra.test = true');
+	$ans['class']='bg-warning';
+	return Ans::ret($ans, 'Значение config.infra.test = true');
 }
 
 $debug=$conf['debug'];
