@@ -7,7 +7,7 @@
 * Тесты - -infra/tests.php (папка tests в расширении)
 * Система прав - разработчик, тестер Access::test() Access::debug() 
 * Авторизация админа Access::admin()
-* Автоустановка install.php
+* Автоустановка update.php
 * Автоподключение config.plugin.require
 * Шаблонизатор Template::parse()
 * События Event::fire() Event::handler()
