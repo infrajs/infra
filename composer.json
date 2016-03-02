@@ -1,5 +1,6 @@
 {
 	"name": "infrajs/infra",
+	"homepage":"https://github.com/infrajs/infra",
 	"license": "GPL3",
 	"autoload": {
 		"psr-4": { "infrajs\\infra\\": "src/" }
