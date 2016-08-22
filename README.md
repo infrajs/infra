@@ -1,3 +1,12 @@
+# Расширение больше не используется
+
+Смотри
+ - [infrajs/cache](https://github.com/infrajs/cache)
+ - [infrajs/config](https://github.com/infrajs/config)
+ - [infrajs/path](https://github.com/infrajs/path)
+ - [infrajs/path](https://github.com/infrajs/ans)
+ - [infrajs/path](https://github.com/infrajs/config)
+
 # infra
 
 * Модель выполнения php файлов в пространстве infra. (index.php?-path/to/file.php)
